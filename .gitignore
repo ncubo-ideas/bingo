@@ -20,5 +20,6 @@ Docker/out/
 # Local settings (machine paths, emulator serials)
 appsettings.local.json
 
-# Notes and docs stay local
+# Notes and docs stay local; only the repo's README is published
 *.md
+!/README.md
