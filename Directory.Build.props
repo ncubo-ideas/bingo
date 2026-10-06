@@ -4,6 +4,13 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
+  <!-- No binary links back to the source repo: without this the SDK writes Source Link
+       (this machine's folder mapped to the repo URL) into every pdb. -->
+  <PropertyGroup>
+    <EnableSourceLink>false</EnableSourceLink>
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+  </PropertyGroup>
+
   <!-- Release builds (the APK, the public web player) must not carry this machine's paths:
        the compiler writes /src/... instead of the real folder into the binaries and pdbs. -->
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
