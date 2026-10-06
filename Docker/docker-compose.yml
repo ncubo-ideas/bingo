@@ -1,0 +1,21 @@
+# The bingo builder: builds the APK inside Docker, so the PC needs neither .NET,
+# the Android SDK nor Java.
+#
+#   .\Docker\build.ps1
+
+services:
+  apk:
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile
+    image: bingo-apk
+    profiles: ["build"]
+    environment:
+      BINGO_RELAY: "1"
+    volumes:
+      - ..:/repo:ro
+      - ./out:/out
+      - bingo-work:/work
+
+volumes:
+  bingo-work:

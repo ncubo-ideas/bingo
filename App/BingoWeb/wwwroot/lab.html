@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bingo.limpio — jugador en WASM</title>
+<!-- Caratula Wasm: manifest + iconos + apple-touch-icon.
+     Sobre http plano Chrome no ofrece "Instalar", pero SI "Agregar a pantalla de inicio",
+     y toma de aca el nombre y el icono del acceso directo. -->
+<meta name="theme-color" content="#7a2e3c">
+<!-- Sin esto, un Android en ingles ofrece traducir la pagina y su barra tapa el menu de Chrome. -->
+<meta name="google" content="notranslate">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<style>
+  :root{--papel:#efece4;--hondo:#e5e1d6;--tinta:#211e1a;--suave:#6b665c;--sello:#7a2e3c;--linea:#cdc7b8;--marca:#c9a24a;--nueva:#2f7a4a;--mal:#a32d2d}
+  *{box-sizing:border-box}
+  body{margin:0;padding:0 16px 40px;background:var(--papel);color:var(--tinta);font:16px/1.5 system-ui,-apple-system,Roboto,sans-serif}
+  .hoja{max-width:560px;margin:0 auto}
+  header{padding:22px 0 12px;border-bottom:2px solid var(--sello)}
+  .cinta{font:600 11px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--sello);margin:0 0 8px}
+  h1{margin:0 0 4px;font:400 26px/1.15 Georgia,serif}
+  .sub{margin:0;color:var(--suave);font-size:14px}
+  .motor{margin:10px 0 0;padding:8px 12px;background:var(--hondo);border-radius:3px;font:12px/1.5 ui-monospace,Consolas,monospace}
+  .estado{display:flex;flex-wrap:wrap;gap:6px 14px;margin:14px 0 0;padding:12px 14px;background:var(--hondo);border-radius:3px;font-size:14px}
+  .estado b{font-weight:600}
+  h2{margin:26px 0 6px;font:600 12px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--suave)}
+  .bolitas{display:flex;flex-wrap:wrap;gap:6px}
+  .bola{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--hondo);border:1px solid var(--linea);font-variant-numeric:tabular-nums;font-weight:600}
+  .bola.nueva{background:var(--nueva);color:#fff;border-color:var(--nueva)}
+  .carton{background:var(--hondo);border-radius:4px;padding:12px;margin-top:10px}
+  .rotulo{display:flex;justify-content:space-between;font-size:13px;color:var(--suave);margin-bottom:8px}
+  .rotulo b{color:var(--sello);font-family:ui-monospace,Consolas,monospace}
+  .veredicto{font-weight:600}
+  .veredicto.si{color:var(--nueva)}
+  table{width:100%;border-collapse:collapse;table-layout:fixed}
+  th{font:600 13px/1 system-ui;letter-spacing:.1em;color:var(--sello);padding-bottom:6px}
+  td{text-align:center;padding:8px 2px;font-size:17px;border:1px solid var(--linea);background:var(--papel);font-variant-numeric:tabular-nums}
+  td.marcada{background:var(--marca);font-weight:700}
+  td.libre{color:var(--suave);font-size:10px;letter-spacing:.08em}
+  .lista{font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:1.6;margin:0;padding:10px 12px;background:var(--hondo);border-radius:3px;max-height:240px;overflow:auto;white-space:pre-wrap}
+  .aviso{color:var(--mal);font-weight:600}
+  .contadores{display:flex;gap:18px;font-size:13px;color:var(--suave);margin-top:8px}
+  .contadores b{color:var(--tinta);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="hoja">
+  <header>
+    <p class="cinta">Jugador en WASM · .NET adentro del navegador</p>
+    <h1 id="nombre">Bingo.limpio</h1>
+    <p class="sub" id="sub">arrancando el runtime…</p>
+    <div class="motor" id="motor">cargando dotnet…</div>
+  </header>
+
+  <div class="estado" id="estado"></div>
+  <div class="contadores">
+    <span>asientos en el diario: <b id="asientos">0</b></span>
+    <span>bolitas journaleadas: <b id="journaleadas">0</b></span>
+    <span>sondeos: <b id="sondeos">0</b></span>
+  </div>
+  <div class="contadores">
+    <span>tablero salido de: <b id="origen">…</b></span>
+    <span>journal en IndexedDB: <b id="idb">todavia nada</b></span>
+    <span>guardado: <b id="nivel">…</b></span>
+  </div>
+  <div class="contadores" style="margin-top:12px;flex-wrap:wrap">
+    <button id="instalar" type="button" style="font:600 14px system-ui;padding:10px 16px;border:0;border-radius:3px;background:var(--nueva);color:#fff">Poner el bingo en mi pantalla</button>
+    <button id="guardar" type="button" style="font:600 14px system-ui;padding:10px 16px;border:0;border-radius:3px;background:var(--sello);color:#fff">Guardar mi comprobante</button>
+    <button id="carpeta" type="button" style="display:none;font:600 14px system-ui;padding:10px 16px;border:0;border-radius:3px;background:#2a5d8f;color:#fff">Guardar en una carpeta de este telefono</button>
+    <button id="reanudar" type="button" style="display:none;font:600 14px system-ui;padding:10px 16px;border:0;border-radius:3px;background:#2a5d8f;color:#fff">Seguir guardando en la carpeta</button>
+    <label style="font:600 14px system-ui;padding:10px 16px;border-radius:3px;background:var(--hondo);color:var(--tinta);cursor:pointer">Traer mi comprobante <input id="importar" type="file" accept=".html,text/html" style="display:none"></label>
+    <span id="guardado"></span><span id="carpetaEstado"></span><span id="importado"></span>
+  </div>
+  <div id="instrucciones" style="display:none;margin-top:10px;padding:12px 14px;background:var(--hondo);border-radius:3px;font-size:14px;line-height:1.6"></div>
+
+  <h2>Bolitas <span id="cuantas" style="color:var(--suave);font-weight:400"></span></h2>
+  <div class="bolitas" id="bolitas"></div>
+
+  <h2>Mis cartones · lo dice el actor, no la página</h2>
+  <div id="cartones"></div>
+
+  <h2>Lo que va pasando</h2>
+  <pre class="lista" id="registro"></pre>
+
+  <h2>La voz del diario (IPuppeteerLogger)</h2>
+  <pre class="lista" id="voz">(nada todavia)</pre>
+
+  <script type="module" src="./main.js?v=4"></script>
+</div>
+</body>
+</html>

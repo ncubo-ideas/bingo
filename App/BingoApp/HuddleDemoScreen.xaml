@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                          xmlns:local="clr-namespace:BingoApp"
+             x:Class="BingoApp.HuddleDemoScreen"
+             Title="{local:Text corrillo.titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="10">
+
+            <Label Text="{local:Text corrillo.paso-1}" FontSize="19" FontAttributes="Bold" />
+            <Label Text="{local:Text corrillo.sin-patio}" FontSize="12" TextColor="Gray" />
+
+            <Label x:Name="StatusLabel" Text="{local:Text corrillo.elige-un-papel}" FontSize="15" FontAttributes="Bold" />
+
+            <Border x:Name="ChoosePanel" Stroke="LightGray" StrokeThickness="1" Padding="12">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{local:Text corrillo.en-este-telefono}" FontAttributes="Bold" FontSize="13" />
+                    <Button x:Name="CommunityLeaderButton" Text="{local:Text corrillo.el-organizador}"
+                            Clicked="OnBeCommunityLeader" BackgroundColor="#512BD4" TextColor="White" />
+                    <Button x:Name="CollaboratorButton" Text="{local:Text corrillo.el-vendedor}"
+                            Clicked="OnBeCollaborator" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border x:Name="PassPanel" IsVisible="False" Stroke="#512BD4" StrokeThickness="2" Padding="12">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{local:Text corrillo.este-es-el-pase}"
+                           FontAttributes="Bold" FontSize="13" />
+                    <Label Text="{local:Text corrillo.va-en-un-qr}"
+                           FontSize="11" TextColor="Gray" />
+                    <Editor x:Name="PassToCopy" IsReadOnly="True" HeightRequest="150"
+                            FontFamily="monospace" FontSize="10" />
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <Label Grid.Column="0" Text="{local:Text corrillo.copiar-el-pase}" FontSize="12"
+                               FontAttributes="Bold" TextColor="Gray" VerticalOptions="Center" />
+                        <Label Grid.Column="1" x:Name="CopiedBadge" Text="{local:Text corrillo.copiado}"
+                               Style="{StaticResource CopiedFlash}" />
+                        <Border Grid.Column="2" Style="{StaticResource CopyTarget}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCopyPass" />
+                            </Border.GestureRecognizers>
+                            <Path Style="{StaticResource CopyIcon}" Data="M7,7 H18 V21 H7 Z M4,17 V4 H15" />
+                        </Border>
+                    </Grid>
+                    <Button Text="{local:Text corrillo.esperar-al-vendedor}" Clicked="OnWait" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border x:Name="AttachPanel" IsVisible="False" Stroke="LightGray" StrokeThickness="1" Padding="12">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{local:Text corrillo.pega-el-pase}"
+                           FontAttributes="Bold" FontSize="13" />
+                    <Editor x:Name="PastedPass" HeightRequest="150"
+                            FontFamily="monospace" FontSize="10" />
+                    <Button Text="{local:Text corrillo.pegarme}" Clicked="OnAttach"
+                            BackgroundColor="#512BD4" TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border x:Name="TestPanel" IsVisible="False" Stroke="LightGray" StrokeThickness="1" Padding="12">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{local:Text corrillo.la-prueba}" FontAttributes="Bold" FontSize="13" />
+                    <Button x:Name="SellButton" Text="{local:Text corrillo.vender-un-carton}" Clicked="OnSell" />
+                    <Button x:Name="LookButton" Text="{local:Text corrillo.como-voy}" Clicked="OnLook" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{local:Text general.lo-que-va-pasando}" FontAttributes="Bold" FontSize="13" />
+            <Editor x:Name="LogBox" IsReadOnly="True" HeightRequest="300"
+                    FontFamily="monospace" FontSize="10" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

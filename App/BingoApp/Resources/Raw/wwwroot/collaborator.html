@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<title>En el bingo</title>
+<script src="_framework/hybridwebview.js"></script>
+<script src="language.js"></script>
+<link rel="stylesheet" href="organizer.css">
+<link rel="stylesheet" href="collaborator.css">
+</head>
+<body>
+
+<!-- La pantalla de quien ayuda. UNA pagina con DOS caras: el codigo del organizador dice
+     a que la llamaron -- a vender cartones o a cantar las bolitas -- y esta pantalla se
+     arma de una sola de las dos. No se elige aca ni se recuerda del telefono: se lee del
+     papelito, porque el que reparte los oficios es el organizador.
+
+     El taco de cartones vive FUERA de las pestanias, arriba del cuerpo. No es capricho:
+     lo que se toca ahi alimenta cuatro botones que viven en tres pestanias distintas, y
+     el cambio de carton exige tocar un vendido Y uno de la mano a la vez. Si el taco
+     estuviera adentro de VENDER, el cambio se haria a ciegas. -->
+<div class="wiz">
+
+  <!-- ══ LA FRANJA DEL ENSAYO, encima de todo ══════════════════════════
+       Solo existe adentro de un bingo de ensayo. Es a la vez el cartel -- nada de esta
+       pantalla cuenta de verdad -- y la unica salida: 'terminar' borra el ensayo entero.
+       Va ARRIBA de la cabecera a proposito, para verse desde cualquier pestania. -->
+  <div id="ensRibbon" class="ens-ribbon hidden">&#127917; <span data-texto="colaborador.ensayo.cinta">ENSAYO — NADA CUENTA DE VERDAD</span>&nbsp;&nbsp;·&nbsp;&nbsp;<u id="ensFin" data-texto="colaborador.ensayo.terminar">terminar</u></div>
+
+  <!-- ══ LA CABECERA, apagada mientras esta en la puerta ═══════════════ -->
+  <!-- La flecha vuelve a la PUERTA, no sale del bingo: quien ayuda puede estar
+       metida en varias a la vez -- vendiendo en una y cantando en otra -- y volver a la
+       lista es como se cambia de una a la otra. Sin esto la unica salida estaba enterrada
+       al fondo de "lo demas". -->
+  <header id="head" class="head-plain hidden">
+    <button id="back" class="back-plain" aria-label="volver a mis bingos" data-texto-aria="colaborador.volver-a-mis-bingos">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="head-mid">
+      <div id="who" class="head-name"></div>
+      <div id="myDuty" class="head-where"></div>
+      <div id="roundLine" class="head-round hidden"></div>
+    </div>
+    <div id="myNumber" class="num-pill"></div>
+  </header>
+
+  <main id="body" class="body helper-body">
+
+    <!-- ══ LA PUERTA ═══════════════════════════════════════════════════
+         Todavia no tiene ni cartones ni numero ni oficio, asi que no hay cabecera
+         ni pestanias de que hablar: la puerta se toma la pantalla entera. -->
+    <section id="door">
+
+      <!-- La cabecera de color, con el mismo recurso del organizador: 26px de radio
+           abajo. No es adorno -- la puerta era la UNICA pantalla sin cabecera, y por el
+           hueco asomaba el fondo morado de la app por la zona del reloj del telefono.
+           Se veia como un error. Ahora ese borde superior es de quien vende. -->
+      <div class="portada">
+        <div class="portada-sello">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2.6" y="6" width="18.8" height="12" rx="2.6"/>
+            <path d="M15 6v12" stroke-dasharray="2 2.4"/></svg>
+          <span data-texto="general.marca">Bingo</span>
+        </div>
+        <h1 class="portada-hola" data-texto="colaborador.puerta.buenas-noches">Buenas noches</h1>
+        <p class="portada-que" data-texto="colaborador.puerta.escanea-y-entra">Escanea tu codigo y entra al bingo</p>
+      </div>
+
+      <!-- El nombre NO se pide: viene en el codigo, porque el organizador esta obligado a
+           escribirlo al anotar al colaborador. Pedirlo aca era pedirle a la persona lo
+           mismo que estaba por recibir, y era lo primero que veia al abrir la app.
+           Queda escondido como red de seguridad: si algun codigo llegara sin nombre, el
+           telefono contesta 'needname' y recien entonces aparece. -->
+      <div class="puerta-cuerpo">
+      <div id="nameWrap" class="hidden">
+        <label class="field-wrap no-top">
+          <span class="label" data-texto="jugador.hoja.nombre">Como te llamas</span>
+          <input id="name" class="field grande" type="text" placeholder="tu nombre" data-texto-ph="jugador.hoja.nombre-ejemplo" autocomplete="off">
+        </label>
+        <p id="nameHint" class="hint" data-texto="colaborador.puerta.con-ese-nombre">Con ese nombre te va a ver el organizador.</p>
+      </div>
+
+      <!-- Las conocidas primero: volver es mas frecuente que entrar de cero, y es ademas
+           el camino de rescate cuando al organizador se le reinicio la app. Tocar la
+           misma en la que ya esta la reconecta sin perder nada. -->
+      <div id="mineWrap" class="hidden">
+        <div class="separa"><span data-texto="colaborador.puerta.tus-bingos">Tus bingos</span></div>
+        <div id="mineList"></div>
+        <p class="hint no-top" data-texto="colaborador.puerta.reconectar">Si tocas el que ya estas usando, te vuelve a conectar sin perder nada de lo que tenes.</p>
+      </div>
+
+      <div class="separa"><span data-texto="colaborador.puerta.o-entra-a-uno-nuevo">O entra a uno nuevo</span></div>
+      <p class="hint no-top" data-texto="colaborador.puerta.el-codigo-trae-el-oficio">En el codigo del organizador viene si te toca vender cartones o cantar las bolitas: eso no se elige.</p>
+
+      <button id="scan" class="go help wide">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8.4V6a2 2 0 012-2h2.4M15.6 4H18a2 2 0 012 2v2.4M20 15.6V18a2 2 0 01-2 2h-2.4M8.4 20H6a2 2 0 01-2-2v-2.4"/>
+          <path d="M4 12h16"/></svg>
+        <span data-texto="colaborador.puerta.escanear">Escanear el codigo</span></button>
+
+      <div class="fold">
+        <button id="byHandFold" class="fold-head">
+          <span data-texto="colaborador.puerta.o-pegar">o pegar el codigo a mano</span>
+          <span id="byHandChevron" class="chev">›</span>
+        </button>
+        <div id="byHandBox" class="fold-body hidden">
+          <input id="code" class="field small-field" type="text" placeholder="bingo://funcion?d=...">
+          <button id="byHand" class="soft wide-soft" data-texto="colaborador.puerta.entrar-con-esto">entrar con esto</button>
+        </div>
+      </div>
+
+      <!-- ══ EL ENSAYO: la invitacion ═════════════════════════════════
+           Para quien todavia no tiene codigo: un bingo de practica en su lista, igual
+           a uno de verdad. Se esconde mientras ya haya un ensayo en la lista, porque a
+           ese se ENTRA por la lista, como a cualquier bingo. -->
+      <div id="ensInvite" class="ens-invite hidden">
+        <b data-texto="colaborador.ensayo.primera-vez">Primera vez? Ensaya antes</b>
+        <p data-texto="colaborador.ensayo.explicacion">Un bingo de ensayo en tu lista, igual a uno de verdad. Nadie mas lo ve y lo borras cuando quieras.</p>
+        <button id="ensQuiero" data-texto="colaborador.ensayo.quiero">Quiero ensayar</button>
+      </div>
+      </div>
+    </section>
+
+    <!-- ══ EL TACO, fuera de las pestanias ═════════════════════════════
+         Un taco puede ser de CIEN cartones: el mosaico de fichas era un muro y contarlas
+         imposible. Como el organizador los entrega en tira ordenada, se dice como rango
+         -- "78, del 45 al 122" -- que es justo el bloque de papeles que ella tiene en la
+         mano. Las fichas una por una siguen estando, pero hay que pedirlas. -->
+    <section id="custody" class="taco hidden">
+      <div class="taco-top">
+        <span class="taco-rotulo" data-texto="colaborador.taco.en-tu-bolsa">En tu bolsa</span>
+        <button id="verTodos" class="taco-mas" data-texto="colaborador.taco.ver-todos">ver todos</button>
+      </div>
+      <div id="howManyIHave" class="rango"></div>
+      <div class="barra"><i id="barraTaco"></i></div>
+      <div id="cardChips" class="tablero hidden"></div>
+      <div id="leyendaTaco" class="leyenda hidden">
+        <span><i></i><span data-texto="colaborador.taco.tuyos">tuyos</span></span><span><i class="ido"></i><span data-texto="colaborador.taco.ya-entregados">ya entregados</span></span>
+      </div>
+    </section>
+
+    <!-- ══ VENDER: la puerta ═══════════════════════════════════════════
+         La pestania es solo la puerta. La venta se abre ENCIMA, a pantalla completa, como
+         en la maqueta: asi cada paso tiene la pantalla entera para UNA pregunta y el boton
+         de seguir queda anclado abajo. Metida en una tarjeta, con las pestanias debajo y
+         el taco arriba, no habia forma de que se pareciera. -->
+    <section id="sell" class="hidden">
+      <!-- La tarjeta de estado, como la casa del colaborador de la maqueta: en que va la
+           noche ANTES de tocar nada. La pestania era un titulo, una frase y un boton -- se
+           abria en una pantalla que no decia nada. Se come ademas la tarjeta del taco que
+           estaba suelta arriba: el rango se mudo a la pastilla, asi el mismo numero deja
+           de aparecer dos veces. -->
+      <div id="misCartones" class="tarjeta"></div>
+
+      <!-- Lo que le debe contar al organizador y lo que rebotó. Los dos son plata: el
+           primero es plata cobrada que él todavía no sabe, y el segundo es plata cobrada
+           por un cartón que no existe. Van ACÁ, en la primera pantalla que ella mira, y no
+           en el registro: el aviso más caro de la noche no puede vivir al fondo de una
+           lista que nadie abre. -->
+      <div id="debeContar" class="aviso calmo hidden"></div>
+      <div id="rebotadas" class="aviso rojo hidden"></div>
+
+      <button id="abrirVenta" class="go help wide mt-big">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor"
+             stroke-linejoin="round" stroke-linecap="round">
+          <path d="M20 8.5V6.5A1.5 1.5 0 0018.5 5h-13A1.5 1.5 0 004 6.5v2a1.7 1.7 0 010 3.4v2A1.5 1.5 0 005.5 15.4h13a1.5 1.5 0 001.5-1.5v-2a1.7 1.7 0 010-3.4Z"
+                stroke-width="1.8"/>
+          <path d="M9.5 5v10.4" stroke-width="1.8" stroke-dasharray="1.6 2.2"/></svg>
+        <!-- El rotulo va en su propio span: render() lo cambia cuando la bolsa esta vacia,
+             y escribirlo sobre el boton entero le borraba el icono de al lado. -->
+        <span id="abrirVentaQue" data-texto="detalle.anotar.vender">Vender cartones</span></button>
+
+      <p class="hint" data-texto="colaborador.venta.salen-en-orden">Los cartones salen en orden desde tu taco: indicá la cantidad y la app elige cuáles.</p>
+    </section>
+
+    <!-- ══ LA VENTA, a pantalla completa ═══════════════════════════════
+         Tres pasos, una pregunta por pantalla. Tapa la barra de pestanias a proposito:
+         mientras esta vendiendo, la unica salida es la flecha, y retrocede un paso por vez.
+         Ella NO elige cartones -- dice cuantos, y el codigo agarra los de arriba. -->
+    <div id="ventaFull" class="venta-full hidden">
+
+      <div class="venta-head">
+        <button id="ventaAtras" class="venta-atras" aria-label="volver">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+               stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div>
+          <div id="ventaTitulo" class="venta-titulo" data-texto="detalle.anotar.vender">Vender cartones</div>
+          <div id="ventaDonde" class="venta-donde"></div>
+        </div>
+      </div>
+
+      <div id="pasosVenta" class="pasos"></div>
+
+      <!-- ── paso 1: cuantos ─────────────────────────────────────────── -->
+      <div id="stepCartones" class="paso hoja">
+        <div class="hoja-cuerpo centrado">
+
+        <!-- ── cuantos ─────────────────────────────────────────────────
+             El control es el de la maqueta, pieza por pieza: pastilla de disponibles, la
+             pregunta en grande, y menos / numero / mas con el numero ESCRIBIBLE.
+             Reemplaza los DOS aparatos que teniamos aca -- la fila de 1..5 y el teclado de
+             doce teclas -- que eran nuestra manera de resolver lo mismo. Lo escribible es
+             lo que hace que sirva para cien: para llevar cuarenta se escribe cuarenta. -->
+        <div id="pastillaTaco" class="pastilla-taco"></div>
+        <div class="pregunta" data-texto="colaborador.venta.cuantos-lleva">¿Cuántos cartones lleva?</div>
+
+        <div id="contador" class="contador">
+          <button id="menosUno" class="cont-tecla" aria-label="uno menos" data-texto-aria="colaborador.contador.uno-menos">&#8722;</button>
+          <input id="cuantosVan" class="cont-num" type="text" inputmode="numeric"
+                 autocomplete="off" aria-label="cuantos cartones" data-texto-aria="colaborador.contador.cuantos-cartones" value="1">
+          <button id="masUno" class="cont-tecla" aria-label="uno mas" data-texto-aria="colaborador.contador.uno-mas">+</button>
+        </div>
+
+        <!-- La escalera de cantidades. Es el patron que ella ya usa en el asistente del
+             organizador ("O escribi otra cantidad"), traido a la venta, que es donde
+             faltaba: escribir cuarenta es mejor que tocar cuarenta veces, pero tocar una
+             vez es mejor que escribir. -->
+        <div id="cuantosMas" class="cuantos-mas hidden"></div>
+
+        <p id="cuantosDice" class="cont-dice"></p>
+        <p id="saldoLuego" class="saldo-luego hidden"></p>
+
+        <p id="topeTaco" class="tope"></p>
+
+        </div>
+        <div class="hoja-pie">
+          <button id="aQuien" class="go help wide" data-texto="crear.continuar">Continuar</button>
+        </div>
+      </div>
+
+      <!-- ── paso 2: quien ───────────────────────────────────────────── -->
+      <div id="stepJugador" class="paso hoja hidden">
+        <div class="hoja-cuerpo">
+          <p id="cuantosLleva" class="cuanto-eco"></p>
+          <div class="pregunta izq" data-texto="colaborador.venta.para-quien">¿Para quién son?</div>
+
+          <!-- DOS modos que no conviven, en vez de cinco piezas apiladas. Antes habia el
+               escaner, un boton gris "Escribir su numero" que destapaba un campo, el campo,
+               y otro boton gris igual "La persona no tiene numero" que destapaba dos campos
+               mas: dos botones identicos compitiendo y dos cajas escondidas detras. Eso es
+               lo que se leia como formulario.
+               Ahora: escanear manda, el campo esta SIEMPRE a la vista debajo, y la primera
+               vez es una salida en texto que cambia la pantalla entera. -->
+          <div id="modoNumero">
+            <!-- El numero lo ENSENA el comprador: con cuarenta ventas en la noche buscarlo
+                 en una lista es una pared, y es lo unico que distingue a dos personas que se
+                 llaman igual. Por eso escanear ocupa el lugar grande. -->
+            <button id="scanBuyer" class="escaner">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor"
+                   stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8.4V6a2 2 0 012-2h2.4M15.6 4H18a2 2 0 012 2v2.4M20 15.6V18a2 2 0 01-2 2h-2.4M8.4 20H6a2 2 0 01-2-2v-2.4"/>
+                <path d="M4 12h16"/></svg>
+              <span style="white-space: pre-line" data-texto="colaborador.venta.escanea-jugador">Escaneá el código
+del jugador</span>
+            </button>
+
+            <div class="o-bien"><span data-texto="colaborador.venta.o-ingresa-numero">o ingresá su número</span></div>
+
+            <input id="buyerNumber" class="field spaced grande" type="text"
+                   placeholder="K7M4-QP2X" autocomplete="off" aria-label="su número" data-texto-aria="colaborador.venta.su-numero">
+
+            <div id="buyerKnown" class="known hidden"></div>
+
+            <button id="sinNumero" class="salida"><span data-texto="colaborador.venta.primera-vez-compra">Es la primera vez que compra</span>
+              <span>›</span></button>
+          </div>
+
+          <!-- Solo para quien compra por primera vez. El organizador le acuña un numero
+               propio y la proxima vez ya no hace falta escribir nada. -->
+          <div id="cajaNueva" class="hidden">
+            <p class="hint no-top" data-texto="colaborador.venta.numero-propio">El organizador le va a asignar un número propio; la próxima vez no hace falta escribirlo.</p>
+
+            <label class="field-wrap">
+              <span class="label" data-texto="colaborador.venta.nombre">Nombre</span>
+              <input id="buyer" class="field" type="text" placeholder="María Rodríguez" data-texto-ph="colaborador.venta.nombre-ejemplo" autocomplete="off">
+            </label>
+
+            <!-- El campo de la ubicacion se esconde, no se borra: el JS lo lee para armar
+                 el mensaje de venta, y sacarlo del HTML lo dejaria buscando un id que no
+                 existe -- eso revienta el arranque entero de la pagina. Escondido manda
+                 vacio, que es lo que corresponde mientras no se muestre. -->
+            <label class="field-wrap hidden">
+              <span class="label"><span data-texto="colaborador.venta.donde-ubicarla">Dónde ubicarla</span> <span class="soft-note" data-texto="general.opcional">opcional</span></span>
+              <input id="contact" class="field" type="text" placeholder="teléfono o dónde vive" data-texto-ph="colaborador.venta.donde-ejemplo" autocomplete="off">
+            </label>
+
+            <button id="volverNumero" class="salida"><span>‹</span> <span data-texto="colaborador.venta.ya-tiene-numero">Ya tiene número</span></button>
+          </div>
+
+        </div>
+        <div class="hoja-pie">
+          <button id="aConfirmar" class="go help wide" data-texto="crear.continuar">Continuar</button>
+        </div>
+      </div>
+
+      <!-- ── paso 3: confirmar ───────────────────────────────────────── -->
+      <div id="stepConfirmar" class="paso hoja hidden">
+        <div class="hoja-cuerpo centrado">
+          <div class="pregunta" data-texto="crear.listo.titulo">Todo listo</div>
+          <p class="hint no-top" data-texto="colaborador.venta.revisa-antes">Revisá la venta antes de confirmar.</p>
+          <div id="resumenVenta" class="tick"></div>
+
+          <!-- Antes decia que la venta no se podia confirmar. Ya no es cierto: los cartones
+               que ella tiene en la mano son suyos, asi que la venta se cobra y se anota
+               hasta que el organizador vuelva. Lo unico que cambia es que el se entera
+               despues, y eso hay que decirlo -- no para asustar, sino para que no la
+               sorprenda ver el aviso de "le debo N" en la pantalla de al lado. -->
+          <div id="soloAviso" class="hidden">
+            <div class="aviso calmo"><span data-texto="colaborador.venta.organizador-no-esta">El organizador no está.</span> <b data-texto="colaborador.venta.cobra-igual">Cobrá igual:</b> <span data-texto="colaborador.venta.queda-anotada">la venta queda anotada acá y se la cuento en cuanto vuelva.</span></div>
+          </div>
+
+          <!-- Aca iba un aviso de no cobrar hasta que el organizador confirmara. Se saco:
+               llegaba antes de que pasara nada, y sobre todo PROMETIA un aviso que la app
+               no da -- el rechazo viaja por el canal 'log', que la pagina descarta. Cuando
+               ese canal se arregle, el lugar del mensaje es el rechazo mismo, no una
+               advertencia preventiva en una pantalla donde todavia no fallo nada. -->
+
+        </div>
+        <!-- El orden es el de la maqueta: la salida en texto ARRIBA y el boton grande
+             abajo, pegado al borde donde cae el pulgar. -->
+        <!-- "mejor no" y "Anotar la venta" se fueron. El primero no decia que pasaba al
+             tocarlo -- suena a duda, no a accion -- y el segundo hablaba desde adentro del
+             sistema: "anotar" era nuestro, no de ella. Lo que ella hace es CONFIRMAR una
+             venta y, si se arrepiente, CANCELARLA. -->
+        <div class="hoja-pie">
+          <button id="cancelarVenta" class="plain" data-texto="general.cancelar">Cancelar</button>
+          <button id="doSell" class="go help wide" data-texto="colaborador.venta.confirmar">Confirmar venta</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ENTREGADOS ══════════════════════════════════════════════════
+         Por VENTA y no por carton: si le dio cuatro juntos a la misma persona es una
+         linea que dice "del 40 al 43". Con cien cartones, eso es la diferencia entre
+         una lista y un listado. -->
+    <section id="sold" class="hidden">
+      <!-- Aca NO va la tarjeta de estado: la lleva Vender, que es la casa. Repetida en las
+           dos, el mismo numero a dos toques de distancia se lee como dos datos. Queda la
+           cuenta de esta pantalla -- cuantos y a cuanta gente -- en un solo renglon. -->
+      <div id="howMuchISold" class="tarjeta dos-cifras"></div>
+      <div class="rotulo" data-texto="colaborador.ventas.realizadas">Ventas realizadas</div>
+
+      <!-- El buscador. Buscar por numero es lo que pasa de verdad: alguien se
+           acerca con el carton en la mano y pregunta algo de EL. Por nombre sirve para el
+           caso contrario, cuando la persona vino sin el carton. -->
+      <input id="soldFind" class="field small-field hidden" type="text"
+             placeholder="Buscar por número o por nombre" data-texto-ph="colaborador.ventas.buscar" autocomplete="off">
+
+      <div id="soldList" class="lista-plana"></div>
+      <div id="soldNone" class="nada-aun hidden"></div>
+    </section>
+
+    <!-- ══ CANTAR ══════════════════════════════════════════════════════
+         La MISMA superficie que ve el organizador: los dos pueden cantar siempre, sin
+         turno ni permiso. Lo que cambia es lo de alrededor -- el organizador cierra
+         rondas y entrega premios, ella no. -->
+    <section id="call" class="hidden">
+      <!-- ══ LAS DOS SECCIONES ═══════════════════════════════════════════
+           INGRESAR es para meter la bolita: el juego, la ultima y el teclado, y nada mas.
+           REVISAR es el cuadro de las 75 con las cuentas, para cuando alguien pregunta
+           "salio el 40?". Son dos momentos distintos y por eso no comparten pantalla:
+           entre bolita y bolita el ojo no tiene que buscar el teclado entre setenta y
+           cinco casillas. -->
+      <div class="call-tabs">
+        <button id="tabEnter" class="call-tab on" data-texto="cantar.pestana.ingresar">Ingresar</button>
+        <button id="tabCheck" class="call-tab" data-texto="cantar.pestana.revisar">Revisar</button>
+      </div>
+
+      <div id="paneEnter">
+
+        <!-- Lo que se juega, DIBUJADO. Las mismas piezas que la pantalla del
+             organizador, y no por simetria: calling.js las pinta en las dos, asi que
+             tenerlas de un lado nada mas rompia esta al pintar.
+             Compacto igual que alla -- el boton de ingresar no puede caer debajo del
+             pliegue, o hay que scrollear en CADA bolita. La ficha completa, con el
+             carton y quien gano, sigue en Revisar. -->
+        <div id="nowPlaying" class="playing hidden">
+          <div class="playing-tag" data-texto="cantar.juego-actual">JUEGO ACTUAL</div>
+          <div id="playingList" class="playing-list"></div>
+        </div>
+
+        <!-- "ULTIMA BOLITA" y no "la que cantaste": la puede haber cantado el otro. -->
+        <div class="last-row">
+          <div id="lastBall" class="ball-big">—</div>
+          <div class="last-what">
+            <div class="last-tag" data-texto="cantar.ultima-bolita">ULTIMA BOLITA</div>
+            <div id="howMany" class="last-count" data-texto="cantando.ninguna-todavia">ninguna bolita todavia</div>
+            <div id="howLeft" class="last-left"></div>
+            <button id="oops" class="link-fix hidden"></button>
+          </div>
+        </div>
+
+        <!-- Corregir usa EL MISMO teclado: se toca "me equivoque", este cartel dice cual
+             era y el boton que manda pasa a decir CORREGIR. Va ARRIBA del teclado porque
+             primero se lee y despues se marca. -->
+        <div id="fixing" class="fixing hidden">
+          <div id="fixingSays" class="fixing-says"></div>
+          <button id="fixCancel" class="plain" data-texto="cantar.dejalo-como-esta">dejalo como esta</button>
+        </div>
+
+        <!-- El teclado. La bolita se marca y despues se manda: ese paso de mas es todo lo
+             que hace falta para que un dedo torcido se borre sin que nadie se entere. -->
+        <div id="pad" class="pad hidden">
+          <div id="padSays" class="pad-says"></div>
+          <div class="pad-show">
+            <div id="padLetter" class="pad-letter hidden"></div>
+            <div id="padShow" class="pad-num empty">—</div>
+          </div>
+          <div id="padBad" class="pad-bad hidden"></div>
+          <div id="padKeys" class="pad-keys"></div>
+        </div>
+
+        <!-- Sin ronda sonando no hay nada que ingresar, y va aca y no afuera: revisar lo
+             que salio en la ronda anterior sigue valiendo. -->
+        <div id="asleep" class="asleep hidden">
+          <div id="asleepTitle" class="asleep-title"></div>
+          <div id="asleepSub" class="asleep-sub"></div>
+        </div>
+
+      </div>
+
+      <div id="paneCheck" class="hidden">
+
+        <div class="check-head">
+          <div id="checkCount" class="check-count"></div>
+          <div id="checkLeft" class="check-left"></div>
+          <div id="checkLast" class="check-last hidden"></div>
+        </div>
+
+        <div class="now-card">
+          <div class="tag-line" data-texto="cantar.lo-que-se-juega">LO QUE SE ESTA JUGANDO</div>
+          <div id="checkGames"></div>
+        </div>
+
+        <!-- El cuadro dice CUALES salieron; esta fila, en que orden. -->
+        <div id="recent" class="recent hidden"></div>
+
+        <!-- Las 75. De aca no sale una bolita nueva -- eso se teclea --, pero se toca una
+             que ya salio para corregirla: se puede corregir CUALQUIERA de la ronda, no
+             solo la ultima, y este es el lugar donde se ven todas. -->
+        <p class="hint no-top" data-texto="cantar.corregir-cualquiera">Si una esta mal, tocala: se puede corregir cualquiera, no solo la ultima.</p>
+
+        <div id="tombola" class="tombola">
+          <div class="tombola-head">
+            <div class="letter" data-band="0">B</div>
+            <div class="letter" data-band="1">I</div>
+            <div class="letter" data-band="2">N</div>
+            <div class="letter" data-band="3">G</div>
+            <div class="letter" data-band="4">O</div>
+          </div>
+          <div id="keys" class="keys"></div>
+        </div>
+
+      </div>
+      <p class="hint" data-texto="colaborador.cantar.la-que-salio">La que salio de la maquinita. Viaja al organizador y el la reparte.</p>
+    </section>
+
+    <!-- ══ LO DEMAS ════════════════════════════════════════════════════
+         La gaveta de lo raro y lo delicado. Entra plegada a proposito: ese toque de mas
+         es el freno, y de paso deja de competir por el pulgar mientras ella vende. -->
+    <!-- ══ MIS CARTONES ════════════════════════════════════════════════
+         Se llamaba "Lo demas" y era una gaveta: un nombre que no dice nada, con dos
+         cosas importantes dobladas adentro. Una de ellas -- devolver -- es OBLIGATORIA
+         todas las noches. Ahora las tres se leen enteras, sin plegar. -->
+    <!-- Un MENU, y cada cosa en su propia pantalla. Estaban las cuatro apiladas en una
+         sola columna -- el QR, el teclado de pasar, el campo de la colega, devolver y
+         cambiar de funcion -- y eso no es una pantalla, es un deposito: nada se lee
+         entero y todo compite con todo. -->
+    <section id="other" class="hidden">
+
+      <!-- Las tres cosas que puede hacer con su taco, en la lista de la maqueta: cajita de
+           icono a la izquierda, titulo y bajada, y la punta de flecha. Antes eran tres
+           tarjetas sueltas con sombra y un cuadrito con '›' a la derecha; en fila y con
+           raya en medio se leen como UN menu y no como tres botones apilados. -->
+      <div id="otherMenu">
+        <div class="rotulo" data-texto="colaborador.mis.tus-cartones">Tus cartones</div>
+
+        <div class="lista">
+          <button class="opcion" data-panel="panelNumero">
+            <span class="opcion-icono">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3.5" y="3.5" width="6" height="6" rx="1.2"/>
+                <rect x="14.5" y="3.5" width="6" height="6" rx="1.2"/>
+                <rect x="3.5" y="14.5" width="6" height="6" rx="1.2"/>
+                <path d="M14.5 15h3M18.5 15v3M14.5 20.5h6"/></svg>
+            </span>
+            <!-- Las bajadas llevan el ESTADO de cada puerta, como las de la maqueta: sin
+                 esto hay que entrar para saber si adentro queda algo que hacer. -->
+            <span class="opcion-que"><b data-texto="colaborador.mis.mostrar-mi-numero">Mostrar mi número</b>
+              <i id="subNumero" data-texto="colaborador.mis.para-recibir-mas">para recibir más cartones</i></span>
+            <span class="opcion-ir">›</span>
+          </button>
+
+          <div class="raya"></div>
+
+          <button class="opcion" data-panel="panelPasar">
+            <span class="opcion-icono">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8h13M17 8l-3-3M17 8l-3 3"/>
+                <path d="M20 16H7M7 16l3-3M7 16l3 3"/></svg>
+            </span>
+            <span class="opcion-que"><b data-texto="colaborador.mis.pasar-cartones">Pasar cartones</b>
+              <i id="subPasar" data-texto="colaborador.mis.a-otra-colaboradora">a otra colaboradora</i></span>
+            <span class="opcion-ir">›</span>
+          </button>
+
+          <div class="raya"></div>
+
+          <button class="opcion" data-panel="panelDevolver">
+            <span class="opcion-icono">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 13.5L4.5 9 9 4.5"/>
+                <path d="M4.5 9h9.5a5.5 5.5 0 010 11H8"/></svg>
+            </span>
+            <span class="opcion-que"><b data-texto="detalle.repartir.devolver">Devolver cartones</b>
+              <i id="subDevolver" data-texto="colaborador.mis.al-organizador">al organizador</i></span>
+            <span class="opcion-ir">›</span>
+          </button>
+        </div>
+
+        <button id="another" class="soft wide-soft mt-big" data-texto="colaborador.mis.cambiar-de-bingo">Cambiar de bingo</button>
+        <p class="hint" data-texto="colaborador.mis.vuelves-al-inicio">Volvés al inicio sin salir de este bingo.</p>
+      </div>
+
+    </section>
+
+    <!-- ══ LAS TRES PANTALLAS DE MIS CARTONES ══════════════════════════
+         A pantalla completa y con SU PROPIA cabecera, igual que la venta. Antes eran
+         paneles metidos adentro de la pestania y la unica salida era un "‹ Mis cartones"
+         chiquito al principio del contenido -- justo donde nadie mira. La flecha que la
+         gente busca es la de arriba, y esa hacia otra cosa: se salia de la funcion. -->
+    <div id="panelFull" class="venta-full hidden">
+
+      <div class="venta-head">
+        <button id="panelAtras" class="venta-atras" aria-label="volver">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+               stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div>
+          <div id="panelTitulo" class="venta-titulo"></div>
+          <div id="panelDonde" class="venta-donde"></div>
+        </div>
+      </div>
+
+      <div id="panelNumero" class="panel hoja hidden">
+        <div class="hoja-cuerpo centrado">
+          <p class="hint no-top" data-texto="colaborador.numero.muestraselo">Mostráselo al organizador para recibir más cartones, o a una colaboradora para que te transfiera de los suyos.</p>
+          <div class="qr-card">
+            <div id="myNumberBig" class="my-num"></div>
+            <img id="myNumberQr" class="qr" alt="">
+          </div>
+        </div>
+      </div>
+
+      <!-- Se le pasan los ULTIMOS del taco, no los primeros: asi el bloque que le queda
+           a cada una sigue siendo una tira seguida, y las dos pueden seguir contando por
+           rango en vez de numero por numero. -->
+      <div id="panelPasar" class="panel hoja hidden">
+        <div class="hoja-cuerpo">
+
+          <!-- Sin taco no hay nada que pasar. Antes la pantalla se abria igual, con el
+               contador en cero y el boton apagado, y habia que deducirlo. -->
+          <div id="sinTacoPasar" class="nada-aun hidden">
+            <b data-texto="colaborador.pasar.no-tienes">No tenes cartones para pasar</b>
+            <span data-texto="colaborador.pasar.pide-mas">Pedí más al organizador, o esperá a que una colaboradora te transfiera los suyos.</span>
+          </div>
+
+          <div id="conTacoPasar">
+          <!-- El MISMO contador de la venta, no el teclado de doce teclas. Es la misma
+               pregunta -- cuantos cartones -- y no hay razon para que se conteste con dos
+               aparatos distintos segun la pantalla en que este. -->
+          <div class="pregunta izq chica" data-texto="colaborador.pasar.cuantos">¿Cuántos querés pasar?</div>
+          <div class="contador">
+            <button id="menosPasar" class="cont-tecla" aria-label="uno menos" data-texto-aria="colaborador.contador.uno-menos">&#8722;</button>
+            <input id="cuantosPasar" class="cont-num" type="text" inputmode="numeric"
+                   autocomplete="off" aria-label="cuantos cartones" value="0">
+            <button id="masPasar" class="cont-tecla" aria-label="uno mas" data-texto-aria="colaborador.contador.uno-mas">+</button>
+          </div>
+          <div id="atajosPasar" class="cuantos-mas hidden"></div>
+          <div id="cualesPasar" class="cuales hidden"></div>
+
+          <!-- Como queda ella despues de pasarlos, antes de pasarlos. De la otra no se
+               puede decir nada: su taco no viaja hasta este telefono. -->
+          <p id="saldoPasar" class="saldo-luego hidden"></p>
+
+          <div class="pregunta izq chica mt-big" data-texto="colaborador.pasar.a-que-colaboradora">¿A qué colaboradora?</div>
+          <p class="hint no-top" data-texto="colaborador.pasar.ingresa-o-escanea">Ingresá su número o escaneá su código.</p>
+
+          <!-- El mismo par que en el paso del comprador: el campo manda y escanear es una
+               tecla cuadrada al lado. Aca va COMPACTO y no con el recuadro grande de la
+               venta -- pasarle cartones a una colega pasa una o dos veces por noche, y el
+               numero se lo dicen de viva voz; escanear cuarenta compradores no. -->
+          <div class="row-two">
+            <input id="colleague" class="field grande numero" type="number" inputmode="numeric"
+                   placeholder="#1" aria-label="numero de la colaboradora" data-texto-aria="colaborador.pasar.numero-de-la-colaboradora">
+            <button id="scanColleague" class="cuadro-scan" aria-label="escanear su código" data-texto-aria="colaborador.pasar.escanear-su-codigo">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+                   stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8.4V6a2 2 0 012-2h2.4M15.6 4H18a2 2 0 012 2v2.4M20 15.6V18a2 2 0 01-2 2h-2.4M8.4 20H6a2 2 0 01-2-2v-2.4"/>
+                <path d="M4 12h16"/></svg>
+            </button>
+          </div>
+          </div>
+        </div>
+        <div id="piePasar" class="hoja-pie">
+          <button id="handover" class="go help wide" disabled data-texto="colaborador.pasar.pasarle">Pasarle los cartones</button>
+        </div>
+      </div>
+
+      <div id="panelDevolver" class="panel hoja hidden">
+        <div class="hoja-cuerpo centrado">
+          <p class="hint no-top" data-texto="colaborador.devolver.vuelven">Los cartones sin vender vuelven al organizador. Seguís dentro del bingo.</p>
+        </div>
+        <div class="hoja-pie">
+          <button id="giveBack" class="go help wide" disabled data-texto="colaborador.devolver.todos">Devolver todos</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══ LAS PESTANIAS: tres si vende, dos si canta ════════════════════
+       Sin recuadro ni relleno: solo el icono y la palabra. La activa se pinta y lleva
+       una guia de 3px arriba. Con caja parecian tres botones apretados, y las apagadas
+       competian con la encendida. -->
+  <nav id="tabs" class="helper-tabs hidden">
+    <button class="htab on" data-go="sell">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.6" y="6" width="18.8" height="12" rx="2.6"/>
+        <path d="M15 6v12" stroke-dasharray="2 2.4"/></svg><span data-texto="colaborador.pestana.vender">Vender</span></button>
+    <!-- data-go sigue siendo 'sold': el nombre viejo vive en el contrato con el JS. -->
+    <button class="htab" data-go="sold">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4.5" y="4" width="15" height="17" rx="2.4"/><path d="M9 3.6h6v3H9z"/>
+        <path d="M8.8 13.4l2 2 4.4-4.4"/></svg><span data-texto="inicio.pestana.ventas">Ventas</span></button>
+    <button class="htab" data-go="call">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2.6" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0"/>
+        <path d="M12 18.2v3.2"/></svg><span data-texto="colaborador.pestana.cantar">Cantar</span></button>
+    <button class="htab" data-go="other">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l9 4.6-9 4.6-9-4.6L12 3z"/><path d="M3 12.6l9 4.6 9-4.6"/>
+        <path d="M3 17.2l9 4.6 9-4.6"/></svg><span data-texto="colaborador.pestana.mis-cartones">Mis cartones</span></button>
+  </nav>
+
+</div>
+
+<!-- ══ EL CODIGO DEL COMPRADOR, encima de todo ════════════════════════
+     Es una CAPA sobre la pantalla y no una banda mas: lo abren dos acciones que viven
+     en pestanias distintas (la venta y el cambio de carton), y asi sale igual sin que
+     ella tenga que saltar de pestania.
+
+     Se cierra SOLO por "listo, siguiente persona": ese es el unico lugar de toda la
+     pantalla que limpia el nombre del comprador. Cualquier otro camino de cierre
+     arrastraria ese nombre a la venta siguiente. -->
+<div id="codeLayer" class="layer hidden">
+  <div class="layer-card">
+    <!-- Lo primero es que la venta ENTRO. Antes esta capa abria con un rotulo en
+         mayusculas -- "PARA CARMEN" -- que informaba a quien, pero no que ya estaba hecho.
+         El sello es el de la maqueta: circulo verde claro con el visto adentro. -->
+    <div class="sello-hecho">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
+           stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12.5l4.5 4.5L19 7"/></svg>
+    </div>
+    <div class="sello-que" data-texto="colaborador.sello.venta-realizada-exclamacion">¡Venta realizada!</div>
+
+    <div id="forWhom" class="sello-quien"></div>
+    <div id="codeQue" class="sello-cuanto hidden"></div>
+
+    <img id="codeQr" class="qr" alt="">
+    <p class="hint no-top" data-texto="colaborador.sello.al-escanear">Que lo escanee con la app o con la cámara del teléfono: va a recibir sus cartones.</p>
+    <p class="hint no-top" data-texto="colaborador.sello.sin-app-limites">Sin la app se abre en el navegador; la primera vez necesita internet.</p>
+
+    <!-- El codigo crudo NO se muestra: eran cuatro renglones de letras que nadie lee, y
+         estaban ahi solo para que el boton de copiar tuviera de donde sacarlo. Se queda en
+         el DOM -- escondido -- porque copyCode le lee el texto. -->
+    <div id="codeText" class="code-text hidden"></div>
+
+    <button id="copyCode" class="salida" data-texto="detalle.codigo.copiar">Copiar el código</button>
+    <button id="next" class="go help wide" data-texto="colaborador.sello.otra-venta">Hacer otra venta</button>
+  </div>
+</div>
+
+<!-- ══ EL DETALLE DE UNA VENTA ════════════════════════════════════════
+     Sale al tocar una venta de la lista. Era una capa con cuatro botones grises apilados:
+     no decia QUE venta se estaba mirando mas alla del rango, y las tres acciones pesaban
+     lo mismo aunque una sea de todos los dias y otra no tenga vuelta atras.
+     Ahora es una pantalla como las demas: arriba la venta -- quien, que se llevo -- y
+     abajo lo que se puede hacer con ella, en lista. Lo mas frecuente primero y lo que no
+     se puede, apagado CON EL MOTIVO. -->
+<div id="ventaLayer" class="venta-full hidden">
+
+  <div class="venta-head">
+    <button id="cerrarVenta" class="venta-atras" aria-label="volver">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div>
+      <div class="venta-titulo" data-texto="colaborador.detalle.titulo">Detalle de venta</div>
+      <div id="ventaDonde2" class="venta-donde"></div>
+    </div>
+  </div>
+
+  <div class="hoja">
+    <div class="hoja-cuerpo">
+      <div id="undo" class="centrado-col">
+        <div class="sello-hecho">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
+               stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12.5l4.5 4.5L19 7"/></svg>
+        </div>
+        <div class="sello-que" data-texto="colaborador.sello.venta-realizada">Venta realizada</div>
+        <div id="ventaQuien" class="quien-nombre"></div>
+        <div id="undoTitle" class="quien-marca-verde"></div>
+      </div>
+
+      <div class="rotulo centro" data-texto="colaborador.detalle.cartones-entregados">Cartones entregados</div>
+      <div id="ventaFichas" class="fichas-carton"></div>
+
+      <div class="corte"></div>
+
+      <!-- El renglon del calendario se fue: el nombre de la funcion ya esta en la cabecera
+           de arriba, y aca duplicado ademas chocaba de id con ella -- por eso salia vacio. -->
+      <div class="dato">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="6.5" width="16" height="11" rx="2"/><path d="M14.6 6.5v11"/></svg>
+        <span id="ventaCuantos"></span>
+      </div>
+
+      <!-- Lo mas frecuente en un boton, y lo que corrige un error detras de una puerta:
+           es la forma de la maqueta y ademas es la proporcion real -- volver a ensenar el
+           codigo pasa todas las noches, pedir una anulacion casi nunca. -->
+      <button id="verCodigo" class="marco" data-texto="colaborador.detalle.ver-codigo">Volver a mostrar el código</button>
+
+      <button id="algoMal" class="salida" data-texto="colaborador.detalle.reportar">Reportar un problema</button>
+
+      <div id="quePaso" class="hidden">
+        <div class="rotulo" data-texto="colaborador.detalle.que-paso">¿Qué pasó con esta venta?</div>
+        <div class="lista">
+          <button id="exchange" class="opcion" disabled>
+            <span class="opcion-icono">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8h13M17 8l-3-3M17 8l-3 3"/>
+                <path d="M20 16H7M7 16l3-3M7 16l3 3"/></svg>
+            </span>
+            <span class="opcion-que"><b data-texto="colaborador.detalle.cambiar-carton">Cambiar un cartón</b>
+              <i id="exchangeSub" data-texto="colaborador.detalle.selecciona-antes">seleccioná antes 1 cartón en Vender</i></span>
+            <span class="opcion-ir">›</span>
+          </button>
+
+          <div class="raya"></div>
+
+          <button id="plead" class="opcion peligro">
+            <span class="opcion-icono">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                   stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 8v5M12 16.5v.2"/>
+                <path d="M10.3 4.3 3 17a2 2 0 001.7 3h14.6a2 2 0 001.7-3L13.7 4.3a2 2 0 00-3.4 0z"/></svg>
+            </span>
+            <span class="opcion-que"><b data-texto="colaborador.detalle.solicitar-anulacion">Solicitar anulación</b>
+              <i data-texto="colaborador.detalle.la-aprueba">la aprueba el organizador</i></span>
+            <span class="opcion-ir">›</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EL ENSAYO: elegir que se practica ══════════════════════════════
+     Una hoja sobre la puerta, como las demas capas. El oficio de verdad no se elige
+     nunca -- viene en el codigo del organizador --; ESTE si se elige, porque el
+     papelito del ensayo se lo corta uno mismo. -->
+<div id="ensDim" class="ens-dim hidden"></div>
+
+<div id="ensSheet" class="ens-sheet hidden">
+  <div class="ens-grab"></div>
+  <h3 data-texto="colaborador.ensayo.que-quieres">Que queres ensayar?</h3>
+  <div class="ens-sub" data-texto="colaborador.ensayo.es-una-practica">Es una practica: se hace igual que en la vida, pero nada cuenta.</div>
+
+  <button id="ensVende" class="ens-pick">
+    <span class="ens-ico">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2.6" y="6" width="18.8" height="12" rx="2.6"/>
+        <path d="M15 6v12" stroke-dasharray="2 2.4"/></svg>
+    </span>
+    <span><b data-texto="detalle.anotar.vender">Vender cartones</b><small data-texto="colaborador.ensayo.vender-sub">Anotar compradores y entregar codigos.</small></span>
+  </button>
+
+  <button id="ensCanta" class="ens-pick">
+    <span class="ens-ico">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2.6" width="6" height="11" rx="3"/>
+        <path d="M5 11a7 7 0 0014 0"/><path d="M12 18.2v3.2"/></svg>
+    </span>
+    <span><b data-texto="detalle.anotar.cantar">Cantar las bolitas</b><small data-texto="colaborador.ensayo.cantar-sub">Teclado, tombola y revisar cartones.</small></span>
+  </button>
+
+  <button id="ensGo" class="go help wide" data-texto="colaborador.ensayo.empezar">Empezar el ensayo</button>
+  <p id="ensNote" class="ens-note"></p>
+</div>
+
+<!-- Terminar borra TODO el ensayo, y por eso se confirma. Sin pantalla de cierre
+     propia: la hoja de siempre, sobre lo que este abierto. -->
+<div id="ensConfirm" class="ens-confirm hidden">
+  <h3 data-texto="colaborador.ensayo.terminar-pregunta">Terminar el ensayo?</h3>
+  <p data-texto="colaborador.ensayo.se-borra">Se borra el bingo de ensayo con sus ventas, sus codigos y sus bolitas. Cuando tengas tu codigo de verdad, entras igual que como ensayaste.</p>
+  <button id="ensBorrar" class="go help wide" data-texto="colaborador.ensayo.terminar-y-borrar">Terminar y borrar todo</button>
+  <button id="ensSeguir" class="ens-quiet" data-texto="colaborador.ensayo.seguir">seguir ensayando</button>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="drum.js"></script>
+<script src="patterns.js"></script>
+<script src="calling.js"></script>
+<script src="collaborator.js"></script>
+</body>
+</html>

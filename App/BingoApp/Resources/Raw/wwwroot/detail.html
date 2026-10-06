@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<title>El bingo</title>
+<script src="_framework/hybridwebview.js"></script>
+<script src="language.js"></script>
+<link rel="stylesheet" href="organizer.css">
+<link rel="stylesheet" href="detail.css">
+</head>
+<body>
+
+<!-- El detalle del bingo, como la maqueta: arriba lo que hay que saber de un
+     vistazo, en el medio las puertas a cada cosa, y abajo el boton grande de empezar.
+     Las puertas no son pantallas aparte sino vistas de esta misma pagina: el
+     organizador entra y sale de ellas todo el tiempo, y volver tiene que ser
+     instantaneo. -->
+<div class="wiz">
+
+  <header class="crown">
+    <div class="crown-top">
+      <button id="back" class="crown-round" aria-label="atras" data-texto-aria="general.atras">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <img class="crown-art" src="assets/bingo-logo-trim.png" alt="">
+      <div class="crown-round crown-ghost"></div>
+    </div>
+
+    <div id="title" class="crown-name"></div>
+
+    <!-- La agenda en una pastilla, y aparte cuanto falta: son dos cosas distintas --
+         cuando es, y que tan cerca esta. Se toca para ponerle o cambiarle la hora: sin
+         esto, un bingo que nacio sin hora se quedaba sin ella para siempre. -->
+    <button id="crownWhen" class="crown-when">
+      <span class="crown-when-ico">
+        <svg viewBox="0 0 24 24" width="17" height="17"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7 3.5v4M17 3.5v4M3.5 9h17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </span>
+      <span id="crownDay" data-texto="general.hoy">Hoy</span>
+      <span id="crownHourWrap" class="crown-when-hour hidden">
+        <span class="crown-when-cut"></span>
+        <span class="crown-when-ico">
+          <svg viewBox="0 0 24 24" width="17" height="17"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </span>
+        <span id="crownHour"></span>
+      </span>
+      <span id="crownNoHour" class="crown-when-add" data-texto="detalle.mas-hora">+ hora</span>
+    </button>
+
+    <div id="chip" class="chip chip-big"></div>
+
+    <!-- ══ LAS PESTANAS ══ La capsula de monedas, DENTRO de la corona: un riel
+         translucido que contiene los cuatro discos con su nombre, y el activo se
+         enciende en blanco con el icono morado. El feston anterior mordia el borde
+         con cuatro discos sueltos: los dormidos parecian botones flotando en el
+         hueco, las etiquetas caian donde el morado se desvanece, y el salto de
+         tamano del activo dejaba la fila dispareja. El riel los declara UNA pieza
+         y todo se lee sobre morado pleno. El contrato con el JS no cambia:
+         #ringRow, .ring, data-pane y ring-on siguen siendo los mismos. -->
+    <nav id="ringRow" class="ring-row" aria-label="secciones del bingo" data-texto-aria="detalle.secciones">
+      <button class="ring" data-pane="rounds">
+        <span class="ring-disc"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 4h8v4.5a4 4 0 0 1-8 0z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 5.5H5.5v1.2a3 3 0 0 0 2.6 3M16 5.5h2.5v1.2a3 3 0 0 1-2.6 3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 12.5V16m-3 4h6l-.6-2.4a1 1 0 0 0-1-.6h-2.8a1 1 0 0 0-1 .6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+        <span class="ring-tag" data-texto="detalle.pestana.rondas">Rondas</span>
+      </button>
+      <button class="ring" data-pane="cards">
+        <span class="ring-disc"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 8.5h16a1 1 0 0 1 1 1v1.2a2.3 2.3 0 0 0 0 4.6v1.2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-1.2a2.3 2.3 0 0 0 0-4.6V9.5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M13 8.5v10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-dasharray="2 2.4"/></svg></span>
+        <span class="ring-tag" data-texto="detalle.pestana.cartones">Cartones</span>
+      </button>
+      <button class="ring" data-pane="team">
+        <span class="ring-disc"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 6.2a3.2 3.2 0 0 1 0 6M17.5 15.2c1.8.6 3 2.2 3 4.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        <span class="ring-tag" data-texto="detalle.pestana.equipo">Equipo</span>
+      </button>
+      <button class="ring" data-pane="players">
+        <span class="ring-disc"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8.5" cy="10" r="1.2" fill="currentColor"/><circle cx="12" cy="10" r="1.2" fill="currentColor"/><circle cx="15.5" cy="10" r="1.2" fill="currentColor"/><circle cx="8.5" cy="14" r="1.2" fill="currentColor"/><circle cx="12" cy="14" r="1.2" fill="currentColor"/></svg></span>
+        <span class="ring-tag" data-texto="detalle.pestana.jugadores">Jugadores</span>
+      </button>
+    </nav>
+
+  </header>
+
+  <main id="body" class="body detail-body">
+
+    <!-- ══ EL HUB ═══════════════════════════════════════════════════ -->
+    <section id="hub">
+
+
+      <!-- ── rondas y premios ── -->
+      <div id="paneRounds" class="pane hidden">
+        <!-- Cabecera de seccion como las apps serias: titulo y dato a la izquierda, el
+             enlace CHICO a la derecha. El enlace centrado y de color gritaba mas que el
+             contenido, y cada pestana gritaba en un color distinto. -->
+        <div class="pane-head">
+          <div class="pane-head-what">
+            <div class="pane-title-row"><div class="pane-title" data-texto="detalle.rondas.titulo">Rondas y premios</div><button class="pane-tip hidden" aria-label="que conviene hacer ahora" data-texto-aria="detalle.que-conviene"><svg viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.7" r="1.05" fill="currentColor"/></svg></button></div>
+            <div class="pane-sub" id="doorRounds"></div>
+          </div>
+          <button id="seeRounds" class="pane-link" data-texto="general.ver-todas">Ver todas</button>
+        </div>
+        <div id="roundCards"></div>
+        <!-- El unico AJUSTE del hub vive con las rondas, que es de lo que habla. -->
+        <div class="setting-line">
+          <div class="setting-name" data-texto="detalle.como-se-anuncia">Como se anuncia</div>
+          <div id="announceNow" class="setting-said"></div>
+          <button id="announceEdit" class="pill-line" data-texto="general.elegir">Elegir</button>
+        </div>
+      </div>
+
+      <!-- ── cartones ── -->
+      <div id="paneCards" class="pane hidden">
+        <div class="pane-head">
+          <div class="pane-head-what">
+            <div class="pane-title-row"><div class="pane-title" data-texto="detalle.cartones.titulo">Cartones</div><button class="pane-tip hidden" aria-label="que conviene hacer ahora" data-texto-aria="detalle.que-conviene"><svg viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.7" r="1.05" fill="currentColor"/></svg></button></div>
+            <!-- El precio es EL dato de contexto de esta pestana: arriba como subtitulo,
+                 no perdido como nota suelta entre la leyenda y los botones. -->
+            <div class="pane-sub" id="paneCardPrice"></div>
+          </div>
+          <button id="seeCards" class="pane-link" data-texto="detalle.cartones.precio-y-mas">Precio y mas</button>
+        </div>
+        <div class="pane-big"><span id="doorCardNum">0</span><span class="pane-big-say" data-texto="detalle.cartones.total">total</span></div>
+        <!-- Una sola barra en tres estados. Vendido y asignado NO se pisan: asignado es
+             lo que esta en manos de colaboradores y todavia no se vendio. -->
+        <div class="split-bar">
+          <div id="barSold" class="split-sold"></div>
+          <div id="barGiven" class="split-given"></div>
+        </div>
+        <div class="legend">
+          <div class="legend-row"><span class="legend-dot dot-sold"></span><span class="legend-say" data-texto="detalle.cartones.vendidos">Vendidos</span><span id="statSold" class="legend-num">0</span></div>
+          <div class="legend-row"><span class="legend-dot dot-given"></span><span class="legend-say" data-texto="detalle.cartones.asignados">Asignados</span><span id="legGiven" class="legend-num">0</span></div>
+          <div class="legend-row"><span class="legend-dot dot-free"></span><span class="legend-say" data-texto="detalle.cartones.disponibles">Disponibles</span><span id="legFree" class="legend-num">0</span></div>
+        </div>
+        <!-- Las tres cosas que se hacen con los cartones, a la vista y cada una en su
+             tecla. Antes habia UNA fila "Gestionar cartones" que abria una hoja para
+             preguntar cual de las tres: un toque de mas para algo que se hace toda la
+             noche. Y MOVER no estaba aca -- vivia dentro de la ficha de cada persona --
+             asi que el caso real ("Maria no vino, pasale sus cartones a Juan") no tenia
+             puerta desde donde uno mira los cartones. -->
+        <div class="card-acts">
+          <button id="actGive" class="card-act">
+            <span class="card-act-ico">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            </span>
+            <span data-texto="detalle.cartones.dar">Dar</span>
+          </button>
+          <button id="actMove" class="card-act">
+            <span class="card-act-ico">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13M17 8l-3-3M17 8l-3 3"/><path d="M20 16H7M7 16l3-3M7 16l3 3"/></svg>
+            </span>
+            <span data-texto="detalle.cartones.mover">Mover</span>
+          </button>
+          <button id="actBack" class="card-act">
+            <span class="card-act-ico">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 13.5L4.5 9 9 4.5"/><path d="M4.5 9h9.5a5.5 5.5 0 010 11H8"/></svg>
+            </span>
+            <span data-texto="detalle.cartones.devolver">Devolver</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── colaboradores ──
+           La lista COMPLETA vive aca, no detras de un "Ver todos": con doce personas,
+           tres caritas y un enlace obligaban a entrar a otra pantalla para saber quien
+           esta. El boton de la cabecera ya no lleva a mirar: agrega, que es lo que uno
+           viene a hacer. La vista completa sigue existiendo -- se entra tocando a una
+           persona -- pero deja de ser el unico camino a la lista. -->
+      <div id="paneTeam" class="pane hidden">
+        <div class="sings">
+          <div class="sings-tag" data-texto="detalle.equipo.quien-cantara">Quien cantara</div>
+          <div class="sings-row">
+            <span class="sings-ico"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="3.5" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M6 11.5a6 6 0 0 0 12 0M12 17.5V21m-3 0h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+            <span id="whoSings" class="sings-name"></span>
+          </div>
+        </div>
+        <div class="pane-head">
+          <div class="pane-head-what">
+            <div class="pane-title-row"><div class="pane-title" data-texto="detalle.equipo.titulo">Colaboradores</div><button class="pane-tip hidden" aria-label="que conviene hacer ahora" data-texto-aria="detalle.que-conviene"><svg viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.7" r="1.05" fill="currentColor"/></svg></button></div>
+            <div class="pane-sub" id="doorTeam"></div>
+          </div>
+          <button id="addTeam" class="pane-add">+ <span data-texto="general.agregar">Agregar</span></button>
+        </div>
+        <div id="doorTeamList" class="door-team"></div>
+      </div>
+
+      <!-- ── quienes juegan ── -->
+      <div id="panePlayers" class="pane hidden">
+        <div class="pane-head">
+          <div class="pane-head-what">
+            <div class="pane-title-row"><div class="pane-title" data-texto="detalle.jugadores.titulo">Quienes juegan</div><button class="pane-tip hidden" aria-label="que conviene hacer ahora" data-texto-aria="detalle.que-conviene"><svg viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.7" r="1.05" fill="currentColor"/></svg></button></div>
+            <div class="pane-sub" id="doorPlayers"></div>
+          </div>
+          <!-- La vista completa existia y NADA la abria: la lista con los cartones de
+               cada uno era inalcanzable. El mismo "Ver todos" que ya tienen las demas. -->
+          <button id="seePlayers" class="pane-link" data-texto="general.ver-todos">Ver todos</button>
+        </div>
+        <div class="pane-big"><span id="statIn">0</span><span class="pane-big-say" data-texto="detalle.jugadores.han-ingresado">han ingresado</span></div>
+        <div class="faces" id="doorPlayerFaces"></div>
+        <button id="entrancePoster" class="row-door">
+          <div class="row-door-ico">▦</div>
+          <div class="row-door-what">
+            <div class="row-door-name" data-texto="detalle.cartel.nombre">Cartel para la entrada</div>
+            <div class="row-door-sub" data-texto="detalle.cartel.sub">Para quien juega sin la app</div>
+          </div>
+          <div class="row-door-go">›</div>
+        </button>
+      </div>
+
+
+      <div id="where" class="where-note"></div>
+
+      <!-- Lo que sigue, AL FONDO del scroll: sugiere, no manda. Arriba competia con
+           la tarjeta del carrusel, que es la protagonista. Quien baja hasta aca la
+           encuentra; el pie con "empezar a cantar" queda fijo igual. -->
+      <div id="nextStep" class="next-step hidden">
+        <div class="next-step-top">
+          <div class="next-step-ico">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9.5 17h5M10 20h4M12 3.5a5.5 5.5 0 0 0-3.2 9.97c.5.36.8.93.8 1.53h4.8c0-.6.3-1.17.8-1.53A5.5 5.5 0 0 0 12 3.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="next-step-tag" data-texto="detalle.proximo.titulo">Proxima accion recomendada</div>
+        </div>
+        <p id="nextStepSays" class="next-step-says"></p>
+        <button id="nextStepGo" class="pill-line"></button>
+      </div>
+    </section>
+
+    <!-- ══ RONDAS Y PREMIOS ═════════════════════════════════════════ -->
+    <section id="rounds" class="hidden">
+      <h1 class="big" data-texto="detalle.rondas.titulo">Rondas y premios</h1>
+      <p class="lead" data-texto="detalle.rondas.lead">Cada figura da su propio premio. Podes anunciar mas rondas mientras
+        el bingo corre.</p>
+
+      <div id="roundList"></div>
+
+      <button id="addRound" class="ghost">
+        <span class="ghost-plus">+</span> <span data-texto="detalle.rondas.anunciar-otra">Anunciar otra ronda</span>
+      </button>
+    </section>
+
+    <!-- ══ CARTONES ═════════════════════════════════════════════════ -->
+    <section id="cards" class="hidden">
+      <h1 class="big" data-texto="detalle.cartones.titulo">Cartones</h1>
+      <p class="lead" data-texto="detalle.cartones.lead">Los que pusiste en venta esta noche y los que todavia no salieron
+        de tus manos.</p>
+
+      <div class="two-up">
+        <div class="box">
+          <div class="box-num" id="boxAll">0</div>
+          <div class="box-what" data-texto="detalle.cartones.en-el-bingo">en el bingo</div>
+        </div>
+        <div class="box">
+          <div class="box-num" id="boxLeft">0</div>
+          <div class="box-what" data-texto="detalle.cartones.sin-repartir">sin repartir</div>
+        </div>
+      </div>
+
+      <button id="more" class="ghost">
+        <span class="ghost-plus">+</span> <span data-texto="detalle.cartones.poner-mas">Poner 10 cartones mas en venta</span>
+      </button>
+
+      <!-- El precio vive donde se ve lo que cuesta, no en una tarjeta aparte del hub
+           pidiendo que lo configuren. -->
+      <div class="slot mt-big">
+        <div class="slot-what">
+          <div class="tag-line" data-texto="detalle.cartones.precio-del-carton">PRECIO DEL CARTON</div>
+          <div id="priceNow" class="slot-none" data-texto="detalle.cartones.sin-precio">Sin precio</div>
+        </div>
+        <button id="priceEdit" class="pill"></button>
+      </div>
+    </section>
+
+    <!-- ══ COLABORADORES ════════════════════════════════════════════════
+         La lista de quienes ayudan, cada una con SU codigo. Antes habia un solo codigo
+         por oficio en la mesa y el siguiente nacia recien cuando alguien usaba el
+         anterior: el organizador tenia que quedarse al lado de cada persona mirandola
+         escanear antes de poder llamar a la que sigue. Ahora escribe la lista de una
+         sentada y le pasa a cada una la suya. -->
+    <section id="team" class="hidden">
+      <h1 class="big" data-texto="detalle.equipo.titulo">Colaboradores</h1>
+
+      <!-- Arriba, la cuenta de los cartones: es lo que le pone techo a lo que puede
+           repartir, y lo que contesta "cuantos me quedan" sin entrar a ningun lado. -->
+      <div class="spread">
+        <div class="tag-line" data-texto="detalle.equipo.distribucion">DISTRIBUCION DE CARTONES</div>
+        <div id="spreadTotal" class="spread-num">0</div>
+        <div class="spread-what" data-texto="detalle.cartones.en-el-bingo">en el bingo</div>
+
+        <div class="spread-two">
+          <div class="spread-box">
+            <div id="spreadGiven" class="spread-box-num">0</div>
+            <div class="spread-box-what" data-texto="detalle.equipo.repartidos">Repartidos</div>
+          </div>
+          <div class="spread-box">
+            <div id="spreadFree" class="spread-box-num">0</div>
+            <div class="spread-box-what" data-texto="detalle.equipo.libres">Libres</div>
+          </div>
+        </div>
+
+        <div class="bar-wrap"><div id="spreadBar" class="bar-fill"></div></div>
+        <div id="spreadRange" class="spread-range"></div>
+      </div>
+
+      <!-- UNA sola lista. Quien canta y quien vende no son dos secciones: son la misma
+           persona anotada para dos oficios distintos, y el oficio es una propiedad del
+           papelito. Separarlos daba dos listas para lo mismo, y la pantalla terminaba
+           diciendo "nadie vendiendo" al lado de un hueco de cantante. -->
+      <div id="teamCount" class="head-small mt-big"></div>
+      <div id="teamList"></div>
+
+      <button id="addSomebody" class="dashed">+ <span data-texto="detalle.equipo.agregar-colaborador">Agregar colaborador</span></button>
+    </section>
+
+    <!-- ══ UNA PERSONA ══════════════════════════════════════════════════
+         Todo lo suyo en un lugar: cuantos tiene, que se puede hacer con sus cartones, su
+         codigo y la salida. Antes eso eran tres botones apretados en el renglon de una
+         lista, y no cabia nada mas. -->
+    <section id="person" class="hidden">
+      <div class="spread">
+        <div id="personFace" class="who-face who-sell big-face"></div>
+        <div id="personCards" class="spread-num">0</div>
+        <div class="spread-what" data-texto="detalle.persona.en-la-mano">en la mano</div>
+
+        <div class="spread-two">
+          <div class="spread-box">
+            <div id="personSold" class="spread-box-num">0</div>
+            <div class="spread-box-what" data-texto="detalle.persona.vendidos">Vendidos</div>
+          </div>
+          <div class="spread-box">
+            <div id="personLeft" class="spread-box-num">0</div>
+            <div class="spread-box-what" data-texto="detalle.persona.sin-vender-titulo">Sin vender</div>
+          </div>
+        </div>
+
+        <div class="bar-wrap"><div id="personBar" class="bar-fill"></div></div>
+        <div id="personRange" class="spread-range"></div>
+      </div>
+
+      <div class="head-small mt-big" data-texto="detalle.persona.gestionar">Gestionar cartones</div>
+
+      <div id="personDoors"></div>
+      <p id="personNote" class="hint"></p>
+
+      <div class="head-small mt-big" data-texto="detalle.persona.acceso">Acceso</div>
+
+      <button id="personQr" class="row-door">
+        <div class="row-door-ico">▦</div>
+        <div class="row-door-what">
+          <div class="row-door-name" data-texto="detalle.persona.codigo-de-acceso">Codigo de acceso</div>
+          <div class="row-door-sub" data-texto="detalle.persona.ver-qr">Ver el QR y compartirlo</div>
+        </div>
+        <div class="row-door-go">›</div>
+      </button>
+
+      <button id="personOut" class="plain danger-plain" data-texto="detalle.persona.sacar">Sacar del bingo</button>
+    </section>
+
+    <!-- ══ QUIENES JUEGAN ═══════════════════════════════════════════ -->
+    <section id="players" class="hidden">
+      <h1 class="big" data-texto="detalle.jugadores.titulo">Quienes juegan</h1>
+      <p class="lead" data-texto="detalle.jugadores.lead">Cada persona con sus cartones. Al que todavia no entro con su
+        telefono lo metio la venta.</p>
+
+      <div id="playerList"></div>
+    </section>
+
+    <!-- ══ DAR Y DEVOLVER ═══════════════════════════════════════════════
+         Una sola vista para las dos: cambian el rotulo, el tope, la cuenta de abajo y
+         el color del boton. Separarlas en dos pantallas gemelas seria mantener dos. -->
+    <section id="handout" class="hidden">
+      <h1 id="handoutTitle" class="big"></h1>
+
+      <div id="handoutWhoTag" class="tag-line mt-big" data-texto="detalle.repartir.selecciona-colaborador">SELECCIONA COLABORADOR</div>
+      <div id="handoutWho" class="picks no-top"></div>
+
+      <div id="handoutHow" class="hidden">
+        <div id="handoutHowTag" class="tag-line mt-big"></div>
+
+        <div class="stepper">
+          <button id="handoutLess" class="stepper-side" aria-label="menos" data-texto-aria="general.menos">−</button>
+          <div id="handoutMany" class="stepper-num">0</div>
+          <button id="handoutMore" class="stepper-side" aria-label="mas" data-texto-aria="general.mas">+</button>
+        </div>
+
+        <div id="handoutQuick" class="quick-many"></div>
+
+        <div id="handoutSays" class="after-box"></div>
+      </div>
+
+      <!-- Solo al mover: los cartones no vuelven al libro, van a otra mano, y hay que
+           decir a cual. -->
+      <div id="handoutToWrap" class="hidden">
+        <div class="tag-line mt-big" data-texto="detalle.repartir.hacia-quien">HACIA QUIEN</div>
+        <div id="handoutTo" class="picks no-top"></div>
+      </div>
+
+      <button id="handoutGo" class="go wide" disabled></button>
+    </section>
+
+    <div class="fold">
+      <button id="logFold" class="fold-head">
+        <span data-texto="general.lo-que-va-pasando">lo que va pasando</span>
+        <span id="logChevron" class="chev">›</span>
+      </button>
+      <pre id="logBox" class="log hidden"></pre>
+    </div>
+
+  </main>
+
+  <footer id="foot" class="foot">
+    <button id="call" class="go">
+      <span class="play">▶</span> <span id="callSays" data-texto="detalle.empezar-a-cantar">Empezar a cantar</span>
+    </button>
+  </footer>
+
+</div>
+
+<!-- la hoja para anunciar una ronda, con sus juegos -->
+<div id="sheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div class="sheet-title" data-texto="detalle.ronda.titulo">Anunciar una ronda</div>
+    <p class="hint" data-texto="detalle.ronda.hint">Agrega las figuras que se juegan y que da cada una.</p>
+
+    <div id="newGames" class="mt"></div>
+
+    <label class="field-wrap">
+      <span class="label" data-texto="detalle.ronda.figura-ganadora">Figura ganadora</span>
+      <div class="select">
+        <select id="figure" class="field"></select>
+      </div>
+    </label>
+    <p id="figureHint" class="hint"></p>
+
+    <span class="label mt" data-texto="detalle.ronda.premio">Premio</span>
+    <div class="two">
+      <button id="goods" class="pick"><span class="pick-ico">🎁</span> <span data-texto="detalle.ronda.premio-fisico">Premio fisico</span></button>
+      <button id="cash" class="pick on"><span class="pick-ico">💵</span> <span data-texto="detalle.ronda.dinero">Dinero</span></button>
+    </div>
+
+    <label class="field-wrap mt">
+      <span id="prizeLabel" class="label" data-texto="detalle.ronda.monto">Monto</span>
+      <input id="prize" class="field" type="number" inputmode="numeric" placeholder="0">
+    </label>
+
+    <button id="addGame" class="soft wide-soft" data-texto="detalle.ronda.agregar-figura">Agregar esta figura</button>
+    <button id="saveRound" class="go sheet-go" data-texto="detalle.ronda.anunciar">Anunciar la ronda</button>
+    <button id="closeSheet" class="plain" data-texto="general.cancelar">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ ANOTAR A ALGUIEN ══════════════════════════════════════════════
+     Una hoja y no una banda en la pagina: se abre desde dos lugares (el renglon de quien
+     canta y el boton de anotar), y el oficio lo trae quien la abrio. -->
+<div id="addSheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div id="addTitle" class="sheet-title"></div>
+    <p id="addSub" class="hint"></p>
+
+    <label class="field-wrap">
+      <span class="label" data-texto="detalle.anotar.como-se-llama">Como se llama</span>
+      <input id="addName" class="field" type="text" placeholder="Ej. Sonia" data-texto-ph="detalle.anotar.nombre-ejemplo" autocomplete="off">
+    </label>
+
+    <!-- El oficio se elige ACA y no abriendo una hoja distinta: es lo unico que
+         distingue a una persona de la otra en esta lista. -->
+    <span class="label mt" data-texto="detalle.anotar.que-va-a-hacer">Que va a hacer</span>
+    <div class="two">
+      <button id="addSells" class="pick on" data-texto="detalle.anotar.vender">Vender cartones</button>
+      <button id="addCalls" class="pick" data-texto="detalle.anotar.cantar">Cantar las bolitas</button>
+    </div>
+
+    <!-- Solo a quien vende. Quien canta no toca cartones. -->
+    <label id="addCardsWrap" class="field-wrap">
+      <span class="label"><span data-texto="detalle.anotar.cartones-apartados">Cartones que le aparto</span> <span class="soft-note" data-texto="general.opcional">opcional</span></span>
+      <input id="addCards" class="field" type="number" inputmode="numeric" placeholder="0">
+    </label>
+    <p id="addCardsHint" class="hint"></p>
+
+    <button id="addGo" class="go sheet-go" data-texto="detalle.anotar.ir">Anotar y sacarle el codigo</button>
+    <button id="addNo" class="plain" data-texto="general.cancelar">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ A QUE HORA ABRE ═══════════════════════════════════════════════ -->
+<div id="hourSheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div class="sheet-title" data-texto="detalle.hora.titulo">A que hora abre</div>
+    <p class="hint" data-texto="detalle.hora.hint">Es lo que se le dice al vecino ademas del dia.</p>
+
+    <div class="clock">
+      <div class="clock-part">
+        <button class="clock-up" data-bump="hour" data-by="1">▲</button>
+        <div id="clockHour" class="clock-num">7</div>
+        <button class="clock-down" data-bump="hour" data-by="-1">▼</button>
+      </div>
+      <div class="clock-dots">:</div>
+      <div class="clock-part">
+        <button class="clock-up" data-bump="minute" data-by="5">▲</button>
+        <div id="clockMinute" class="clock-num">00</div>
+        <button class="clock-down" data-bump="minute" data-by="-5">▼</button>
+      </div>
+      <div class="clock-half">
+        <button id="isAm" class="half-one" data-texto="general.am">a.m.</button>
+        <button id="isPm" class="half-one on" data-texto="general.pm">p.m.</button>
+      </div>
+    </div>
+
+    <button id="hourGo" class="go sheet-go" data-texto="general.listo">Listo</button>
+    <button id="hourNo" class="plain" data-texto="general.cancelar">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ QUE SE VA A HACER CON LOS CARTONES ════════════════════════════ -->
+<div id="handoutSheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div class="sheet-title" data-texto="detalle.gestion.titulo">Gestion de cartones</div>
+
+    <div class="picks no-top">
+      <button id="pickGive" class="pick-one pick-give">
+        <div class="pick-ico-box pick-ico-give">+</div>
+        <div>
+          <span class="pick-name" data-texto="detalle.repartir.dar">Dar cartones</span>
+          <span class="pick-says" data-texto="detalle.gestion.dar.sub">Asignar cartones desde los disponibles</span>
+        </div>
+      </button>
+      <button id="pickBack" class="pick-one pick-back">
+        <div class="pick-ico-box pick-ico-back">↩</div>
+        <div>
+          <span class="pick-name" data-texto="detalle.repartir.devolver">Devolver cartones</span>
+          <span class="pick-says" data-texto="detalle.gestion.devolver.sub">Regresar cartones al organizador</span>
+        </div>
+      </button>
+    </div>
+
+    <button id="handoutNo" class="plain" data-texto="general.cerrar-mayuscula">Cerrar</button>
+  </div>
+</div>
+
+<!-- ══ EL PRECIO DEL CARTON ══════════════════════════════════════════ -->
+<div id="priceSheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div class="sheet-title" data-texto="detalle.precio.titulo">Precio del carton</div>
+    <p class="hint" data-texto="detalle.precio.hint">Todos los cartones de este bingo valen lo mismo.</p>
+
+    <label class="field-wrap">
+      <span class="label" data-texto="detalle.precio.cuanto-vale">Cuanto vale</span>
+      <input id="priceHow" class="field" type="number" inputmode="numeric" placeholder="Ej. 2000" data-texto-ph="crear.precio.ejemplo">
+    </label>
+    <p id="priceHint" class="hint"></p>
+
+    <button id="priceGo" class="go sheet-go" data-texto="detalle.precio.ponerle">Ponerle este precio</button>
+    <button id="priceNo" class="plain" data-texto="general.cancelar">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ COMO SE ANUNCIA EL BINGO ══════════════════════════════════════
+     Dos maneras y las dos son de verdad: con la voz (la mesa no se frena; el grito es
+     humano y el organizador ya tiene el cartel para verificar) o automatico (la mesa se
+     frena sola al completarse un carton, hasta que el organizador entregue o rechace). -->
+<div id="announceSheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div class="sheet-title" data-texto="detalle.anunciar.titulo">Como se anuncia el bingo</div>
+    <p class="hint" data-texto="detalle.anunciar.hint">Vale desde la ronda que arranque despues de elegirlo.</p>
+
+    <div class="picks">
+      <button id="announceVoice" class="pick-one">
+        <div class="pick-name" data-texto="detalle.anunciar.voz.nombre">La gente canta ¡BINGO!</div>
+        <div class="pick-says" data-texto="detalle.anunciar.voz.sub">La maquinita no se detiene. El que completa lo grita, y
+          vos ya lo tenes verificado en pantalla para entregarle.</div>
+      </button>
+      <button id="announceAuto" class="pick-one">
+        <div class="pick-name" data-texto="detalle.anunciar.auto.nombre">Automatico</div>
+        <div class="pick-says" data-texto="detalle.anunciar.auto.sub">Al completarse un carton la mesa se frena sola, hasta que
+          entregues el premio o lo rechaces.</div>
+      </button>
+    </div>
+
+    <button id="announceGo" class="go sheet-go" disabled data-texto="general.elegir">Elegir</button>
+    <button id="announceNo" class="plain" data-texto="general.cancelar">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ CUANTOS CARTONES ══════════════════════════════════════════════
+     La misma hoja para dar, recoger y mover: las tres preguntan lo mismo -- cuantos --,
+     y lo que cambia es de donde salen y a donde van, que ya lo dijo el renglon que la
+     abrio. -->
+<div id="manySheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div id="manyTitle" class="sheet-title"></div>
+    <p id="manySub" class="hint"></p>
+
+    <label class="field-wrap">
+      <span class="label" data-texto="detalle.cuantos.titulo">Cuantos</span>
+      <input id="manyHow" class="field" type="number" inputmode="numeric" placeholder="0">
+    </label>
+    <p id="manyHint" class="hint"></p>
+
+    <!-- Solo al mover: a quien. Sale de las que estan vendiendo y conectadas, porque
+         pasarle cartones a un telefono que no escucha es perderlos. -->
+    <div id="manyWhoWrap" class="hidden">
+      <span class="label" data-texto="detalle.cuantos.a-quien">A quien</span>
+      <div id="manyWho" class="picks"></div>
+    </div>
+
+    <button id="manyGo" class="go sheet-go"></button>
+    <button id="manyNo" class="plain" data-texto="general.cancelar">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ EL CODIGO DE UNA PERSONA ══════════════════════════════════════
+     El enlace tambien en letra y seleccionable: no todos los telefonos estan juntos para
+     escanear, y el organizador se lo manda por mensaje. -->
+<div id="codeLayer" class="layer hidden">
+  <div class="layer-card">
+    <div id="codeFor" class="tag-line"></div>
+    <p id="codeSays" class="hint no-top"></p>
+    <img id="codeQr" class="qr" alt="">
+    <div id="codeText" class="code-text"></div>
+    <button id="codeCopy" class="soft wide-soft" data-texto="detalle.codigo.copiar">Copiar el codigo</button>
+    <button id="codeClose" class="go wide" data-texto="general.listo">Listo</button>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="patterns.js"></script>
+<script src="detail.js"></script>
+</body>
+</html>

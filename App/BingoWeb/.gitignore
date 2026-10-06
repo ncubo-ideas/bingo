@@ -1,0 +1,13 @@
+# Brought in from BingoApp by build.ps1 on every build
+wwwroot/index.html
+wwwroot/player.js
+wwwroot/player.css
+wwwroot/patterns.js
+wwwroot/language.js
+wwwroot/texts.json
+
+# The Cloudflare Pages copy, made by make-site.js
+site/
+
+# Wrangler's local session and cache
+.wrangler/

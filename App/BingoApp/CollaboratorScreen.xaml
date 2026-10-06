@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BingoApp.CollaboratorScreen"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Paper}">
+
+    <!-- La pantalla de quien ayuda es una pagina (collaborator.html) y este XAML es solo
+         el cascaron. La pagina se arma de UNA de dos caras segun el oficio que trae el
+         codigo del organizador: vender cartones o cantar las bolitas.
+
+         Lo que antes era una tira de paneles con IsVisible se dibuja alla; el
+         code-behind quedo siendo el puente. El dominio no se entera: LiveCollaborator
+         sigue igual. -->
+    <HybridWebView x:Name="Web" DefaultFile="collaborator.html"
+                   RawMessageReceived="OnWebMessage" />
+
+</ContentPage>

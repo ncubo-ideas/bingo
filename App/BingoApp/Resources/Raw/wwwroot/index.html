@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>El bingo</title>
+<script src="_framework/hybridwebview.js"></script>
+<script src="language.js"></script>
+<link rel="stylesheet" href="player.css">
+</head>
+<body>
+
+<div id="door" class="door">
+  <div class="door-breathe">
+    <div class="door-bg"></div>
+  </div>
+  <div class="door-content">
+    <div class="door-title" data-texto="jugador.puerta.titulo">VENGO A JUGAR</div>
+    <img class="door-logo" src="assets/bingo-logo-trim.png" alt="">
+    <!-- Mis bingos y los dos botones de entrar se turnan EL MISMO hueco: el del cartel
+         colgante del dibujo. Apilarlos corria el mostrador, la placa y el carnet fuera de
+         su sitio, porque todo este layout esta medido en vh contra el fondo.
+
+         Con bingos guardados manda la lista, que es a lo que se vuelve casi siempre, y
+         entrar a uno nuevo queda en un renglon flaco abajo. Sin bingos, los dos botones
+         grandes como toda la vida. -->
+    <div id="mineSlot" class="mine-slot hidden">
+      <div class="mine-head">
+        <span class="mine-tag" data-texto="jugador.puerta.mis-bingos">MIS BINGOS</span>
+        <button id="doorMore" class="mine-add">+ <span data-texto="jugador.puerta.otro-bingo">otro bingo</span></button>
+      </div>
+      <div id="mineList" class="mine-list"></div>
+    </div>
+
+    <div id="doorButtons" class="door-buttons">
+      <button id="doorScan" class="door-opt door-opt-scan">
+        <img src="assets/opt-scan.png" alt="">
+        <span data-texto="jugador.puerta.escanear">ESCANEAR EL CODIGO</span>
+      </button>
+      <button id="doorCode" class="door-opt door-opt-code">
+        <img src="assets/opt-code.png" alt="">
+        <span data-texto="jugador.puerta.pegar">PEGAR EL CODIGO</span>
+      </button>
+    </div>
+    <div id="doorSub" class="door-sub" data-texto="jugador.puerta.explicacion">Escanea el codigo que te dieron y aparece tu carton.</div>
+    <div id="doorTrouble" class="door-trouble hidden"></div>
+    <button id="doorBadge" class="door-badge">
+      <span class="door-badge-tag" data-texto="jugador.mi-numero">MI NUMERO</span>
+      <span id="doorBadgeNumber" class="door-badge-number">····-····</span>
+    </button>
+    <button id="doorBack" class="door-back hidden">‹ <span data-texto="jugador.puerta.volver">volver a mi carton</span></button>
+  </div>
+
+  <div id="codeSheet" class="sheet hidden">
+    <div class="sheet-card">
+      <div class="sheet-title" data-texto="jugador.hoja.titulo">ENTRAR CON EL CODIGO</div>
+      <!-- El nombre NO se pide de entrada: viene adentro del codigo, porque quien vende
+           lo escribe al hacer la venta. Se destapa solo si el codigo llega sin el. -->
+      <div id="nameAsk" class="hidden">
+        <label class="sheet-label" data-texto="jugador.hoja.nombre">Como te llamas</label>
+        <input id="nameField" class="sheet-input" type="text" autocomplete="off" data-texto-ph="jugador.hoja.nombre-ejemplo">
+      </div>
+      <label class="sheet-label" data-texto="jugador.hoja.codigo">Pega el codigo del bingo</label>
+      <textarea id="codeField" class="sheet-code" rows="3" placeholder="bingo://funcion?d=..."></textarea>
+      <button id="enterByHand" class="sheet-go" data-texto="jugador.hoja.entrar">ENTRAR CON ESTO</button>
+      <button id="closeSheet" class="sheet-cancel" data-texto="jugador.hoja.cancelar">mejor no</button>
+    </div>
+  </div>
+</div>
+
+<div id="play" class="play hidden">
+  <div class="play-bg"></div>
+  <div class="play-shade"></div>
+  <div class="play-warm"></div>
+  <img class="play-deco play-deco-l" src="assets/cup.png" alt="">
+  <img class="play-deco play-deco-r" src="assets/ic-wheel.png" alt="">
+
+  <div class="tube-zone">
+    <div class="tube">
+      <div class="tube-gloss"></div>
+      <div class="tube-label" data-texto="jugador.tubo.titulo">ULTIMAS BOLITAS</div>
+      <div id="recentRow" class="tube-row"></div>
+    </div>
+  </div>
+
+  <div id="roundLine" class="round-line"></div>
+  <div class="banner-zone">
+    <div id="bannerWrap" class="banner-wrap">
+      <div id="banner" class="banner">
+        <div class="banner-tail banner-tail-l"></div>
+        <div class="banner-body">
+          <div class="banner-text">
+            <div class="banner-carton" data-texto="jugador.carton">CARTON</div>
+            <div class="banner-num">#<span id="cardNo">—</span></div>
+          </div>
+          <div id="bannerPattern" class="pattern-grid"></div>
+        </div>
+        <div class="banner-tail banner-tail-r"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="chips" class="chips hidden"></div>
+
+  <div id="stage" class="stage">
+    <img id="peekL" class="peek peek-l hidden" src="assets/card-only.png" alt="">
+    <img id="peekR" class="peek peek-r hidden" src="assets/card-only.png" alt="">
+    <div class="rail"><img src="assets/tube-strip.png" alt=""></div>
+    <div id="hanger" class="hanger">
+      <div id="cardBox" class="card-box">
+        <div class="cord cord-l"></div>
+        <div class="cord cord-r"></div>
+        <div class="knob knob-l"></div>
+        <div class="knob knob-r"></div>
+        <div class="card-glow"></div>
+        <img class="card-img" src="assets/card-only.png" alt="">
+        <div id="winFrame" class="win-frame hidden"></div>
+        <div id="cells" class="cells"></div>
+      </div>
+    </div>
+    <div id="minis" class="minis hidden"></div>
+    <div id="waiting" class="waiting hidden">
+      <div class="waiting-emoji">🎫</div>
+      <div class="waiting-title" data-texto="jugador.sin-cartones.titulo">Todavia no tenes cartones</div>
+      <div class="waiting-sub" data-texto="jugador.sin-cartones.explicacion">Cuando te vendan uno aparece aca solo.</div>
+    </div>
+  </div>
+
+  <!-- La vista horizontal: en vertical no existe (display:none) y este DOM queda quieto.
+       Arriba corre la MARQUESINA de la tombola: el tambor que redobla, la bolita reinante,
+       la estela de las anteriores, la figura con su premio y el termometro de la tension
+       ("te faltan 3" / "¡FALTA 1! ESCUCHA EL 52"). Abajo, la mesa con TODOS los cartones. -->
+  <div id="land" class="land">
+    <div id="landTube" class="lm">
+      <div class="lm-bulbs" aria-hidden="true"></div>
+      <div id="lmDrum" class="lm-drum">
+        <span class="lm-cage">
+          <i style="--x:26%; --y:56%; --d:0ms;   background:#FF6B6B"></i>
+          <i style="--x:52%; --y:68%; --d:40ms;  background:#4DA3FF"></i>
+          <i style="--x:70%; --y:52%; --d:80ms;  background:#50C878"></i>
+          <i style="--x:44%; --y:40%; --d:120ms; background:#F5A623"></i>
+          <i style="--x:64%; --y:28%; --d:160ms; background:#9B7BFF"></i>
+          <span class="lm-cage-glint"></span>
+        </span>
+        <b class="lm-cage-foot"></b>
+      </div>
+      <div id="lmThrone" class="lm-throne"></div>
+      <div id="lmTrail" class="lm-trail"></div>
+      <div class="lm-round">
+        <div id="landPattern" class="pattern-grid lm-pattern"></div>
+        <div class="lm-round-text">
+          <div id="landFigure" class="lm-figure"></div>
+          <div id="landPrize" class="lm-prize hidden"><span id="landPrizeText"></span></div>
+        </div>
+      </div>
+      <div id="lmThermo" class="lm-thermo hidden"></div>
+      <div id="lmState" class="lm-state hidden"></div>
+      <span class="land-hint">📜</span>
+    </div>
+    <div class="land-main">
+      <div id="landShelf" class="land-shelf"></div>
+      <div id="landPanel" class="land-panel hidden"></div>
+      <div id="landGhost" class="land-ghost"></div>
+      <div id="landMinis" class="land-minis hidden"></div>
+    </div>
+  </div>
+  <div id="landLupa" class="land-lupa hidden"></div>
+
+  <div id="roundStrip" class="round-strip hidden"></div>
+
+  <button id="trophy" class="trophy hidden">
+    <img src="assets/trophy.png" alt="">
+  </button>
+  <div id="prizeRibbon" class="prize-ribbon hidden"><span id="prizeText"></span></div>
+
+  <button id="mega" class="mega mega-off">
+    <img src="assets/megaphone.png" alt="">
+    <span id="megaBadge" class="mega-badge hidden" data-texto="jugador.bingo">¡BINGO!</span>
+  </button>
+
+  <button id="navLog" class="log-chip"><span>📜</span></button>
+
+  <div class="navbar">
+    <button id="navLang" class="nav-btn"><img src="assets/ic-lang.png" alt=""></button>
+    <button id="navChange" class="nav-btn"><img src="assets/ic-wheel.png" alt=""></button>
+    <button id="navBadge" class="nav-btn nav-btn-big"><img src="assets/ic-tickets.png" alt=""></button>
+    <button id="navSync" class="nav-btn"><img src="assets/ic-board2.png" alt=""></button>
+    <button id="navExit" class="nav-btn"><img src="assets/ic-tent.png" alt=""></button>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+</div>
+
+<div id="celebrate" class="celebrate hidden">
+  <div id="confetti" class="confetti"></div>
+  <div class="celebrate-bottom">
+    <div id="bingoLetters" class="bingo-letters"></div>
+    <div id="celebrateWhat" class="celebrate-what"></div>
+    <img class="celebrate-trophy" src="assets/trophy-win.png" alt="">
+  </div>
+</div>
+
+<div id="langModal" class="lang-modal hidden">
+  <div id="langPanel" class="lang-panel">
+    <button id="closeLang" class="lang-close">✕</button>
+    <div class="lang-pin">
+      <img class="lang-seal" src="assets/wax-seal.png" alt="">
+      <img class="lang-globe" src="assets/seal-globe-gold.png" alt="">
+    </div>
+    <img class="lang-board" src="assets/lang-board.png" alt="">
+    <div class="lang-content">
+      <div id="langTitle" class="lang-title" data-texto="general.elige-idioma">Elige tu idioma</div>
+      <div class="lang-flags">
+        <div class="lang-halo"></div>
+        <button id="pickEn" class="lang-flag">
+          <img src="assets/flag-us.png" alt="">
+          <span data-texto="general.ingles">English</span>
+        </button>
+        <button id="pickEs" class="lang-flag">
+          <img src="assets/flag-es.png" alt="">
+          <span data-texto="general.espanol">Español</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="badgeModal" class="badge-modal hidden">
+  <div class="badge-panel">
+    <button id="closeBadge" class="lang-close">✕</button>
+    <div class="badge-pin">
+      <img class="badge-seal" src="assets/wax-seal.png" alt="">
+    </div>
+    <div id="badgeTitle" class="badge-title" data-texto="jugador.mi-numero">MI NUMERO</div>
+    <div id="badgeWho" class="badge-who"></div>
+    <div class="badge-qr-frame">
+      <img id="badgeQr" class="badge-qr" alt="">
+    </div>
+    <div id="badgeNumber" class="badge-number">····-····</div>
+    <div id="badgeHint" class="badge-hint" data-texto="jugador.carnet.pista">Ensenale esto a quien te vende y tu carton llega solo.</div>
+  </div>
+</div>
+
+<div id="logPanel" class="log-panel hidden">
+  <div class="log-card">
+    <div class="log-title" data-texto="general.lo-que-va-pasando">lo que va pasando</div>
+    <pre id="logBox" class="log-box"></pre>
+    <button id="closeLog" class="sheet-cancel" data-texto="general.cerrar">cerrar</button>
+  </div>
+</div>
+
+<script src="patterns.js"></script>
+<script src="player.js"></script>
+</body>
+</html>

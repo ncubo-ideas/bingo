@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+                          xmlns:local="clr-namespace:BingoApp"
+             x:Class="BingoApp.ScanScreen"
+             Title="{local:Text escanear.titulo}">
+
+    <Grid>
+        <zxing:CameraBarcodeReaderView x:Name="Camera" IsDetecting="True" />
+
+        <VerticalStackLayout VerticalOptions="Start" Padding="16,40,16,16"
+                             BackgroundColor="#99000000" Spacing="4">
+            <Label x:Name="Instruction" Text="{local:Text escanear.apunta-al-organizador}"
+                   TextColor="White" FontSize="15" FontAttributes="Bold" />
+            <Label x:Name="Diagnostics" Text=""
+                   TextColor="#FFCC00" FontSize="11" FontFamily="monospace" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout VerticalOptions="End" Padding="16" Spacing="8"
+                             BackgroundColor="#99000000">
+            <Label x:Name="Warning" Text="" TextColor="#FF8888" FontSize="12" IsVisible="False" />
+            <!-- La linterna es la diferencia entre leer y no leer una pantalla ajena en un
+                 salon a media luz, que es donde esto se va a usar de verdad. -->
+            <Button x:Name="TorchButton" Text="{local:Text escanear.prender-la-luz}" Clicked="OnTorch" />
+            <Button Text="{local:Text escanear.volver-a-mano}" Clicked="OnBack" />
+        </VerticalStackLayout>
+
+        <Grid x:Name="NoCamera" IsVisible="False" BackgroundColor="White">
+            <VerticalStackLayout VerticalOptions="Center" Padding="32" Spacing="14">
+                <Label Text="{local:Text escanear.sin-permiso}" FontSize="18" FontAttributes="Bold"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{local:Text escanear.dale-permiso}"
+                       HorizontalTextAlignment="Center" />
+                <Button Text="{local:Text general.volver}" Clicked="OnBack" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+
+</ContentPage>

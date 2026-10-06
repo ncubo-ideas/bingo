@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Inicio</title>
+<script src="_framework/hybridwebview.js"></script>
+<script src="language.js"></script>
+<link rel="stylesheet" href="organizer.css">
+<link rel="stylesheet" href="home.css">
+</head>
+<body>
+
+<!-- El inicio del organizador. Las cuatro pestañas son cuatro vistas de ESTA pagina:
+     cambiar de pestaña no cuesta una pantalla nueva ni volver a preguntarle al diario.
+     Ventas y Mas todavia no tienen nada que dar, y lo dicen -- una pestaña que no
+     responde al toque se siente rota; una que contesta "todavia no" se entiende. -->
+<div class="wiz">
+
+  <header class="top">
+    <div class="top-what">
+      <div id="hello" class="hello" data-texto="inicio.hola">Hola</div>
+      <div id="helloSub" class="hello-sub hidden" data-texto="inicio.sub.bingos">Organiza y consulta tus bingos.</div>
+    </div>
+    <button id="pillNew" class="pill hidden">+ <span data-texto="inicio.nuevo-bingo">Nuevo bingo</span></button>
+  </header>
+
+  <main id="body" class="body home-body">
+
+    <!-- ══ SIN BINGOS ══════════════════════════════════════════════ -->
+    <section id="empty" class="empty-home hidden">
+      <img class="hero" src="assets/org-empty.webp" alt="">
+      <div class="empty-title" style="white-space: pre-line" data-texto="inicio.vacio.titulo">Organiza tu
+proximo bingo</div>
+      <div class="empty-sub" data-texto="inicio.vacio.explicacion">Crea tu bingo, prepara las rondas y empeza a vender cartones.</div>
+      <button id="firstOne" class="go wide" data-texto="inicio.crear-mi-primer-bingo">Crear mi primer bingo</button>
+    </section>
+
+    <!-- ══ CON BINGOS ══════════════════════════════════════════════ -->
+    <section id="full" class="hidden">
+
+      <!-- La tarjeta es el arte, no un degradado con bolitas dibujadas a mano: la
+           ilustracion va de fondo corrida a la derecha y el morado se le encima por
+           la izquierda, para que el nombre se lea encima de color plano. -->
+      <div id="card" class="next">
+        <div class="next-veil"></div>
+        <div class="next-what">
+          <div class="next-tag" data-texto="inicio.tu-bingo-de-ahora">TU BINGO DE AHORA</div>
+          <div class="next-name" id="nextName"></div>
+          <div class="next-when" id="nextWhen"></div>
+
+          <div class="next-big">
+            <div class="next-big-what" id="nextBigWhat"></div>
+            <div class="next-big-num" id="nextBigNum"></div>
+            <div class="next-big-unit" id="nextBigUnit"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat stat-sold">
+          <div class="stat-num" id="statSold">0</div>
+          <div class="stat-what" style="white-space: pre-line" data-texto="inicio.stat.cartones-vendidos">cartones
+vendidos</div>
+        </div>
+        <div class="stat stat-in">
+          <div class="stat-num" id="statIn">0</div>
+          <div class="stat-what" style="white-space: pre-line" data-texto="inicio.stat.han-ingresado">han
+ingresado</div>
+        </div>
+        <div class="stat stat-prize">
+          <div class="stat-num" id="statPrizes">0</div>
+          <div class="stat-what" style="white-space: pre-line" data-texto="inicio.stat.premios-en-juego">premios
+en juego</div>
+        </div>
+      </div>
+
+      <button id="see" class="go mid wide">
+        <span data-texto="inicio.ver-bingo">Ver bingo</span>
+        <span class="go-arrow">→</span>
+      </button>
+
+      <button id="another" class="line mt">+ <span data-texto="inicio.crear-nuevo-bingo">Crear nuevo bingo</span></button>
+
+      <!-- Los OTROS que se juegan hoy. La tarjeta grande muestra uno solo, y con dos
+           bingos la misma noche el segundo caia entre los "otros" como si fuera de otro
+           dia. Aca arriba, con su propio rotulo, se ve que tambien es de hoy. -->
+      <div id="todayWrap" class="past-wrap hidden">
+        <div class="row-head">
+          <div id="todayTag" class="head-small" data-texto="inicio.tambien-hoy">Tambien hoy</div>
+        </div>
+        <div id="todayList"></div>
+      </div>
+
+      <div id="pastWrap" class="past-wrap hidden">
+        <div class="row-head">
+          <div id="pastTag" class="head-small" data-texto="inicio.bingos-anteriores">Bingos anteriores</div>
+          <button id="seeAll" class="link" data-texto="inicio.ver-todos">Ver todos</button>
+        </div>
+        <div id="past"></div>
+      </div>
+    </section>
+
+    <!-- ══ LA LISTA COMPLETA ════════════════════════════════════════ -->
+    <!-- Sin control segmentado: las dos secciones van una debajo de la otra. Elegir
+         entre "Proximos" y "Anteriores" era un toque para esconder la mitad de lo
+         que uno vino a ver. -->
+    <section id="all" class="hidden">
+      <div id="groupNext" class="group hidden">
+        <div class="head-small" data-texto="inicio.proximos">Proximos</div>
+        <div id="listNext"></div>
+      </div>
+
+      <div id="groupPast" class="group hidden">
+        <div class="head-small" data-texto="inicio.anteriores">Anteriores</div>
+        <div id="listPast"></div>
+      </div>
+
+      <section id="allNone" class="empty-home hidden">
+        <img class="hero hero-small" src="assets/org-empty.webp" alt="">
+        <div class="none-title" data-texto="inicio.ninguno.titulo">Aun no tenes bingos</div>
+        <div class="none-sub" data-texto="inicio.ninguno.explicacion">Crea tu primer bingo y empeza a organizar tu bingo.</div>
+        <button id="firstToo" class="go wide" data-texto="inicio.crear-mi-primer-bingo">Crear mi primer bingo</button>
+      </section>
+    </section>
+
+    <!-- ══ VENTAS ═══════════════════════════════════════════════════════
+         Cuenta cartones siempre, y plata cuando el bingo tiene precio: la cajita del
+         medio se llena sola el dia que el organizador se lo ponga. -->
+    <section id="ventas" class="hidden">
+      <!-- Ventas mira UN bingo a la vez, como la maqueta: "cuanto vendi" es una
+           pregunta de una noche, no de todas juntas. El selector es lo que la cambia. -->
+      <div id="vPickWrap">
+        <span class="label" data-texto="inicio.ventas.bingo">Bingo</span>
+        <div class="select">
+          <select id="vPick" class="field"></select>
+        </div>
+      </div>
+
+      <!-- Las tres cajitas de la maqueta. La del medio es la plata, y va en su lugar
+           con el hueco a la vista: sacarla cambiaria la forma de la pantalla, y ponerle
+           un numero inventado seria peor que dejarla vacia. -->
+      <div class="boxes-three">
+        <div class="tri tri-sold">
+          <div id="vSold" class="tri-num">0</div>
+          <div class="tri-what" data-texto="inicio.ventas.cartones-vendidos">cartones vendidos</div>
+          <div id="vSoldPct" class="tri-note"></div>
+        </div>
+        <div class="tri tri-money">
+          <div id="vMoney" class="tri-num tri-off">—</div>
+          <div class="tri-what" data-texto="inicio.ventas.en-ventas">en ventas</div>
+          <div id="vMoneyNote" class="tri-note tri-bad" data-texto="inicio.ventas.falta-el-precio">falta el precio</div>
+        </div>
+        <div class="tri tri-left">
+          <div id="vLeft" class="tri-num">0</div>
+          <div class="tri-what" data-texto="inicio.ventas.por-vender">por vender</div>
+          <div id="vOf" class="tri-note"></div>
+        </div>
+      </div>
+
+      <div id="vProgress" class="card-plain hidden">
+        <div class="tag-line" data-texto="inicio.ventas.titulo">VENTAS DE CARTONES</div>
+        <div id="vProgressNum" class="spread-num">0 / 0</div>
+        <div class="bar-wrap mt"><div id="vBar" class="bar-fill"></div></div>
+        <div id="vPct" class="spread-range"></div>
+      </div>
+
+      <div id="vNone" class="none hidden"></div>
+
+      <div id="vWhoWrap" class="hidden">
+        <div class="head-small mt-big" data-texto="inicio.ventas.por-colaborador">Ventas por colaborador</div>
+        <div id="vWho"></div>
+      </div>
+
+      <!-- Lo que falta, dicho una vez y no en cada caja. Son DOS cosas y una sola causa
+           cada una: sin precio no hay plata que sumar, y sin la hora de cada venta no
+           hay "cartones por dia" que dibujar. -->
+      <p id="vMissing" class="hint mt-big"></p>
+    </section>
+
+    <!-- ══ MAS ══════════════════════════════════════════════════════
+         Lo que no es de ninguna noche en particular. Decia "Configuracion y otras
+         opciones · proximamente" y prometia algo que no existia: una pestana entera
+         de la barra gastada en avisar que no hay nada. Ahora tiene lo que de verdad
+         va aca, y la palabra configuracion vuelve el dia que haya algo que configurar. -->
+    <section id="mas" class="hidden">
+      <div class="lista">
+        <button id="masEnsayo" class="opcion">
+          <span class="opcion-icono ambar">&#127917;</span>
+          <span class="opcion-que"><b id="masEnsayoTitle" data-texto="inicio.mas.ensayo.crear">Crear bingo de ensayo</b>
+            <i id="masEnsayoSub" data-texto="inicio.mas.ensayo.sub.crear">se arma y se juega igual que uno real; nada cuenta</i></span>
+          <span class="opcion-ir">&#8250;</span>
+        </button>
+
+        <div class="raya"></div>
+
+        <button id="masPapel" class="opcion">
+          <span class="opcion-icono">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8a7 7 0 0112-2.5"/><path d="M17 3.5v3h-3"/>
+              <path d="M19 16a7 7 0 01-12 2.5"/><path d="M7 20.5v-3h3"/></svg>
+          </span>
+          <span class="opcion-que"><b data-texto="inicio.mas.cambiar-papel">Cambiar de papel</b>
+            <i data-texto="inicio.mas.cambiar-papel.sub">volver a la portada: organizar no es lo unico que haces</i></span>
+          <span class="opcion-ir">&#8250;</span>
+        </button>
+
+        <div class="raya"></div>
+
+        <button id="masAcerca" class="opcion">
+          <span class="opcion-icono">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><path d="M12 7.8v.3"/></svg>
+          </span>
+          <span class="opcion-que"><b data-texto="inicio.mas.acerca">Acerca de Bingo</b>
+            <i id="masVersion" data-texto="inicio.mas.version.sin">la version y de quien es</i></span>
+          <span class="opcion-ir">&#8250;</span>
+        </button>
+      </div>
+    </section>
+
+    <div class="fold">
+      <button id="logFold" class="fold-head">
+        <span data-texto="general.lo-que-va-pasando">lo que va pasando</span>
+        <span id="logChevron" class="chev">›</span>
+      </button>
+      <pre id="logBox" class="log hidden"></pre>
+    </div>
+
+  </main>
+
+  <nav class="tabs">
+    <div id="tabSlot" class="tab-slot"><div class="tab-mark"></div></div>
+
+    <button class="tab on" data-go="inicio">
+      <span class="tab-ico">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3.5 10.5 12 3.5l8.5 7v9a1 1 0 0 1-1 1h-5.25v-6h-4.5v6H4.5a1 1 0 0 1-1-1v-9Z" fill="currentColor"/></svg>
+      </span>
+      <span class="tab-say" data-texto="inicio.pestana.inicio">Inicio</span>
+    </button>
+
+    <button class="tab" data-go="funciones">
+      <span class="tab-ico">
+        <svg viewBox="0 0 24 24" width="24" height="24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 3.5v4M17 3.5v4M3.5 9h17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="13" r="1" fill="currentColor"/><circle cx="12" cy="13" r="1" fill="currentColor"/><circle cx="16" cy="13" r="1" fill="currentColor"/><circle cx="8" cy="17" r="1" fill="currentColor"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>
+      </span>
+      <span class="tab-say" data-texto="inicio.pestana.bingos">Bingos</span>
+    </button>
+
+    <button class="tab" data-go="ventas">
+      <span class="tab-ico">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M6 4.5h12a1.5 1.5 0 0 1 1.5 1.5v3a2.5 2.5 0 0 0 0 5v4A1.5 1.5 0 0 1 18 19.5H6A1.5 1.5 0 0 1 4.5 18v-4a2.5 2.5 0 0 0 0-5V6A1.5 1.5 0 0 1 6 4.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.5v9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="1.8 2.2"/></svg>
+      </span>
+      <span class="tab-say" data-texto="inicio.pestana.ventas">Ventas</span>
+    </button>
+
+    <button class="tab" data-go="mas">
+      <span class="tab-ico">
+        <svg viewBox="0 0 24 24" width="24" height="24"><circle cx="5.5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="18.5" cy="12" r="1.8" fill="currentColor"/></svg>
+      </span>
+      <span class="tab-say" data-texto="inicio.pestana.mas">Mas</span>
+    </button>
+  </nav>
+
+</div>
+
+<script src="patterns.js"></script>
+<script src="home.js"></script>
+</body>
+</html>

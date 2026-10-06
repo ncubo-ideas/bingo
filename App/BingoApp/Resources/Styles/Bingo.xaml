@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Color x:Key="Ink">#14161A</Color>
+    <Color x:Key="InkSoft">#5B6270</Color>
+    <Color x:Key="Rule">#E3E6EB</Color>
+    <Color x:Key="Ground">#F7F8FA</Color>
+    <Color x:Key="Paper">#FFFFFF</Color>
+
+    <Color x:Key="Organizer">#4F46E5</Color>
+    <Color x:Key="Seller">#B45309</Color>
+    <Color x:Key="Player">#15803D</Color>
+    <Color x:Key="Alert">#B00020</Color>
+
+    <Color x:Key="OrganizerSoft">#EEF0FE</Color>
+    <Color x:Key="SellerSoft">#FDF3E7</Color>
+    <Color x:Key="PlayerSoft">#EAF6EE</Color>
+
+    <Style x:Key="Title" TargetType="Label">
+        <Setter Property="FontSize" Value="30" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource Ink}" />
+    </Style>
+
+    <Style x:Key="Explainer" TargetType="Label">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource InkSoft}" />
+    </Style>
+
+    <Style x:Key="Rubric" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource InkSoft}" />
+        <Setter Property="CharacterSpacing" Value="1.4" />
+    </Style>
+
+    <Style x:Key="RoleName" TargetType="Label">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource Ink}" />
+    </Style>
+
+    <!-- ── la cabecera que no rueda ──────────────────────────────────────── -->
+
+    <Style x:Key="Header" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Paper}" />
+        <Setter Property="Stroke" Value="{StaticResource Rule}" />
+        <Setter Property="StrokeThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="18,14,18,12" />
+    </Style>
+
+    <Style x:Key="SmallTitle" TargetType="Label">
+        <Setter Property="FontSize" Value="21" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource Ink}" />
+    </Style>
+
+    <Style x:Key="Detail" TargetType="Label">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="{StaticResource InkSoft}" />
+    </Style>
+
+    <!-- ── la cabecera de un wizard: del color de quien lo camina ─────────
+         Es la misma fila fija de siempre, pintada. Lleva el paso en que va,
+         que es lo unico que no puede perderse de vista mientras se arma algo
+         largo: cuanto falta y que viene. -->
+
+    <Style x:Key="HeaderInColor" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Organizer}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="18,14,18,16" />
+    </Style>
+
+    <Style x:Key="TitleInColor" TargetType="Label">
+        <Setter Property="FontSize" Value="19" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <!-- El punto de un paso. Vacio es lo que falta; lleno, donde va o por
+         donde paso. -->
+    <Style x:Key="StepDot" TargetType="Border">
+        <Setter Property="WidthRequest" Value="34" />
+        <Setter Property="HeightRequest" Value="34" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Stroke" Value="White" />
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="17" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="StepNumber" TargetType="Label">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="StepName" TargetType="Label">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="CharacterSpacing" Value="1.4" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="BackArrow" TargetType="Button">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="BackgroundColor" Value="#332F2AC7" />
+        <Setter Property="WidthRequest" Value="42" />
+        <Setter Property="HeightRequest" Value="42" />
+        <Setter Property="CornerRadius" Value="21" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <!-- ── las pestanas de abajo ─────────────────────────────────────────── -->
+
+    <Style x:Key="Tab" TargetType="Button">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CharacterSpacing" Value="1" />
+        <Setter Property="HeightRequest" Value="46" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource InkSoft}" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+    </Style>
+
+    <!-- ── una seccion que se pliega ─────────────────────────────────────── -->
+
+    <Style x:Key="Fold" TargetType="Button">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="HeightRequest" Value="48" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Ink}" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+    </Style>
+
+    <!-- ── la bolita que se acaba de cantar, del color de su banda ───────── -->
+
+    <Style x:Key="Ball" TargetType="Border">
+        <Setter Property="WidthRequest" Value="64" />
+        <Setter Property="HeightRequest" Value="64" />
+        <Setter Property="BackgroundColor" Value="{StaticResource InkSoft}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="32" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AlertPanel" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Paper}" />
+        <Setter Property="Stroke" Value="{StaticResource Alert}" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="18" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Panel" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource Paper}" />
+        <Setter Property="Stroke" Value="{StaticResource Rule}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="18" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="18" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BigButton" TargetType="Button">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="HeightRequest" Value="58" />
+        <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <!-- ── la pildora del numero de colaboradora, en la cabecera ─────────── -->
+
+    <Style x:Key="Pill" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SellerSoft}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="12" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── una zona hundida adentro de una tarjeta, sin borde sobre borde ── -->
+
+    <Style x:Key="Well" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SellerSoft}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="14" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── lo que deshace algo: la unica accion roja de la pantalla ──────── -->
+
+    <Style x:Key="DangerButton" TargetType="Button">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Alert}" />
+        <Setter Property="BorderColor" Value="{StaticResource Alert}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <Style x:Key="QuietButton" TargetType="Button">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource InkSoft}" />
+        <Setter Property="BorderColor" Value="{StaticResource Rule}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="CornerRadius" Value="14" />
+    </Style>
+
+    <Style x:Key="CopyIcon" TargetType="Path">
+        <Setter Property="Stroke" Value="{StaticResource InkSoft}" />
+        <Setter Property="StrokeThickness" Value="1.8" />
+        <Setter Property="Fill" Value="Transparent" />
+        <Setter Property="StrokeLineJoin" Value="Round" />
+        <Setter Property="Aspect" Value="Uniform" />
+        <Setter Property="HeightRequest" Value="20" />
+        <Setter Property="WidthRequest" Value="20" />
+    </Style>
+
+    <Style x:Key="CopyTarget" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="CopiedFlash" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CharacterSpacing" Value="1.4" />
+        <Setter Property="TextColor" Value="{StaticResource Player}" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <Style x:Key="Log" TargetType="Editor">
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="FontFamily" Value="monospace" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextColor" Value="{StaticResource InkSoft}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+    </Style>
+
+</ResourceDictionary>

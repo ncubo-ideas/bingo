@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/App/">
+    <Project Path="App/BingoApp/BingoApp.csproj" />
+    <Project Path="App/BingoWeb/BingoWeb.csproj" />
+  </Folder>
+  <Folder Name="/Engine/">
+    <Project Path="Engine/BingoEngine/BingoEngine.csproj" />
+    <Project Path="Engine/Village/Village.csproj" />
+  </Folder>
+  <Folder Name="/Test/">
+    <Project Path="Test/BingoAppTests/BingoAppTests.csproj" />
+    <Project Path="Test/BingoEngineDslTests/BingoEngineDslTests.csproj" />
+    <Project Path="Test/BingoEngineTests/BingoEngineTests.csproj" />
+    <Project Path="Test/VillageTests/VillageTests.csproj" />
+  </Folder>
+  <Folder Name="/Docker/">
+    <File Path="Docker/build.ps1" />
+    <File Path="Docker/build.sh" />
+    <File Path="Docker/docker-compose.yml" />
+    <File Path="Docker/Dockerfile" />
+  </Folder>
+</Solution>

@@ -1,0 +1,339 @@
+/* La pantalla de cantar del organizador.
+
+   Lo que comparte con la colaboradora a la que le toco cantar vive en organizer.css:
+   la tombola con sus colores de banda, la bolita grande, el cartelito de cuando no hay
+   ronda sonando y el marco liso. Aca queda solo lo que es de esta pantalla y de nadie
+   mas: el tablero de como van, los pedidos de anular, los verbos de la ronda y el
+   bingo. */
+
+body { background: var(--papel); }
+
+.cantar-body { padding-top: 16px; }
+
+/* Lo de "me equivoque" vive en organizer.css: lo comparten las dos
+   pantallas que cantan. */
+
+/* ── como van ─────────────────────────────────────────────────────────── */
+
+.row-board {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--linea);
+}
+
+.row-who { flex: 1; min-width: 0; }
+
+.row-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.row-name.hot { color: var(--morado); }
+
+.row-fig {
+  font-size: 12.5px;
+  color: var(--tinta2);
+  margin-top: 1px;
+}
+
+.row-far {
+  flex: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tinta2);
+}
+
+.row-far.hot { color: var(--morado); }
+.row-far.done { color: #12805A; }
+.row-far.no { color: var(--tinta3); }
+
+/* ── la ronda ─────────────────────────────────────────────────────────── */
+
+.round-now {
+  font-size: 15px;
+  color: var(--tinta2);
+  margin: 10px 0 4px;
+  line-height: 1.45;
+}
+
+.history { margin-top: 12px; }
+
+.history-line {
+  font-size: 13px;
+  color: var(--tinta2);
+  padding: 7px 0;
+  border-top: 1px solid var(--linea);
+  line-height: 1.4;
+}
+
+/* ── lo que alguien pide anular ───────────────────────────────────────── */
+
+.pleas {
+  border: 2px solid var(--alerta);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.pleas-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--alerta);
+}
+
+.pleas-sub {
+  font-size: 13px;
+  color: var(--tinta2);
+  line-height: 1.45;
+  margin-top: 6px;
+}
+
+.plea {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--linea);
+}
+
+.plea-who {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.plea-acts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* ── el bingo ─────────────────────────────────────────────────────────── */
+
+.bingo {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 24, 39, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  animation: fade 0.2s ease both;
+}
+
+.bingo-card {
+  width: 100%;
+  border-radius: 26px;
+  padding: 26px 22px;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(150deg, #6D5CF0 0%, var(--morado) 55%, #3F2FBE 100%);
+  box-shadow: 0 24px 44px -16px rgba(0, 0, 0, 0.5);
+  animation: rise 0.28s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+.bingo-tag {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: 1px;
+}
+
+.bingo-who {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 21px;
+  margin-top: 10px;
+}
+
+.bingo-what {
+  font-size: 15px;
+  opacity: 0.88;
+  margin-top: 4px;
+}
+
+.bingo .go {
+  background: #fff;
+  color: var(--morado);
+  box-shadow: none;
+  margin-top: 20px;
+}
+
+.bingo .plain { color: rgba(255, 255, 255, 0.85); }
+
+/* El toast sube por encima de la tombola. */
+.toast { bottom: 34px; }
+
+
+/* ── lo que se juega, arriba del teclado ────────────────────────────────
+     Compacto a proposito: cada pixel de mas aca empuja el boton de ingresar hacia el
+     pliegue, y detras del pliegue hay que scrollear en cada bolita. */
+
+.playing {
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+  background: var(--papel);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.playing-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--tinta2);
+  margin-bottom: 10px;
+}
+
+.playing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* La forma de cada juego --.playing-one y lo que va dentro-- se define mas abajo, en
+   "juego actual, en dos columnas". Aca vivia una copia del diseño viejo de una sola
+   columna, tapada entera por esa: cinco bloques muertos, menos un `flex: 1` en
+   .playing-what que seguia vivo y estiraba la etiqueta. Esa sobra era justo lo que hacia
+   que esta pantalla y la del colaborador no se vieran iguales. */
+
+/* Cuantas van y cuantas quedan. Al que canta le importa el resto: es lo que le dice si
+   la ronda va por la mitad o si ya casi. */
+.last-left {
+  font-size: 13px;
+  color: var(--tinta3);
+  margin-top: 2px;
+}
+
+/* Una tecla que no puede llevar a ninguna bolita sin cantar se apaga. No se esconde:
+   moverlas de sitio a mitad de la noche seria peor que dejarlas quietas y grises. Y en
+   gris a secas, sin opacidad: con dos digitos puestos se apagan las diez a la vez, y
+   fantasmeadas eso se lee como pantalla colgada. */
+.pad-key:disabled { color: var(--tinta3); }
+
+
+/* ── la cabecera de cantar ──────────────────────────────────────────────
+     Morada y con las pestañas adentro. Mientras se canta, la cabecera ES la pantalla:
+     dice donde va uno y como cambiar de vista. Blanca parecia un formulario. */
+
+.crown-call {
+  flex: none;
+  background: var(--morado);
+  border-radius: 0 0 24px 24px;
+  padding: calc(10px + max(env(safe-area-inset-top), var(--arriba, 30px))) 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #fff;
+}
+
+.crown-call-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crown-round {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.crown-round:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.3); }
+
+/* El hueco de la derecha guarda el sitio para que el titulo quede centrado. */
+.crown-hole { background: none; pointer-events: none; }
+
+.crown-call-mid { flex: 1; min-width: 0; text-align: center; }
+
+.crown-call-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crown-call-round {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Las pestañas sobre morado: la elegida en blanco, la otra en el mismo morado con la
+   letra clara. La regla compartida las pinta sobre gris y aca no sirve. */
+.crown-call .call-tabs {
+  background: rgba(255, 255, 255, 0.16);
+  margin-bottom: 0;
+}
+
+.crown-call .call-tab { color: rgba(255, 255, 255, 0.85); }
+
+.crown-call .call-tab.on {
+  background: var(--papel);
+  color: var(--morado);
+}
+
+/* ── juego actual, en dos columnas ──────────────────────────────────────
+     FIGURA a un lado y PREMIO al otro, con su divisor, como la maqueta. Con varios
+     juegos abiertos se apilan: en este bingo corren a la vez sobre la misma tombola. */
+
+.playing-one {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.playing-one + .playing-one { border-top: 1px solid var(--linea); padding-top: 12px; }
+
+.playing-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.playing-cut { align-self: stretch; background: var(--linea); }
+
+.playing-what {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  color: var(--tinta3);
+}
+
+.playing-figure {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--tinta);
+  text-align: center;
+}
+
+.playing-prize {
+  font-size: 14px;
+  color: var(--tinta2);
+}
+
+.playing-ico {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  object-fit: contain;
+}

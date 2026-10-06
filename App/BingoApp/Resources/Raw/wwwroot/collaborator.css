@@ -1,0 +1,2196 @@
+/* La pantalla de quien ayuda. Los tokens y casi todos los componentes salen de
+   organizer.css -- incluida la tombola, que comparte con el organizador cuando a ella
+   le toca cantar. Aca vive solo lo propio.
+
+   El acento NO es el morado del organizador: es el VERDE de quien vende. Los tres papeles
+   de la noche tienen su color y no conviene que se confundan -- quien mira el telefono de
+   al lado tiene que saber de un vistazo cual es cual. */
+
+:root {
+  /* El verde sale medido de la maqueta de Fer, donde toda la venta del colaborador va en
+     el mismo tono: los botones de cantidad, el indicador de pasos y el boton de seguir.
+     Antes esto era ambar. La regla que importaba -- que el vendedor NO use el morado del
+     organizador -- se cumple igual, y ademas coincidimos con el diseno en el hex, que era
+     lo que faltaba: ella tambien separo los papeles por color, solo que eligio verde.
+     De paso el ambar queda libre, que es con lo que Fer marca el deber de cantar. */
+  --ayuda: #0FA37A;
+  --ayuda-hondo: #0B7F5F;
+  --ayuda-suave: #E3F6EE;
+  --ayuda-tinta: #0B7F5F;
+
+  /* Dos que faltaban y que en su maqueta si tienen papel propio: el borde de las pastillas
+     claras, y el verde apagado del boton que todavia no se puede tocar. Antes lo apagado
+     se pintaba con var(--linea) gris, que se lee como "roto" y no como "todavia no". */
+  --ayuda-borde: #D6EEE2;
+  --ayuda-apagado: #C7E6D8;
+
+  /* Los neutros vuelven a los de organizer.css. Estaban corridos a tibio a proposito,
+     porque los azulados peleaban con el ambar; con el verde esa pelea no existe -- son los
+     mismos neutros frios que Fer usa al lado de su verde en toda la maqueta. Un token que
+     ya no resuelve nada es un token que miente, asi que el bloque se va entero. */
+}
+
+/* El SUELO es tibio y las piezas van en papel blanco encima. Todo era blanco sobre
+   blanco: sin planos nada se agrupa, cada cosa flota suelta y lo que sobra abajo se lee
+   como pantalla vacia en vez de como aire. Con un suelo, tres filas ya son un bloque. */
+body { background: var(--hueco); }
+
+.helper-body { background: var(--hueco); }
+
+/* Cada seccion es una tarjeta de papel sobre ese suelo. */
+#sell, #sold, #other, #custody {
+  background: var(--papel);
+  border-radius: 22px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(11, 127, 95, 0.05), 0 8px 20px -12px rgba(11, 127, 95, 0.16);
+}
+
+#custody { padding: 15px 16px; }
+
+/* La cabecera va en el color de quien mira, como la casa del colaborador de la maqueta:
+   degradado, esquinas de abajo redondeadas y todo el texto en blanco. En blanco plano se
+   leia como una barra prestada de otra pantalla, y encima peleaba con la venta, que si es
+   de color. El radio de 28px es el de ella. */
+.head-plain {
+  background: linear-gradient(160deg, var(--ayuda), var(--ayuda-hondo));
+  border-bottom: none;
+  border-radius: 0 0 28px 28px;
+}
+
+/* A quien le toca cantar NO se le pinta de vendedora: ese oficio es del organizador
+   prestado, y ya lleva su morado en la pestania. */
+.head-plain.head-canta { background: linear-gradient(160deg, var(--morado), #3E35C9); }
+
+.head-plain #who { color: #fff; }
+.head-plain #myDuty { color: rgba(255, 255, 255, 0.85); }
+.head-plain #roundLine { color: rgba(255, 255, 255, 0.95); }
+
+.head-plain .back-plain { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.head-plain .back-plain:active { background: rgba(255, 255, 255, 0.32); }
+
+.head-plain .num-pill { background: rgba(255, 255, 255, 0.2); color: #fff; }
+
+/* En la puerta no hay cabecera, y sin ella nada empuja el contenido debajo de la
+   hora del sistema: el WebView dibuja de borde a borde y env(safe-area-inset-top)
+   contesta 0 adentro.
+   El hueco es el estado POR DEFECTO y no el excepcional: la pagina abre siempre en
+   la puerta, y el telefono tarda en contestar de que va. Al reves -- agregar el
+   hueco cuando llega el retrato -- el primer cuadro sale con el rotulo encima de
+   la hora. Cuando la cabecera aparece, el minimo lo lleva ella. */
+.helper-body { padding-top: calc(18px + max(env(safe-area-inset-top), var(--arriba, 30px))); }
+
+.helper-body.inside { padding-top: 18px; }
+
+/* La pestania arranca despues del taco, que vive arriba de todas: sin esto el
+   primer rotulo queda pegado al marco de los cartones. */
+#sell, #sold, #call, #other { padding-top: 22px; }
+
+/* ── la cabecera ──────────────────────────────────────────────────────── */
+
+.head-round {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ayuda);
+  margin-top: 3px;
+}
+
+/* Su numero, arriba a la derecha y siempre a la vista: es como la nombra el
+   organizador y como se la distingue de otra que se llame igual. */
+.num-pill {
+  flex: none;
+  align-self: center;
+  padding: 7px 13px;
+  border-radius: 100px;
+  background: var(--ayuda-suave);
+  color: var(--ayuda);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* ── el acento de quien ayuda ─────────────────────────────────────────── */
+
+.go.help {
+  background: var(--ayuda);
+  box-shadow: 0 14px 26px -8px rgba(15, 163, 122, 0.4);
+}
+
+.go.help:active { background: var(--ayuda-hondo); }
+
+.tag-help { color: var(--ayuda); }
+
+.tag-danger { color: var(--alerta); }
+
+/* ── piezas de formulario ─────────────────────────────────────────────── */
+
+/* El campo con su boton al lado: escribir el numero o escanearlo son el MISMO
+   paso, y separarlos en dos renglones hace parecer que son dos. */
+.row-two {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.row-two .field { flex: 1; min-width: 0; }
+
+.soft.narrow {
+  width: 118px;
+  height: 58px;
+  margin-top: 0;
+  flex: none;
+}
+
+.spaced { letter-spacing: 2px; }
+
+.small-field { font-size: 12px; }
+
+/* Los tres retoques de texto que se comparten (.mt-big, .no-top, .soft-note) viven en
+   organizer.css: los usan tambien el detalle y la pantalla de cantar. */
+
+/* Cuando el numero que escribio ya se conoce: se le dice quien es antes de que
+   escriba el nombre, para que no lo escriba distinto que la vez pasada. */
+.known {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1F7A47;
+  margin-top: 8px;
+}
+
+/* ── el taco de cartones ──────────────────────────────────────────────── */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chip-card {
+  min-width: 54px;
+  height: 54px;
+  padding: 0 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 14px;
+  background: var(--papel);
+  color: var(--ayuda);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-card:active { transform: scale(0.94); }
+
+.chip-card.on {
+  background: var(--ayuda);
+  border-color: var(--ayuda);
+  color: #fff;
+}
+
+/* ── los vendidos ─────────────────────────────────────────────────────── */
+
+.sold-one {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--linea);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sold-num {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--ayuda-suave);
+  color: var(--ayuda);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.sold-one.on .sold-num {
+  background: var(--ayuda);
+  color: #fff;
+}
+
+.sold-what { flex: 1; min-width: 0; }
+
+.sold-who {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sold-mark {
+  font-family: ui-monospace, monospace;
+  font-size: 12.5px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+.danger-card {
+  border: 2px solid var(--alerta);
+  border-radius: 18px;
+  padding: 16px;
+  margin-top: 18px;
+}
+
+/* ── los plegables ────────────────────────────────────────────────────── */
+
+.fold-body { padding: 0 0 16px; }
+
+.fold-body .field-wrap:first-child { margin-top: 0; }
+
+.my-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--ayuda);
+  margin-bottom: 12px;
+}
+
+/* ── mis bingos, en la puerta ──────────────────────────────────────── */
+
+.mine-one {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 15px 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  background: var(--papel);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mine-one:active { border-color: var(--ayuda); }
+
+/* La que esta abierta ahora se distingue: la lista es el conmutador entre bingos,
+   y sin esto no se sabe de cual se viene. */
+.mine-one.now {
+  border-color: var(--ayuda);
+  background: var(--ayuda-suave);
+}
+
+.mine-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* La pastilla de "aqui estas" habla en el color de quien ayuda: la morada es del
+   organizador, y adentro de una fila ambar se lee como si fuera de otra pantalla. */
+.chip-here { background: var(--ayuda); color: #fff; }
+
+.mine-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.mine-duty {
+  font-size: 13px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+.mine-go {
+  flex: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ayuda);
+}
+
+/* ── las pestanias ────────────────────────────────────────────────────────
+     Dos o tres, segun el oficio. En vez de fijar las columnas, se reparten solas:
+     las que no son de su oficio no existen, no estan escondidas. */
+
+.helper-tabs {
+  flex: none;
+  display: flex;
+  padding: 6px 8px calc(10px + max(env(safe-area-inset-bottom), 6px));
+  background: var(--papel);
+  border-top: 1px solid var(--borde);
+  gap: 4px;
+}
+
+/* Sin recuadro ni relleno: con caja parecian tres botones apretados y las apagadas
+   competian con la encendida. La activa se pinta y lleva una guia de 3px arriba, que
+   es lo que convierte tres botones en una barra. */
+.htab {
+  flex: 1;
+  min-height: 52px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tinta3);
+  cursor: pointer;
+  position: relative;
+  padding: 11px 2px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.2s ease;
+}
+
+.htab svg { width: 21px; height: 21px; }
+
+.htab.on { color: var(--ayuda); }
+
+.htab.on::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--ayuda);
+}
+
+/* Cuando le toca cantar, esa pestania es del color del organizador: es trabajo suyo
+   prestado, y el color lo dice sin explicarlo. */
+.htab.on[data-go="call"] { color: var(--morado); }
+.htab.on[data-go="call"]::before { background: var(--morado); }
+
+/* ── la capa del codigo ─────────────────────────────────────────────────
+     Encima de todo, porque la abren dos acciones que viven en pestanias distintas
+     y no puede nacer fuera de pantalla justo cuando es lo unico que importa. */
+
+/* La capa que se pone encima de la pantalla (.layer/.layer-card/.code-text) vive en
+   organizer.css: la comparten esta pagina y el detalle, que ensena ahi el QR de cada
+   colaborador. Lo unico propio es el marco, que va en el color de quien mira. */
+.layer-card { border-color: var(--ayuda); text-align: center; }
+
+/* ── el codigo del comprador ────────────────────────────────────────────────
+   Abre diciendo que la venta ENTRO. Antes abria con "PARA CARMEN" en mayusculas: decia a
+   quien, pero no que ya estaba hecho, que es lo primero que ella necesita saber despues
+   de tocar el boton. El sello es el de la maqueta. */
+.sello-hecho {
+  width: 60px;
+  height: 60px;
+  margin: 4px auto 0;
+  border-radius: 50%;
+  background: var(--ayuda-suave);
+  color: var(--ayuda-tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sello-que {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--tinta);
+  margin-top: 10px;
+}
+
+.sello-quien { font-weight: 700; font-size: 16px; color: var(--tinta); margin-top: 12px; }
+
+.sello-cuanto { font-size: 13px; color: var(--tinta3); margin-top: 1px; }
+
+/* El QR es lo unico que la otra persona tiene que ver, asi que se lleva el lugar grande. */
+#codeQr { margin-top: 16px; }
+
+/* El registro es el unico canal de error de esta pantalla, asi que el rotulo del
+   plegable arrastra la ultima linea dicha -- y se pone rojo cuando algo fallo. Sin
+   esto, un "no" quedaria solo adentro de un plegable que nadie abre. */
+.says-bad { color: var(--alerta); font-weight: 600; }
+
+/* El toast sube por encima de las pestanias. */
+.toast { bottom: 96px; }
+
+/* ══ EL TACO: cien cartones que se leen de un vistazo ═══════════════════
+   El organizador los entrega en tira ordenada, asi que el taco es un RANGO. Cien
+   fichas eran un muro y contarlas imposible; "78, del 45 al 122" es exactamente el
+   bloque de papeles que ella tiene en la mano. */
+
+.taco {
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 4px;
+}
+
+.taco-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.taco-rotulo {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tinta3);
+  font-weight: 600;
+}
+
+.taco-mas {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ayuda);
+  cursor: pointer;
+  padding: 0;
+}
+
+.rango { display: flex; align-items: baseline; gap: 9px; }
+.rango b { font-family: 'Fredoka', sans-serif; font-size: 30px; font-weight: 600; line-height: 1; }
+.rango span { font-size: 12.5px; color: var(--tinta2); }
+
+.barra {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--linea);
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.barra i { display: block; height: 100%; background: var(--ayuda); border-radius: 3px; }
+
+/* El tablero: agrupado de a doce y con los entregados apagados, se lee igual que el
+   tablero de bingo que ya conocen y el hueco salta a la vista. */
+.tablero {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  margin-top: 14px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.tc {
+  height: 33px;
+  border-radius: 9px;
+  background: var(--ayuda-suave);
+  border: 1.5px solid var(--ayuda-suave);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ayuda-hondo);
+}
+
+.tc.ido { background: var(--papel); border-color: var(--linea); color: var(--tinta3); }
+
+.decena {
+  grid-column: 1 / -1;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--tinta3);
+  font-weight: 600;
+  margin: 9px 0 1px;
+}
+
+.leyenda {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 13px;
+  font-size: 11px;
+  color: var(--tinta2);
+}
+
+.leyenda i {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 4px;
+  margin-right: 5px;
+  vertical-align: -1px;
+  background: var(--ayuda-suave);
+  border: 1.5px solid var(--ayuda-suave);
+}
+
+.leyenda i.ido { background: var(--papel); border-color: var(--linea); }
+
+/* ══ LA VENTA EN PASOS ══════════════════════════════════════════════════ */
+
+.paso { animation: entra 0.24s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+@keyframes entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── la venta, a pantalla completa ──────────────────────────────────────────
+   Copiada de la maqueta: la venta NO vive adentro de una tarjeta con las pestanias
+   debajo, se pone encima de todo. Es lo que le da a cada paso la pantalla entera para una
+   sola pregunta, y lo que deja anclar el boton de seguir abajo en vez de que quede
+   flotando a media altura. Mientras esta arriba tapa la barra de pestanias a proposito:
+   la unica salida es la flecha. */
+.venta-full {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--papel);
+}
+
+/* La capa del codigo tiene que quedar por ENCIMA de la venta: nace justo cuando la venta
+   entro, y es lo unico que importa en ese momento. Sin esto la venta la tapaba. */
+.layer { z-index: 60; }
+
+.venta-head {
+  flex: none;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: calc(max(env(safe-area-inset-top), var(--arriba, 30px)) + 14px) 20px 18px;
+  background: linear-gradient(160deg, var(--ayuda), var(--ayuda-hondo));
+  border-radius: 0 0 24px 24px;
+}
+
+.venta-atras {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: none;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.venta-atras:active { background: rgba(255, 255, 255, 0.32); }
+
+.venta-titulo {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: #fff;
+}
+
+.venta-donde { font-size: 12px; color: rgba(255, 255, 255, 0.85); margin-top: 1px; }
+
+/* Cada paso es una hoja de alto completo: el cuerpo se estira y scrollea, y el pie con el
+   boton se queda pegado abajo pase lo que pase adentro. */
+.hoja {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hoja-cuerpo {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 24px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* La pregunta corta va CENTRADA en el alto libre, como en la maqueta: con el contenido
+   pegado arriba, media pantalla en blanco se lee como que falta algo. */
+.hoja-cuerpo.centrado {
+  justify-content: center;
+  text-align: center;
+  gap: 0;
+}
+
+.hoja-pie {
+  flex: none;
+  padding: 12px 24px calc(max(env(safe-area-inset-bottom), 8px) + 12px);
+}
+
+/* El eco de lo ya contestado, arriba de la pregunta que sigue. */
+.cuanto-eco { margin: 0; font-size: 13.5px; color: var(--tinta2); }
+
+.pregunta.izq { text-align: left; font-size: 21px; }
+
+/* Los titulos de adentro de un panel: la pregunta grande es para la pantalla que tiene UNA
+   sola cosa que contestar; aca hay dos, y a 21px se pisan entre ellas. */
+.pregunta.chica { font-size: 18px; }
+
+/* ── el paso del comprador ──────────────────────────────────────────────────
+   El separador entre las dos formas de identificarlo. Sin el, el campo debajo del escaner
+   se leia como "ademas de escanear, escribi esto"; con el, queda claro que son dos caminos
+   para lo mismo y basta uno. Reemplaza al boton gris "Escribir su numero", que destapaba
+   un campo escondido: un toque y una caja de mas para algo que puede estar siempre. */
+.o-bien {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 12px;
+  color: var(--tinta3);
+  font-size: 12.5px;
+}
+
+.o-bien::before,
+.o-bien::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--linea);
+}
+
+/* El campo del numero: mas grande que un campo normal porque es un CODIGO que se compara
+   letra por letra contra la pantalla de otro telefono. */
+.field.grande {
+  height: 60px;
+  font-size: 17px;
+  text-align: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* El de la colega es un numero corto -- #1, #7 -- y no un codigo: va en Fredoka y sin
+   espaciado de letras, que ahi solo separaria digitos que se leen de un golpe. */
+.field.grande.numero {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0;
+}
+
+/* Escanear, como tecla cuadrada al lado del campo. Era un boton de texto tan ancho como
+   media fila: pesaba lo mismo que el campo y las dos formas competian. */
+/* Sin alto propio: .row-two estira, asi la tecla siempre mide lo que mida el campo de al
+   lado y no hay dos numeros que mantener iguales a mano. */
+.cuadro-scan {
+  width: 60px;
+  flex: none;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  background: #F7FBF9;
+  color: var(--ayuda-tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cuadro-scan:active { background: var(--ayuda-suave); border-color: var(--ayuda); }
+
+/* Las salidas, en texto y no en boton gris. Eran dos botones identicos al escaner en peso
+   visual, compitiendo con el camino principal; en texto se ven cuando se las busca y
+   desaparecen cuando no. */
+.salida {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ayuda-tinta);
+}
+
+.salida span { color: var(--tinta3); font-size: 16px; }
+
+.salida:active { opacity: 0.6; }
+
+/* ── la revision de la venta ────────────────────────────────────────────────
+   Medida de la maqueta. Lo que cambia respecto de lo que teniamos no es el estilo sino el
+   ORDEN: primero la persona con su cara, despues la flecha, despues lo que se lleva. Antes
+   eran tres renglones de datos -- "1 cartón / para Fff / el 6" -- que se leian como un
+   recibo; la pregunta que ella se hace antes de confirmar es a QUIEN le esta dando esto. */
+.quien-avatar {
+  width: 52px;
+  height: 52px;
+  margin: 6px auto 0;
+  border-radius: 50%;
+  background: var(--ayuda);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.quien-nombre { font-weight: 700; font-size: 17px; color: var(--tinta); margin-top: 6px; }
+
+/* Cuando lo grande es el NUMERO y no un nombre: se lee letra por letra contra la pantalla
+   del otro telefono, asi que va espaciado y en mayusculas. */
+.quien-nombre.marca { letter-spacing: 0.06em; text-transform: uppercase; }
+
+.quien-marca { font-size: 13px; color: var(--tinta3); margin-top: 1px; }
+
+/* La flecha dice "recibe" sin escribirlo. */
+.recibe-flecha { color: #C7C9D4; margin: 10px 0; display: flex; justify-content: center; }
+
+.recibe-que { font-weight: 700; font-size: 15.5px; color: var(--tinta); }
+
+.fichas-carton {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.ficha-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 100px;
+  background: #F7FBF9;
+  border: 1px solid var(--ayuda-borde);
+  color: var(--ayuda-tinta);
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+
+/* Cuantos, no cuales: ella dice el numero y el codigo agarra los de arriba. */
+/* UNA fila de seis, no dos de tres. Dos filas de botones de 68px ocupaban media pantalla
+   y empujaban abajo del fondo lo unico que importa: cuales despegar y el boton de seguir. */
+.cuantos { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+
+.cn {
+  height: 56px;
+  border-radius: 15px;
+  background: var(--papel);
+  border: 1.5px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--tinta);
+  cursor: pointer;
+  padding: 0;
+}
+
+.cn.on {
+  background: var(--ayuda);
+  border-color: var(--ayuda);
+  color: #fff;
+  box-shadow: 0 8px 18px -6px rgba(15, 163, 122, 0.45);
+}
+
+/* Lo que no puede dar se apaga ANTES de que lo toque: no hay "no se puede" despues. */
+.cn:disabled { background: var(--hueco); border-color: var(--hueco); color: var(--tinta3); }
+
+.cn.chico { font-size: 24px; color: var(--ayuda); }
+
+/* El taco, en una linea. Era una tarjeta con rotulo, numerote y barra: mucho peso para
+   un dato que ella mira de reojo mientras la fila espera. */
+.taco {
+  border: none;
+  border-bottom: 1px solid var(--linea);
+  border-radius: 0;
+  padding: 0 0 13px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.taco-top { display: none; }
+.taco .barra { display: none; }
+.taco .rango { flex: 1; min-width: 0; align-items: baseline; }
+.taco .rango b { font-size: 22px; }
+.taco .rango span { font-size: 12.5px; }
+.taco .taco-mas { flex: none; }
+
+.cuales {
+  border: 1.5px solid var(--ayuda);
+  background: var(--ayuda-suave);
+  border-radius: 18px;
+  padding: 13px;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.cuales-t {
+  font-size: 12px;
+  color: var(--ayuda-hondo);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 9px;
+}
+
+.cuales-r { font-family: 'Fredoka', sans-serif; font-size: 19px; font-weight: 600; color: var(--ayuda-hondo); }
+
+.cuales-fichas { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+
+.ficha-carton {
+  width: 40px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--ayuda);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* El mismo molde de doce teclas que el organizador usa para las bolitas. */
+/* La tarjeta del teclado va en PAPEL y no transparente: en esta pantalla el suelo es
+   --hueco, que es el mismo color de las teclas, asi que sobre el suelo desaparecian.
+   El resto de la forma --borde, radio, padding-- la pone la hoja compartida. */
+.pad { background: var(--papel); }
+
+
+
+
+
+.pad-show {
+  height: 62px;
+  border: 1.5px solid var(--ayuda);
+  border-radius: 18px;
+  background: var(--ayuda-suave);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--ayuda-hondo);
+}
+
+.tope { font-size: 11.5px; color: var(--tinta3); text-align: center; margin: 10px 0 0; }
+
+/* Escanear ocupa media pantalla: teclear es lo mas caro que se le puede pedir. */
+/* Alto fijo y no cuadrado. Con aspect-ratio 1/1 el recuadro se estiraba al ancho de la
+   pantalla y quedaba un hueco arriba y abajo del icono: grande sin decir nada. Sigue siendo
+   la pieza que manda -- escanear es el camino rapido -- pero sin el agujero. */
+.escaner {
+  width: 100%;
+  height: 164px;
+  border: none;
+  border-radius: 24px;
+  background: var(--ayuda-suave);
+  color: var(--ayuda);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.escaner span {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--ayuda-hondo);
+  line-height: 1.25;
+}
+
+.tick { border: 1.5px solid var(--borde); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
+.tick-row { display: flex; align-items: center; gap: 12px; }
+
+.tick-card {
+  width: 58px;
+  height: 64px;
+  border-radius: 15px;
+  background: var(--ayuda);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.tick-card i { font-style: normal; font-size: 9px; opacity: 0.85; letter-spacing: 0.08em; }
+.tick-card b { font-family: 'Fredoka', sans-serif; font-size: 23px; font-weight: 600; line-height: 1; }
+.tick-to { flex: 1; min-width: 0; }
+.tick-lbl { font-size: 10.5px; color: var(--tinta3); letter-spacing: 0.05em; text-transform: uppercase; }
+.tick-name { font-family: 'Fredoka', sans-serif; font-size: 17px; font-weight: 600; margin-top: 2px; }
+
+/* Los avisos tienen canal propio: el mas caro de la noche vivia al fondo del registro
+   y en gris, porque el color salia de buscar palabras adentro del texto. */
+.aviso { border-radius: 16px; padding: 13px; margin-bottom: 13px; font-size: 13px; line-height: 1.45; }
+.aviso.calmo { background: var(--hueco); color: var(--tinta2); }
+.aviso.rojo { background: #FDECEA; color: var(--alerta); font-weight: 600; }
+.aviso.bien { background: #E1F3E9; color: #1F7A47; font-weight: 600; }
+
+/* Un renglon por venta rebotada. Van en fila y no en parrafo porque hay que LEERLAS de a
+   una: cada uno es una persona a la que hay que ir a buscar. Los numeros en tabular para
+   que la hora y los cartones se alineen cuando son varias. */
+.rebote {
+  margin-top: 8px;
+  padding-left: 10px;
+  border-left: 2px solid currentColor;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.rebote-pie { margin-top: 10px; font-weight: 500; opacity: 0.85; }
+
+.plain {
+  width: 100%;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--tinta2);
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+/* ══ LA PUERTA ══════════════════════════════════════════════════════════
+   Es la primera impresion de la app y estaba desnuda: tres bloques de texto gris y un
+   boton, sin jerarquia ni identidad. Ahora abre con el sello de la casa, el saludo pesa,
+   y los dos caminos -- volver y entrar de cero -- estan separados de verdad. */
+
+/* La cabecera de color se come el hueco de arriba y lo pinta: por ese hueco asomaba el
+   fondo morado de la app en la zona del reloj, y se veia como un error. Los margenes
+   negativos la sacan del padding del cuerpo para que llegue a los bordes. */
+.portada {
+  margin: calc(-18px - max(env(safe-area-inset-top), var(--arriba, 30px))) -20px 22px;
+  padding: calc(22px + max(env(safe-area-inset-top), var(--arriba, 30px))) 22px 26px;
+  background: linear-gradient(150deg, var(--ayuda) 0%, var(--ayuda-hondo) 100%);
+  border-radius: 0 0 26px 26px;
+  color: #fff;
+}
+
+.portada-sello {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px 7px 9px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.18);
+  margin-bottom: 20px;
+}
+
+.portada-sello svg { width: 18px; height: 18px; }
+
+.portada-sello span {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.portada-hola {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0 0 7px;
+}
+
+.portada-que { font-size: 14px; opacity: 0.88; margin: 0; line-height: 1.45; }
+
+.puerta-cuerpo { padding: 0 2px; }
+
+.field.grande { height: 62px; font-size: 17px; }
+
+/* El separador con rotulo: divide los dos caminos sin gritar. Un titulito suelto no
+   alcanzaba para que se vieran como dos cosas distintas. */
+.separa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 14px;
+}
+
+.separa::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--borde);
+}
+
+.separa span {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tinta3);
+  font-weight: 600;
+  flex: none;
+}
+
+/* Las funciones, como tarjetas con cuerpo. Eran un renglon fino con la palabra "Entrar"
+   al final: no se leia como algo tocable ni decia a que va en cada una. */
+.mine-one {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  background: var(--papel);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.mine-one:active { transform: scale(0.99); }
+
+.mine-name { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 17px; }
+
+.mine-duty {
+  display: inline-block;
+  margin-top: 7px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: var(--ayuda-suave);
+  color: var(--ayuda);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* Cantar es trabajo del organizador prestado, y lleva su color. */
+.mine-duty.canta { background: var(--morado-suave); color: var(--morado); }
+
+.mine-go {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  background: var(--ayuda);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* La que ya esta abierta se distingue, y su flecha dice reconectar en vez de entrar. */
+.mine-one.now { border-color: var(--ayuda); background: var(--ayuda-suave); }
+.mine-one.now .mine-go { background: var(--papel); color: var(--ayuda); }
+
+/* El campo se perdia: borde clarito sobre papel blanco es casi invisible, y no invita a
+   tocarlo. Con fondo propio y borde firme se lee como lo que es -- el lugar donde se
+   escribe -- y al tocarlo se enciende en ambar. */
+.field.grande {
+  height: 64px;
+  font-size: 17px;
+  background: var(--hueco);
+  border: 2px solid var(--borde);
+  border-radius: 18px;
+}
+
+.field.grande::placeholder { color: var(--tinta3); }
+
+.field.grande:focus {
+  background: var(--papel);
+  border-color: var(--ayuda);
+  box-shadow: 0 0 0 4px var(--ayuda-suave);
+  outline: none;
+}
+
+/* El resumen de la venta: una frase, no una ficha. */
+.tick { border: none; padding: 8px 0 6px; margin-bottom: 18px; }
+
+.cuanto-va {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.para-quien {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ayuda);
+  margin-top: 4px;
+}
+
+/* ══ MIS CARTONES: un menu, no un deposito ══════════════════════════════ */
+
+.opcion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  background: var(--papel);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.opcion:active { transform: scale(0.99); border-color: var(--ayuda); }
+
+.opcion-que { flex: 1; min-width: 0; }
+.opcion-que b { display: block; font-size: 15.5px; font-weight: 600; color: var(--tinta); }
+.opcion-que i { display: block; font-style: normal; font-size: 12.5px; color: var(--tinta3); margin-top: 3px; }
+
+.opcion-ir {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  background: var(--ayuda-suave);
+  color: var(--ayuda);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.panel { animation: entra 0.24s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+.volver {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ayuda);
+  padding: 0 0 16px;
+  cursor: pointer;
+}
+
+/* La fila de entregados: la pastilla lleva solo la CUENTA -- nunca pasa de dos digitos y
+   por eso nunca se parte. El rango metido adentro se cortaba en dos renglones. */
+.sold-num { width: 42px; height: 42px; font-size: 18px; }
+.sold-go { flex: none; color: var(--tinta3); font-size: 17px; }
+.sold-mark { font-family: inherit; font-size: 12.5px; color: var(--tinta3); }
+
+/* ══ EL CARIÑO ══════════════════════════════════════════════════════════
+   Nada de adornos nuevos: mas aire, sombras suaves en vez de bordes duros, y los
+   numeros -- que son el idioma de esta app -- con el peso que merecen. */
+
+/* Las sombras reemplazan al borde en lo que se toca: un borde de 1.5px sobre papel
+   blanco es una linea; una sombra tibia es un objeto. */
+.opcion {
+  border: none;
+  box-shadow: 0 1px 2px rgba(11, 127, 95, 0.06), 0 6px 16px -8px rgba(11, 127, 95, 0.18);
+  padding: 18px 17px;
+  margin-bottom: 12px;
+  border-radius: 20px;
+}
+
+.opcion:active { box-shadow: 0 1px 3px rgba(11, 127, 95, 0.12); }
+.opcion-que b { font-size: 16px; color: var(--ayuda-tinta); }
+.opcion-que i { color: var(--tinta2); font-size: 13px; }
+.opcion-ir { background: var(--ayuda-suave); color: var(--ayuda); border-radius: 13px; }
+
+/* Entregados: la fila respira y la cuenta se lee de lejos. */
+.sold-one { padding: 15px 2px; gap: 14px; }
+
+.sold-num {
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: var(--ayuda-suave);
+  color: var(--ayuda-tinta);
+  font-size: 20px;
+}
+
+.sold-who { font-size: 15.5px; font-weight: 600; }
+.sold-mark { font-size: 12.5px; color: var(--tinta3); margin-top: 3px; }
+
+/* El rotulo de arriba deja de ser un gris mas y se vuelve el dato: cuantos entrego. */
+#howMuchISold {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--tinta);
+  margin: 2px 0 6px;
+}
+
+/* El taco, calido y sin caja: el numero manda y el rango lo acompaña. */
+.taco { border-bottom-color: var(--linea); }
+.taco .rango b { color: var(--ayuda-tinta); }
+.taco-mas { color: var(--ayuda); }
+
+/* Los botones de cantidad, con sombra tibia en el elegido en vez de un bloque plano. */
+.cn { border-color: var(--borde); background: var(--papel); }
+.cn.on { box-shadow: 0 6px 16px -6px rgba(15, 163, 122, 0.55); }
+.cn:disabled { background: var(--hueco); border-color: var(--hueco); }
+
+.cuales { border-color: var(--ayuda); background: var(--ayuda-suave); }
+.cuales-t { color: var(--ayuda-tinta); }
+.cuales-r { color: var(--ayuda-tinta); }
+.ficha-carton { background: var(--ayuda); box-shadow: 0 4px 10px -4px rgba(15, 163, 122, 0.6); }
+
+/* La geometria es la de Fer (14/26/-8) y el alfa tambien: ella asienta el boton del
+   COLABORADOR en 0.4, no en el 0.5 que le pone al morado del organizador.
+   Y en fila, para el que lleva icono: el de vender abre con el dibujo del carton. */
+.go.help {
+  box-shadow: 0 14px 26px -8px rgba(15, 163, 122, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.go.help:disabled { box-shadow: none; }
+.pad-show { border-color: var(--ayuda); background: var(--ayuda-suave); color: var(--ayuda-tinta); }
+.num-pill { background: var(--ayuda-suave); color: var(--ayuda-tinta); }
+.cuanto-va { color: var(--tinta); }
+.para-quien { color: var(--ayuda); }
+.tc { background: var(--ayuda-suave); border-color: var(--ayuda-suave); color: var(--ayuda-tinta); }
+.mine-duty { background: var(--ayuda-suave); color: var(--ayuda-tinta); }
+.portada { background: linear-gradient(150deg, var(--ayuda) 0%, var(--ayuda-hondo) 100%); }
+
+/* El trio de cuentas de la noche. Mismo componente que el organizador, con el color en
+   la cajita y no en el numero -- asi se distinguen sin gritar. */
+#howMuchISold { margin: 0 0 4px; }
+
+.stats { display: flex; gap: 9px; margin-bottom: 6px; }
+
+.stat {
+  flex: 1;
+  border-radius: 16px;
+  padding: 13px 10px;
+  text-align: center;
+}
+
+.st-uno { background: var(--ayuda-suave); }
+.st-dos { background: #EDF2FB; }
+.st-tres { background: #E9F4EC; }
+
+.stat-num {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--tinta);
+}
+
+.stat-what { font-size: 11px; color: var(--tinta2); margin-top: 5px; line-height: 1.25; }
+
+/* La lista arranca despues del trio, con su propio rotulo. */
+#soldList { margin-top: 6px; }
+.sold-one:last-child { border-bottom: none; padding-bottom: 4px; }
+
+/* El vacio con sentido: cuando todavia no vendio, la pantalla lo dice en vez de quedarse
+   muda y a medio llenar. */
+.nada-aun {
+  text-align: center;
+  padding: 26px 18px 10px;
+  color: var(--tinta3);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.nada-aun b {
+  display: block;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 16px;
+  color: var(--tinta2);
+  margin-bottom: 5px;
+}
+
+/* ══ LOS CAMPOS, EN SU COLOR ════════════════════════════════════════════
+   organizer.css enciende el campo enfocado en MORADO (.field:focus). En la pantalla
+   del vendedor eso es el color de otro papel: se veia un borde azul-violeta en medio de
+   una pantalla ambar, como si el control fuera de otra app. */
+.field:focus {
+  border-color: var(--ayuda);
+  box-shadow: 0 0 0 4px var(--ayuda-suave);
+  outline: none;
+}
+
+/* El campo y su boton, como UNA pieza: misma altura, mismo radio, misma linea de base.
+   Estaban a alturas distintas y se leian como dos cosas sueltas puestas al lado. */
+.row-two { align-items: stretch; gap: 8px; }
+
+.row-two .field {
+  height: 58px;
+  background: var(--hueco);
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+}
+
+.soft.narrow {
+  width: 112px;
+  height: 58px;
+  border-radius: 16px;
+  background: var(--papel);
+  border: 1.5px solid var(--borde);
+  color: var(--ayuda-tinta);
+  font-weight: 600;
+}
+
+.soft.narrow:active { background: var(--ayuda-suave); border-color: var(--ayuda); }
+
+/* Lo apagado se ve apagado, no descolorido. Un boton ambar con opacidad queda de un
+   naranja sucio que parece un error de pintura; en gris tibio se lee como "todavia no". */
+/* Apagado en VERDE claro, no en gris. Es el tratamiento de Fer para el mismo boton
+   (fondo #C7E6D8 con la letra en blanco): un gris dice "esto esta roto", el verde
+   descolorido dice "esto todavia no" -- que es lo que de verdad pasa mientras a la venta
+   le falta un dato. La opacidad se queda en 1: lo apagado se ve apagado, no descolorido. */
+.go:disabled,
+.go.help:disabled {
+  background: var(--ayuda-apagado);
+  color: #fff;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.soft:disabled { color: var(--tinta3); border-color: var(--linea); opacity: 1; }
+
+/* El teclado de pasar, con aire arriba y abajo. */
+#padPasar { margin-bottom: 4px; }
+#cuantosPasar { margin-top: 4px; }
+
+/* ── Entregados y Mis cartones, con el molde de la maqueta ──────────────────
+   Las dos dejan de ser UNA tarjeta grande con todo adentro. En la maqueta la pantalla es
+   el suelo y las piezas son las tarjetas: una tarjeta de cifras, un rotulo, y una lista.
+   Metido todo en un solo recuadro no se distinguia el resumen del detalle. */
+#sell, #sold, #other {
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 6px 16px 0;
+}
+
+/* El rotulo que nombra cada bloque. Mayusculas chicas y grises: ordena sin competir. */
+.rotulo {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tinta3);
+  margin: 22px 0 10px 2px;
+}
+
+/* La tarjeta de cifras. */
+.tarjeta {
+  background: var(--papel);
+  border: 1.5px solid var(--linea);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.tarjeta-top { display: flex; align-items: center; justify-content: space-between; }
+
+.tarjeta-titulo { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 17px; color: var(--tinta); }
+
+.tarjeta-pill {
+  background: var(--ayuda-suave);
+  color: var(--ayuda-tinta);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.cifras { display: flex; align-items: center; margin-top: 14px; }
+
+.cifra { flex: 1; text-align: center; }
+
+.cifra-num { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 30px; color: var(--tinta); }
+
+.cifra-que { font-size: 13px; color: var(--tinta2); margin-top: 2px; }
+
+.cifra-raya { width: 1px; height: 32px; background: var(--borde); }
+
+.barrita { height: 6px; border-radius: 4px; background: var(--linea); overflow: hidden; margin-top: 14px; }
+
+.barrita i { display: block; height: 100%; border-radius: 4px; background: var(--ayuda); transition: width 0.3s ease; }
+
+/* ── las dos cifras de Entregados ───────────────────────────────────────────
+   Su forma: cajita de icono, el numero grande y el rotulo en dos renglones, con una raya
+   fina en medio. */
+.dos-cifras { display: flex; align-items: center; padding: 14px 8px; }
+
+.dos-cifra { flex: 1; display: flex; align-items: center; justify-content: center; gap: 11px; }
+
+.dos-icono {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ayuda-suave);
+  color: var(--ayuda-tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* El numero apenas mas grande que el nombre de una fila, no un numerote: la cifra de la
+   maqueta acompanya, no preside. */
+.dos-cifra .cifra-num { font-size: 18px; line-height: 1.15; }
+
+.dos-cifra .cifra-que { font-size: 12px; margin-top: 0; line-height: 1.25; }
+
+/* ── los renglones de lo entregado ──────────────────────────────────────────
+   Lista PLANA: renglones sobre el suelo con raya en medio, sin recuadro. Metidos en una
+   tarjeta con borde competian con la de las cifras, que si es una pieza. */
+.lista-plana { margin-top: 2px; }
+
+.lista-plana .sold-one {
+  align-items: flex-start;
+  padding: 13px 2px;
+  border-bottom: 1px solid var(--linea);
+}
+
+.lista-plana .sold-one:last-child { border-bottom: none; }
+
+.sold-arriba { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+
+.sold-fichas { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
+
+/* La ficha con el numero de carton, del molde de la maqueta: el '#' adelante y esquinas
+   apenas redondeadas, para que se lea como un numero de papel y no como una pastilla. */
+.ficha-num {
+  background: var(--ayuda-suave);
+  color: var(--ayuda-tinta);
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 3px 7px;
+  white-space: nowrap;
+}
+
+.ficha-num.grande { font-size: 14px; border-radius: 12px; padding: 8px 15px; }
+
+/* La lista: UN recuadro con renglones adentro y raya en medio, no una pila de tarjetas.
+   Con tarjeta por renglon, tres opciones parecen tres botones sueltos. */
+.lista {
+  background: var(--papel);
+  border: 1.5px solid var(--linea);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.raya { height: 1px; background: var(--linea); margin: 0 16px; }
+
+/* ── los renglones de las dos listas ─────────────────────────────────────── */
+.opcion, .sold-one {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: none;
+  border-bottom: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  margin: 0;
+  text-align: left;
+}
+
+.opcion:active, .sold-one:active { background: var(--hueco); transform: none; box-shadow: none; }
+
+.opcion-icono {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  background: #F7FBF9;
+  color: var(--ayuda-tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+/* La cara de quien compro: circulo, no cuadrito, porque es una persona y no un objeto.
+   En verde suave y no macizo -- el macizo se guarda para la revision, donde hay UNA sola;
+   tres o diez seguidos serian una columna de manchas. */
+.sold-avatar {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ayuda-suave);
+  color: var(--ayuda-tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  /* Dos letras adentro de 38px: a 16px se salian del circulo. */
+  font-size: 13.5px;
+}
+
+/* La cuenta va suelta al lado de las fichas y en gris: las fichas ya dicen cuales, esto
+   solo cierra la cuenta. En pastilla competia con ellas. */
+.sold-cuenta { font-size: 12px; color: var(--tinta3); margin-left: 2px; white-space: nowrap; }
+
+/* ── el detalle de una venta ────────────────────────────────────────────────
+   Con la forma de la maqueta: sello, nombre, su numero en verde, las fichas, y recien
+   despues los datos y lo que se puede hacer. */
+.centrado-col { display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+.quien-marca-verde {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ayuda-tinta);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.rotulo.centro { text-align: center; margin-left: 0; }
+
+.rotulo.no-top { margin-top: 14px; }
+
+.corte { height: 1px; background: var(--linea); margin: 20px 0 4px; }
+
+/* Los datos de la venta, cada uno con su icono chico en verde. */
+.dato {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  font-size: 14.5px;
+  color: var(--tinta);
+}
+
+.dato svg { flex: none; color: var(--ayuda); }
+
+/* El boton de marco: es la accion frecuente, pero no la unica salida de la pantalla, asi
+   que no se lleva el relleno lleno que usan los botones que cierran algo. */
+.marco {
+  width: 100%;
+  height: 56px;
+  margin-top: 18px;
+  border: 1.5px solid var(--ayuda);
+  border-radius: 20px;
+  background: var(--papel);
+  color: var(--ayuda-tinta);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.marco:active { background: var(--ayuda-suave); }
+
+.marco:disabled { border-color: var(--borde); color: var(--tinta3); }
+
+/* La puerta a las correcciones va en gris, como el "Reportar un problema" de la maqueta:
+   es una salida de emergencia, no una invitacion. */
+#algoMal { color: var(--tinta2); }
+
+/* El sello del detalle y del codigo, al 52 de la maqueta. */
+.sello-hecho { width: 52px; height: 52px; }
+
+/* Pedir una anulacion es lo unico sin vuelta atras de toda la pantalla, y se ve. */
+.opcion.peligro .opcion-icono { background: #FDECEA; color: var(--alerta); }
+.opcion.peligro .opcion-que b { color: var(--alerta); }
+
+/* Apagado: se ve apagado, no descolorido -- y la bajada dice por que. */
+.opcion:disabled .opcion-que b { color: var(--tinta3); }
+.opcion:disabled .opcion-icono { background: var(--hueco); color: var(--tinta3); }
+
+.opcion-que { flex: 1; min-width: 0; }
+
+.opcion-que b { display: block; font-weight: 700; font-size: 14.5px; color: var(--tinta); }
+
+.opcion-que i { display: block; font-style: normal; font-size: 12.5px; color: var(--tinta3); margin-top: 1px; }
+
+.opcion-ir, .sold-go {
+  width: auto;
+  height: auto;
+  flex: none;
+  background: none;
+  border-radius: 0;
+  color: #C7C9D4;
+  font-size: 15px;
+}
+
+.sold-what { flex: 1; min-width: 0; }
+
+/* El nombre no parte la fila en dos: si es largo se corta con puntos y la pastilla de la
+   derecha se queda en su lugar. */
+.sold-who {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--tinta);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El numero del comprador en VERDE, como en la maqueta: es su identidad en la funcion,
+   no un dato mas -- es lo que se compara cuando dos se llaman igual. */
+.sold-mark { font-size: 12.5px; color: var(--ayuda); font-weight: 600; margin-top: 1px; }
+
+/* El chevron pegado al borde y centrado en el alto de la fila. */
+.sold-one > .sold-go { align-self: center; }
+
+/* El vacio va DENTRO del recuadro de la lista, si no el rotulo queda anunciando nada. */
+.nada-aun { padding: 22px 18px; text-align: center; font-size: 13px; line-height: 1.5; color: var(--tinta3); }
+
+.nada-aun b { display: block; font-family: 'Fredoka', sans-serif; font-size: 15px; color: var(--tinta2); margin-bottom: 4px; }
+
+/* ── el indicador de pasos ──────────────────────────────────────────────────
+   Medido de la maqueta de Fer: circulo de 26px, rotulo de 10.5px debajo, conector de 2px.
+   NO se reusa .steps/.dot/.bar de organizer.css aunque suene parecido: aquello son
+   circulos de 32px sin rotulo propio, pintados en blanco para ir sobre cabecera de color,
+   con UN nombre compartido debajo de los tres. Es otra pieza, no la misma con otro color.
+
+   La diferencia con Fer es deliberada y es la que costo la sesion pasada: ella tiene tres
+   PANTALLAS y nosotros dos. Estas tres marcas cuentan RESPUESTAS -- cuantos, quien,
+   confirmar -- no pantallas. Se llenan mientras ella contesta en la misma pantalla, asi
+   que dan la sensacion de avance sin devolvernos el paso del medio donde se quedaba
+   encerrada. Y como en Fer, son divs sin onClick: no se vuelve tocando una marca. */
+.pasos {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px 8px;
+}
+
+/* Las marcas son BOTONES: se toca una para volver a ese paso. Van con los estilos de boton
+   apagados porque lo que se ve es el circulo, no una caja. */
+.paso-marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Apagada NO se decolora: la marca pendiente ya se ve pendiente por su color, y bajarle
+   la opacidad encima la volveria invisible. Lo que cambia es que deja de responder. */
+.paso-marca:disabled { cursor: default; }
+
+.paso-marca:not(:disabled):active .paso-bola { transform: scale(0.92); }
+
+/* El circulo pendiente lleva BORDE y no solo relleno claro. Sin el, gris palido sobre
+   blanco casi no se veia: los pasos que faltan tienen que leerse como pasos, no como
+   manchas. El icono va en el gris terciario, no en uno mas claro todavia. */
+.paso-bola {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--papel);
+  border: 1.5px solid var(--borde);
+  color: var(--tinta3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+.paso-marca.va .paso-bola {
+  background: var(--ayuda);
+  border-color: var(--ayuda);
+  color: #fff;
+}
+
+/* El paso EN QUE ESTA, con un halo. Sin esto, "andado" y "aqui" se pintaban igual y la
+   barra no contestaba la unica pregunta que le hacen: donde estoy. */
+.paso-marca.aqui .paso-bola { box-shadow: 0 0 0 4px var(--ayuda-suave); }
+
+.paso-que {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tinta3);
+}
+
+.paso-marca.va .paso-que { color: var(--ayuda-tinta); font-weight: 700; }
+
+/* El margen de abajo alinea la linea con el CENTRO de los circulos y no con el bloque
+   entero, que lleva el rotulo colgando. */
+.paso-linea {
+  flex: 1;
+  height: 2px;
+  background: var(--borde);
+  margin: 0 8px 17px;
+  transition: background 0.25s ease;
+}
+
+.paso-linea.va { background: var(--ayuda); }
+
+/* ── el control de cantidad ─────────────────────────────────────────────────
+   Copiado de la maqueta con sus medidas: pastilla de 13px en radio 100px, la pregunta en
+   Fredoka 700 de 22px, teclas de 52px en radio 16 y el numero en Fredoka 700 de 44px.
+   Reemplaza los dos aparatos que teniamos -- la fila de seis botones y el teclado de doce
+   teclas -- que eran nuestra forma de resolver lo mismo con el doble de piezas. */
+.pastilla-taco {
+  width: fit-content;
+  margin: 0 auto 10px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: var(--ayuda-suave);
+  color: var(--ayuda-tinta);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pregunta {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--tinta);
+  text-align: center;
+}
+
+.contador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 18px 0 4px;
+}
+
+.cont-tecla {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  border: none;
+  border-radius: 16px;
+  background: var(--ayuda);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cont-tecla:active { background: var(--ayuda-hondo); }
+.cont-tecla:disabled { background: var(--ayuda-apagado); }
+
+/* El numero se ESCRIBE, que es lo que hace que el control sirva para cien cartones: para
+   llevar cuarenta se escribe cuarenta y no se toca la flecha cuarenta veces. */
+.cont-num {
+  width: 96px;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  text-align: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 44px;
+  color: var(--tinta);
+}
+
+/* La maqueta deja el campo sin ninguna senal de foco. Un numero de 44px no aguanta el
+   halo que usamos en los campos normales, pero quedarse sin nada es peor: un subrayado
+   dice donde esta escribiendo sin romper la pieza. */
+.cont-num:focus { box-shadow: inset 0 -2px 0 var(--ayuda); }
+
+/* ── la escalera de cantidades ──────────────────────────────────────────────
+   El patron que ella usa en el asistente del organizador ("O escribi otra cantidad"),
+   traido a la venta, que es donde faltaba. Escribir cuarenta es mejor que tocar cuarenta
+   veces, pero tocar UNA vez es mejor que escribir.
+
+   Se FILTRAN por lo que hay en la bolsa en vez de dibujarlos apagados: un 50 apagado
+   cuando tiene 25 es ruido, y ella no tiene que aprender por que no se puede tocar. */
+/* PASTILLAS y no una segunda fila de botones cuadrados. En rejilla de ancho completo, justo
+   debajo del menos/numero/mas, se leian como un segundo teclado peleando con el contador:
+   dos aparatos del mismo tamano para la misma pregunta. Redondas, centradas y mas chicas,
+   se leen como lo que son -- atajos del numero de arriba -- y el contador vuelve a ser el
+   que manda. El radio de 100px es el mismo de la pastilla de disponibles. */
+.cuantos-mas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.cn-mas {
+  width: auto;
+  height: 38px;
+  padding: 0 17px;
+  border-radius: 100px;
+  border: 1.5px solid var(--borde);
+  background: var(--papel);
+  color: var(--tinta2);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cn-mas.on {
+  background: var(--ayuda);
+  border-color: var(--ayuda);
+  color: #fff;
+  box-shadow: 0 4px 12px -4px rgba(15, 163, 122, 0.5);
+}
+
+.cont-dice {
+  margin: 12px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta);
+  text-align: center;
+}
+
+/* ── que papeles despegar ───────────────────────────────────────────────────
+   Este bloque no existe en la maqueta -- ella manda los cartones a la cuenta del jugador
+   y no hay papel que despegar -- asi que le toca hablar el idioma de las piezas suyas que
+   SI informan: fondo verde muy claro con borde de 1px, como sus pastillas de carton en la
+   revision. Con el marco de 1.5px en el verde fuerte pesaba mas que el contador, y el
+   contador es lo que manda en esta pantalla. */
+.cuales {
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1px solid var(--ayuda-borde);
+  border-radius: 16px;
+  background: #F7FBF9;
+}
+
+.cuales-t {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tinta2);
+  margin-bottom: 6px;
+}
+
+.cuales-r {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ayuda-tinta);
+}
+
+/* ── el saldo de despues ────────────────────────────────────────────────────
+   "Te quedarian N disponibles". Es de Fer y es el dato que a nuestra vendedora le importa
+   mas que a la suya: al final de la noche tiene que devolver lo que le sobro, asi que ver
+   el saldo ANTES de entregar le evita quedarse corta con la fila esperando. */
+.saldo-luego {
+  font-size: 13.5px;
+  color: var(--tinta2);
+  text-align: center;
+  margin-top: 8px;
+}
+
+
+/* ── lo que se juega, arriba del teclado ────────────────────────────────
+     Copia de caller.css porque esta pagina no lo carga, y calling.js pinta lo mismo en
+     las dos. Compacto: cada pixel de mas empuja el boton de ingresar hacia el pliegue, y
+     detras del pliegue hay que scrollear en cada bolita. */
+
+.playing {
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+  background: var(--papel);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.playing-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--tinta2);
+  margin-bottom: 10px;
+}
+
+.playing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.playing-one {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.playing-one + .playing-one { border-top: 1px solid var(--linea); padding-top: 12px; }
+
+.playing-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.playing-cut { align-self: stretch; background: var(--linea); }
+
+.playing-what {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  color: var(--tinta3);
+}
+
+.playing-figure {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--tinta);
+  text-align: center;
+}
+
+.playing-prize {
+  font-size: 14px;
+  color: var(--tinta2);
+}
+
+.playing-ico {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  object-fit: contain;
+}
+
+/* Cuantas van y cuantas quedan: al que canta le importa el resto. */
+.last-left {
+  font-size: 13px;
+  color: var(--tinta3);
+  margin-top: 2px;
+}
+
+/* Una tecla que no puede llevar a ninguna bolita sin cantar se apaga: en gris sobre el
+   mismo fondo, sin fantasma. Con opacidad y las diez apagadas a la vez -- que es lo que
+   pasa con dos digitos puestos -- se leia como pantalla colgada. */
+.pad-key:disabled { color: var(--tinta3); }
+
+
+/* La tombola, igual que el teclado: sobre el suelo gris necesita su papel, o las 75
+   celdas --que son var(--hueco)-- se pierden contra el fondo. Solo el FONDO: el borde,
+   el radio y el padding ya los pone .tombola en la hoja compartida, y repetirlos aca
+   dibujaba una segunda tarjeta dentro de la primera. */
+.tombola { background: var(--papel); }
+
+
+/* ══ EL ENSAYO ══════════════════════════════════════════════════════════
+   La unica capa nueva del modo ensayo: la franja de arriba, la invitacion de la
+   puerta, la pastilla de la lista y las dos hojas (elegir y terminar). El ambar es
+   SOLO del ensayo -- en ningun otro lugar de esta pantalla algo se pinta asi, y esa
+   exclusividad es parte de que no se confunda con la noche de verdad. */
+
+/* La franja paga ella la zona del reloj: vive arriba de la cabecera, y si no la paga
+   nadie el rotulo queda debajo de la hora del sistema. */
+.ens-ribbon {
+  flex: none;
+  background: #FEF3C7;
+  border-bottom: 1px solid #FDE68A;
+  color: #8A4A06;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-align: center;
+  padding: calc(max(env(safe-area-inset-top), var(--arriba, 30px))) 10px 9px;
+}
+
+.ens-ribbon u { text-underline-offset: 2px; }
+
+/* Con la franja arriba, la cabecera ya no paga la zona del reloj: la pagaria dos
+   veces y quedaria un hueco entre las dos. */
+body.practice .head-plain { padding-top: 12px; }
+
+.ens-invite {
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
+  border-radius: 16px;
+  padding: 13px 15px;
+  margin-top: 18px;
+}
+
+.ens-invite b {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: #7C3D07;
+  display: block;
+}
+
+.ens-invite p {
+  font-size: 12.5px;
+  color: #97580E;
+  line-height: 1.45;
+  margin: 4px 0 0;
+}
+
+.ens-invite button {
+  margin-top: 11px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 11px;
+  background: #B45309;
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ens-pill {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #FEF3C7;
+  color: #8A4A06;
+}
+
+/* Por encima de las pestanias y de la venta a pantalla completa: las hojas del
+   ensayo son lo unico que importa mientras estan arriba. */
+.ens-dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 15, 24, 0.45);
+  z-index: 70;
+}
+
+.ens-sheet,
+.ens-confirm {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 71;
+  background: var(--papel);
+  border-radius: 24px 24px 0 0;
+  padding: 18px 18px calc(22px + max(env(safe-area-inset-bottom), 6px));
+  box-shadow: 0 -16px 40px rgba(13, 15, 24, 0.35);
+}
+
+.ens-grab {
+  width: 38px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--borde);
+  margin: 0 auto 14px;
+}
+
+.ens-sheet h3,
+.ens-confirm h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--tinta);
+  margin: 0;
+}
+
+.ens-sheet .ens-sub {
+  font-size: 13px;
+  color: var(--tinta2);
+  margin-top: 4px;
+}
+
+.ens-confirm p {
+  font-size: 13px;
+  color: var(--tinta2);
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+
+.ens-pick {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  padding: 13px 14px;
+  margin-top: 11px;
+  background: var(--papel);
+  font-family: inherit;
+}
+
+.ens-pick .ens-ico {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--hueco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--tinta2);
+}
+
+.ens-pick b {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--tinta);
+  display: block;
+}
+
+.ens-pick small {
+  font-size: 12px;
+  color: var(--tinta2);
+  line-height: 1.4;
+  display: block;
+  margin-top: 1px;
+}
+
+/* El elegido se pinta del color de SU oficio: verde el que vende, morado el que
+   canta -- los mismos de la cabecera de cada cara. */
+.ens-pick.va { border-color: var(--ayuda); background: var(--ayuda-suave); }
+.ens-pick.va .ens-ico { background: #D9F3E6; color: var(--ayuda); }
+.ens-pick.vc { border-color: var(--morado); background: var(--morado-suave); }
+.ens-pick.vc .ens-ico { background: #E0E3FD; color: var(--morado); }
+
+.ens-sheet .go,
+.ens-confirm .go { margin-top: 14px; }
+
+.ens-note {
+  font-size: 11.5px;
+  color: var(--tinta3);
+  text-align: center;
+  line-height: 1.5;
+  margin: 12px 0 0;
+}
+
+.ens-quiet {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: center;
+  font-size: 13px;
+  color: var(--tinta2);
+  padding: 12px 0 0;
+  font-family: inherit;
+}

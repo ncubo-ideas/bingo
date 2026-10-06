@@ -1,0 +1,845 @@
+/* El detalle del bingo. Los tokens salen de organizer.css; aca vive lo propio:
+   la cabecera clara (esta pantalla no es un wizard, no necesita el bloque morado),
+   las puertas del hub y las vistas de adentro. */
+
+body { background: var(--papel); }
+
+/* La cabecera clara, .none, .wide-soft y el toast viven en organizer.css: los
+   comparten el detalle y la pantalla de cantar. */
+
+.detail-body { padding-top: 18px; }
+
+/* La pastilla del estado (.chip / .chip-big) vive en organizer.css: la comparten
+   el inicio y esta pantalla. */
+
+.stats-plain { margin-top: 16px; }
+
+
+/* El cartoncito de la figura (.mini-grid) vive en organizer.css: lo dibujan tambien
+   las dos pantallas que cantan. */
+
+.more-figs {
+  align-self: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta3);
+}
+
+/* La barra de cuanto va (.bar-wrap/.bar-fill) vive en organizer.css: la usan esta
+   pantalla, la lista de colaboradores y las ventas del inicio. */
+
+/* Las iniciales de quienes estan ayudando, encimadas como en una foto de grupo. */
+.faces { display: flex; }
+
+.face {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  margin-right: -8px;
+  border: 2px solid var(--papel);
+  border-radius: 16px;
+  background: var(--morado-suave);
+  color: var(--morado);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.face.waiting { background: var(--linea); color: var(--tinta3); }
+
+/* ── cartones ─────────────────────────────────────────────────────────── */
+
+.two-up {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.box {
+  border-radius: 18px;
+  background: var(--hueco);
+  padding: 18px;
+  text-align: center;
+}
+
+.box-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  color: var(--morado);
+}
+
+.box-what {
+  font-size: 13.5px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+/* ── el codigo ────────────────────────────────────────────────────────── */
+
+/* El QR, su enlace en letra y el rotulo de quien es (.qr-card, .qr, .qr-who,
+   .qr-link) viven en organizer.css: la colaboradora tambien ensena codigos. */
+
+/* ── las filas de gente ───────────────────────────────────────────────── */
+
+/* El renglon y la carita (.who, .who-face y sus colores) viven en organizer.css:
+   Ventas arma con la misma forma el desglose por colaborador. */
+
+/* El nombre y su renglon de estado (.who-what, .who-name, .who-sub) tambien viven en
+   organizer.css: el inicio arma las ventas bingo por bingo con la misma forma. */
+
+.who-act {
+  flex: none;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: none;
+  color: var(--tinta2);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+
+.who-act.danger { border-color: var(--alerta); color: var(--alerta); }
+
+.who-acts {
+  flex: none;
+  display: flex;
+  gap: 6px;
+}
+
+/* ── el pie ───────────────────────────────────────────────────────────── */
+
+.play { margin-right: 6px; }
+
+/* El toast sube por encima del boton grande de empezar a cantar. */
+.toast { bottom: 108px; }
+
+
+/* ── la corona: la cabecera con la agenda adentro ───────────────────────
+     Como la maqueta: morada, con el nombre grande, cuando se juega y cuanto falta. La
+     direccion donde escucha el organizador bajo al pie -- es dato de taller. */
+
+.crown {
+  flex: none;
+  /* El mismo arte y el mismo velo que la tarjeta del inicio, para que el bingo se vea
+     igual en los dos lados. El degradado va ENCIMA de la imagen y en la misma regla, sin
+     un div de velo: los hijos quedan arriba sin pelear por z-index. A la izquierda el
+     morado es casi opaco -- ahi va el nombre y tiene que leerse sobre color plano. */
+  background:
+    /* La franja de abajo se funde a morado SOLIDO: ahi vive la capsula de
+       pestanas, que es translucida y sobre la textura de la foto se ensuciaba.
+       Sobre liso se lee limpia y pareja. */
+    linear-gradient(to top,
+      var(--morado) 0px,
+      var(--morado) 34px,
+      rgba(79, 70, 229, 0) 86px),
+    linear-gradient(100deg,
+      rgba(79, 70, 229, 0.99) 0%,
+      rgba(79, 70, 229, 0.97) 42%,
+      rgba(79, 70, 229, 0.82) 72%,
+      rgba(79, 70, 229, 0.55) 100%),
+    url('assets/org-hero.jpg') 74% center / cover no-repeat,
+    var(--morado);
+  border-radius: 0 0 26px 26px;
+  /* Abajo 16: la capsula de pestanas vive ADENTRO de la corona, asi que ya no
+     hace falta la franja vacia donde mordian los discos del feston. */
+  padding: calc(12px + max(env(safe-area-inset-top), var(--arriba, 30px))) 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  color: #fff;
+}
+
+.crown-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.crown-round {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.crown-round:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.3); }
+
+/* El hueco de la derecha existe para que el logo quede centrado de verdad. */
+.crown-ghost { background: none; pointer-events: none; }
+
+.crown-art { height: 44px; }
+
+.crown-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 23px;
+  line-height: 1.15;
+}
+
+.crown-when {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 100px;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.crown-when-ico { display: flex; opacity: 0.9; }
+
+.crown-when-hour {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crown-when-cut {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Donde escucha el organizador: al pie y en voz baja. */
+.where-note {
+  font-size: 12.5px;
+  color: var(--tinta3);
+  text-align: center;
+  margin-top: 18px;
+}
+
+
+/* ── dar y devolver cartones ────────────────────────────────────────────
+     Las dos comparten pantalla y solo cambian de rotulo, de tope y de color. Devolver
+     va en rojo porque saca cartones de la mano de alguien: es la unica de las dos que
+     le quita algo a otra persona. */
+
+/* La elegida en la hoja: cada una con el tinte de lo que hace. */
+.pick-ico-box {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.pick-ico-give { background: #E1F3E9; color: #1F7A47; }
+.pick-ico-back { background: #FBE7E4; color: var(--alerta); }
+
+.pick-give.pick-one:active { border-color: #1F7A47; }
+.pick-back.pick-one:active { border-color: var(--alerta); }
+
+/* El renglon de una persona, con su marca de elegida a la derecha. */
+.who-pick {
+  align-items: center;
+  gap: 12px;
+}
+
+.who-pick:disabled { opacity: 0.45; }
+
+.radio {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border: 2px solid var(--borde);
+  border-radius: 50%;
+}
+
+.radio-on {
+  border-color: var(--morado);
+  border-width: 7px;
+}
+
+/* El contador grande. Es el mismo gesto que el de las rondas del wizard, pero acotado:
+   aca el mas se apaga al llegar al tope de verdad -- lo libre, o lo que tiene en mano --
+   asi que no se puede pedir lo que no hay. */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  padding: 8px 12px;
+  margin-top: 4px;
+}
+
+.stepper-side {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border: none;
+  border-radius: 12px;
+  background: var(--hueco);
+  color: var(--morado);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stepper-side:active { background: var(--borde); }
+
+.stepper-side:disabled { color: var(--tinta3); opacity: 0.4; }
+
+.stepper-num {
+  flex: 1;
+  text-align: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--tinta);
+}
+
+.quick-many {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.many-one {
+  flex: 1;
+  height: 42px;
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.many-one:active { border-color: var(--morado); color: var(--morado); }
+
+.many-one:disabled { color: var(--tinta3); opacity: 0.4; }
+
+/* Como queda todo despues del gesto. Es la linea que contesta la cuenta que uno esta
+   haciendo de cabeza mientras aprieta el mas. */
+.after-box {
+  background: var(--hueco);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 14px;
+}
+
+.after-box.after-bad { background: #FBE7E4; }
+
+.after-line {
+  font-size: 14px;
+  color: var(--tinta2);
+  line-height: 1.5;
+}
+
+.after-line.strong { font-weight: 600; color: var(--tinta); }
+
+.after-bad .after-line.strong { color: var(--alerta); }
+
+/* Devolver saca cartones de la mano de alguien, y el boton lo dice. */
+.go.go-danger {
+  background: var(--alerta);
+  box-shadow: 0 14px 26px -8px rgba(180, 35, 24, 0.45);
+}
+
+
+
+.setting-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--tinta);
+}
+
+.setting-said {
+  font-size: 14px;
+  color: var(--tinta2);
+  margin-top: -4px;
+}
+
+/* Pastilla de contorno: pide un toque sin competir con el boton grande del pie. */
+.pill-line {
+  padding: 8px 20px;
+  border: 1.5px solid var(--morado);
+  border-radius: 100px;
+  background: var(--papel);
+  color: var(--morado);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.pill-line:active { transform: scale(0.97); background: var(--morado-suave); }
+
+/* El nombre de la puerta y su accion propia en el mismo renglon. */
+
+/* Gestionar cartones, adentro de la tarjeta de Cartones. Es un span y no un button
+   porque la puerta entera YA es un button, y un boton dentro de otro no es html
+   valido -- el gesto se atiende igual y se le frena la burbuja al padre. */
+
+
+/* La pastilla de la agenda es un boton, asi que necesita su reset -- y el reset incluye
+   el FONDO: un button sin background trae el gris del sistema, y sobre ese gris el texto
+   blanco no se leia. */
+.crown-when {
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.crown-when:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.14); }
+
+/* Sin hora dicha, la pastilla invita a ponerla en vez de callarse: es la unica pista
+   de que ese dato existe y se puede agregar. */
+.crown-when-add {
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+
+/* ── lo que sigue ───────────────────────────────────────────────────────
+     La unica tarjeta del hub que dice que HACER en vez de a donde entrar, asi que se
+     ve distinta: fondo tenue y borde punteado, como una nota pegada. */
+
+/* Tarjeta solida en morado suave, sin borde punteado: el punteado se lee como
+   borrador, y esta tarjeta es una sugerencia del sistema, no un pendiente a mano. */
+.next-step {
+  border: none;
+  border-radius: 14px;
+  background: var(--morado-suave);
+  padding: 14px 16px;
+  margin-top: 18px;
+}
+
+.next-step-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.next-step-ico {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--morado-suave);
+  color: var(--morado);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.next-step-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--morado);
+}
+
+.next-step-says {
+  font-size: 14px;
+  color: var(--tinta);
+  line-height: 1.5;
+  margin: 10px 0 12px;
+}
+
+
+/* ── las pestanas: la capsula de monedas, dentro de la corona ────────────
+     Un riel translucido que contiene los cuatro discos con su nombre; el activo
+     se enciende en BLANCO con el icono morado. El riel es lo que las declara UNA
+     pieza: el feston anterior eran cuatro discos sueltos flotando en el hueco,
+     con las etiquetas cayendo donde el morado se desvanece y el activo saltando
+     de tamano. Aca la fila es SIEMPRE pareja y todo se lee sobre morado pleno. */
+
+.ring-row {
+  width: 100%;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  background: transparent;
+  padding: 2px 0;
+}
+
+.ring-disc {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  transition: background .18s, color .18s, transform .18s cubic-bezier(.34,1.3,.5,1);
+}
+
+.ring-tag {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: .2px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color .18s;
+}
+
+.ring:active .ring-disc { transform: scale(.94); }
+
+/* El encendido: la moneda blanca con el icono morado. Sin saltos de tamano --
+   la jerarquia la ponen el relleno y la sombra. */
+.ring-on .ring-disc {
+  background: #fff;
+  color: var(--morado);
+  box-shadow: 0 2px 8px rgba(23, 24, 39, 0.25);
+}
+
+.ring-on .ring-tag { color: #fff; font-weight: 600; }
+
+/* ── las tarjetas del carrusel ──────────────────────────────────────────
+     Una por pestana, con una entradita lateral: es lo que hace sentir el carrusel
+     sin arrastrar nada. Los cartoncitos de figura (.mini-grid) y la barra del
+     reparto (.bar-wrap) siguen viviendo en organizer.css. */
+
+.pane {
+  /* Los colores del reparto, solo de esta pantalla: el verde de venta de la maqueta
+     y el morado claro de lo asignado -- en manos de colaboradores, sin vender. */
+  --verde-venta: #1C9E63;
+  --morado-claro: #A5B4FC;
+  margin-top: 16px;
+  animation: pane-in .22s ease both;
+}
+
+@keyframes pane-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.pane-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  color: var(--tinta);
+}
+
+/* Dentro de las tarjetas del carrusel las caras crecen: son EL contenido de la
+   pestana de colaboradores, no una miniatura de pasada como eran en las puertas. */
+.pane .face {
+  width: 42px;
+  height: 42px;
+  border-radius: 21px;
+  margin-right: -10px;
+  border-width: 2.5px;
+  font-size: 16.5px;
+}
+
+.pane .faces { margin-top: 12px; }
+
+.pane-sub { font-size: 13px; color: var(--tinta2); margin-top: 3px; }
+
+/* Cabecera de seccion: titulo y dato a la izquierda, el enlace chico a la derecha.
+   Un solo acento (morado) para TODO enlace: el color por pestana gritaba. */
+.pane-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pane-head-what { min-width: 0; }
+
+.pane-link {
+  flex: none;
+  margin-top: 3px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 999px;
+  background: var(--morado-suave);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--morado);
+}
+
+.pane-link:active { transform: scale(0.96); }
+
+/* La accion principal como fila de app: ancho completo, borde de pelo, flecha. */
+.action-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 13px 16px;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--papel);
+  box-shadow: 0 1px 2px rgba(23, 24, 39, 0.04);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--tinta);
+}
+
+.action-row:active { transform: scale(0.99); background: var(--hueco); }
+.action-row svg { color: var(--tinta3); flex: none; }
+
+.pane-big { display: flex; align-items: baseline; gap: 8px; margin-top: 8px; }
+
+.pane-big span:first-child {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1.1;
+  color: var(--tinta);
+}
+
+.pane-big-say { font-size: 13px; color: var(--tinta3); }
+
+.pane-note { font-size: 13px; color: var(--tinta2); margin-top: 12px; }
+
+
+/* ── cartones: la barra en tres estados ── */
+
+.split-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--hueco);
+  overflow: hidden;
+  display: flex;
+  margin-top: 12px;
+}
+
+.split-sold { background: var(--verde-venta); }
+.split-given { background: var(--morado-claro); }
+
+.legend { margin-top: 6px; display: flex; flex-direction: column; }
+.legend-row { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.legend-row + .legend-row { border-top: 1px solid var(--linea); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dot-sold { background: var(--verde-venta); }
+.dot-given { background: var(--morado-claro); }
+.dot-free { background: #D6D8E4; }
+.legend-say { flex: 1; font-size: 14px; color: var(--tinta2); }
+
+.legend-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--tinta);
+}
+
+/* ── rondas: una tarjetita por figura ── */
+
+.round-mini {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  background: var(--papel);
+}
+
+/* El azulejo del dibujito: morado suave y esquinas amables, como en el mock. */
+.round-tile {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--morado-suave);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.round-mini-what { flex: 1; min-width: 0; }
+.round-mini-tag { font-size: 11px; font-weight: 700; letter-spacing: .8px; color: var(--tinta3); }
+
+.round-mini-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--tinta);
+}
+
+.round-mini-prize { font-size: 13px; color: var(--tinta2); margin-top: 1px; }
+
+/* ── el ajuste, un renglon al pie de la tarjeta de rondas ──
+     Es lo unico del hub que se CAMBIA en vez de abrirse, y vive con las rondas
+     porque de eso habla: como se anuncia lo que se canta. */
+
+.setting-line {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--linea);
+}
+
+/* ── colaboradores: quien canta, en su tarjeta ── */
+
+.sings {
+  margin-top: 16px;
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: var(--papel);
+}
+
+.sings-tag { font-size: 12.5px; font-weight: 600; color: var(--tinta3); }
+.sings-row { display: flex; align-items: center; gap: 9px; margin-top: 7px; }
+.sings-ico { color: var(--morado); display: flex; }
+
+.sings-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--tinta);
+}
+
+
+/* ── la ⓘ del titulo y el consejo que despliega ─────────────────────────
+     El recuadro de "proxima accion recomendada" ocupaba el pie de todas las
+     pestanas diciendo siempre lo mismo, y competia con lo que uno vino a mirar.
+     Ahora el consejo se PIDE: la ⓘ aparece al lado del titulo solo cuando hay
+     algo que recomendar, y el globo sale ahi mismo, pegado a la pestana abierta. */
+
+.pane-title-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pane-tip {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--tinta3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color .15s, background .15s, transform .1s;
+}
+
+.pane-tip:active { transform: scale(0.9); }
+
+/* Abierto: el boton se queda encendido para que se vea de donde salio el globo. */
+.pane-tip.on { background: var(--morado-suave); color: var(--morado); }
+
+/* El consejo, ya no como tarjeta del pie sino como globo del titulo. */
+.next-step {
+  margin-top: 12px;
+  border-left: 3px solid var(--morado);
+  border-radius: 0 14px 14px 0;
+}
+
+/* La cajita del bombillo sobraba: el globo ya nace del boton que lo abrio. */
+.next-step .next-step-ico { display: none; }
+
+
+/* ── la cabecera del equipo: agregar, no mirar ──────────────────────────
+     El boton de esta pestana ya no dice "Ver todos" -- la lista se ve entera
+     debajo -- sino que agrega, que es lo que uno viene a hacer. Va relleno
+     porque es una accion y no un enlace. */
+
+.pane-add {
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--morado);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform .1s;
+}
+
+.pane-add:active { transform: scale(0.96); }
+
+/* La lista completa dentro de la pestana: las tarjetas de persona ya traen su
+   forma, aca solo se les da aire entre una y otra. */
+.door-team {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+
+/* La tarjeta de quien canta y el rotulo de Colaboradores estaban pegados: son dos
+   cosas distintas -- una decision de la noche y una lista de gente -- y sin aire
+   entre ellas se leian como un solo bloque. */
+#paneTeam .pane-head { margin-top: 22px; }
+
+
+/* ── las tres teclas de los cartones ────────────────────────────────────
+     Dar, mover y devolver a la vista, cada una en su tecla. Antes habia una
+     sola fila "Gestionar cartones" que abria una hoja para preguntar cual de
+     las tres: un toque de mas para algo que se hace toda la noche. */
+
+.card-acts {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.card-act {
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  background: var(--hueco);
+  padding: 14px 6px 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 500;
+  font-size: 12.5px;
+  color: var(--tinta2);
+  cursor: pointer;
+  transition: transform .1s, border-color .15s;
+}
+
+.card-act:active { transform: scale(0.97); border-color: var(--morado); }
+
+.card-act-ico { color: var(--morado); display: flex; }

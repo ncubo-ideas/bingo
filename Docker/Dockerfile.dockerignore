@@ -1,0 +1,8 @@
+*
+!Directory.Build.props
+!App/BingoApp/BingoApp.csproj
+!App/BingoApp/nuget.config
+!App/BingoApp/localfeed
+!Engine/BingoEngine/BingoEngine.csproj
+!Engine/Village/Village.csproj
+!Docker/nuget.docker.config

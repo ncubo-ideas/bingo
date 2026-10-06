@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- La suite del catalogo de textos. BingoApp es solo Android y no se puede referenciar
+       desde un proyecto de pruebas de escritorio, asi que esto compila Texts.cs por link y
+       embebe el MISMO texts.json con el MISMO LogicalName: asi Texts.cs se prueba sin
+       telefono. Texts.cs no depende de MAUI a
+       proposito, para que esto sea posible. -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.8.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\App\BingoApp\Texts.cs" Link="Texts.cs" />
+    <EmbeddedResource Include="..\..\App\BingoApp\texts.json" LogicalName="bingo.texts.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="appsettings.local.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('appsettings.local.json')" />
+  </ItemGroup>
+
+</Project>

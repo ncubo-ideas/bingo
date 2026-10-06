@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BingoApp"
+             x:Class="BingoApp.FestivalScreen"
+             Title="{local:Text detalle.titulo}"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Paper}">
+
+    <!-- El detalle de UN bingo: lo que hay que saber de un vistazo y las puertas a
+         cada cosa. De aca se sale a cantar, que es la unica pantalla del organizador
+         que todavia vive en XAML.
+
+         El diario no se entera: este code-behind le manda un retrato y recibe gestos,
+         que terminan en los mismos metodos de LiveCommunityLeader de siempre. -->
+    <!-- detail.html y no funcion.html: ese nombre ya es del jugador (player.css/js viven
+         en la misma carpeta). -->
+    <HybridWebView x:Name="Web" DefaultFile="detail.html"
+                   RawMessageReceived="OnWebMessage" />
+
+</ContentPage>

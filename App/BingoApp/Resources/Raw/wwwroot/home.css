@@ -1,0 +1,421 @@
+/* El inicio del organizador. Los tokens y los componentes base salen de
+   organizer.css; aca vive solo lo propio de esta pantalla. */
+
+body { background: var(--papel); }
+
+/* ── el saludo ────────────────────────────────────────────────────────── */
+
+.top {
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(14px + max(env(safe-area-inset-top), var(--arriba, 30px))) 24px 6px;
+}
+
+.top-what { min-width: 0; }
+
+.hello {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  color: var(--tinta);
+}
+
+.hello-sub {
+  font-size: 15px;
+  color: var(--tinta2);
+  margin-top: 4px;
+}
+
+.top .pill { margin-top: 4px; }
+
+.home-body { padding-top: 12px; }
+
+/* ── rotulos y enlaces de seccion ─────────────────────────────────────── */
+
+/* El renglon con el rotulo a un lado y su boton al otro (.row-head) vive en
+   organizer.css: lo usan el inicio y el detalle. */
+
+/* El rotulo .head-small vive en organizer.css: lo comparte con el colaborador. */
+
+.link {
+  flex: none;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--morado);
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.group { margin-bottom: 24px; }
+
+.group > .head-small { margin-bottom: 10px; }
+
+/* ── sin bingos: la invitacion se toma la pantalla ───────────────────── */
+
+.empty-home {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.hero {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+}
+
+.hero-small { max-width: 200px; }
+
+.empty-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.empty-sub {
+  font-size: 17px;
+  color: var(--tinta2);
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+.none-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.none-sub {
+  font-size: 15px;
+  color: var(--tinta2);
+  line-height: 1.5;
+  max-width: 260px;
+}
+
+/* ── el bingo de ahora ───────────────────────────────────────────────── */
+
+/* El arte va corrido a la derecha (70%) porque el dibujo tiene su peso ahi; el
+   velo morado entra por la izquierda y se abre hacia la derecha, para que el
+   nombre caiga sobre color plano y la ilustracion siga viendose. */
+.next {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  min-height: 220px;
+  background-image: url('assets/org-hero.jpg');
+  background-size: cover;
+  background-position: 70% center;
+  background-repeat: no-repeat;
+  color: #fff;
+}
+
+.next-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(79, 70, 229, 0.98) 0%,
+    rgba(79, 70, 229, 0.92) 38%,
+    rgba(79, 70, 229, 0.55) 58%,
+    rgba(79, 70, 229, 0.08) 100%);
+}
+
+.next-what {
+  position: relative;
+  z-index: 1;
+  width: 62%;
+  padding: 22px 0 22px 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.next-tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.next-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.25;
+  margin-top: 8px;
+}
+
+.next-when {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 4px;
+}
+
+.next-big { margin-top: 14px; }
+
+.next-big-what {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.next-big-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.next-big-unit {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 2px;
+}
+
+.go-arrow { margin-left: 6px; }
+
+/* ── un bingo en una lista ──────────────────────────────────────────── */
+
+.past-wrap { margin-top: 30px; }
+
+.funcion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  background: var(--papel);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.funcion:active { transform: scale(0.99); border-color: var(--morado); }
+
+.funcion-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.funcion-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--tinta);
+}
+
+.funcion-name.old { color: var(--tinta2); }
+
+.funcion-sub {
+  font-size: 14px;
+  color: var(--tinta2);
+}
+
+.funcion-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.funcion-state {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--morado);
+}
+
+.funcion-state.old { color: var(--tinta3); }
+
+.funcion-go {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+
+/* La pastilla del estado (.chip) vive en organizer.css: la comparten el inicio y
+   el detalle. */
+
+/* ── lo que todavia no da nada ────────────────────────────────────────── */
+
+.middle {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding: 24px 8px;
+}
+
+.middle-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+}
+
+.middle-sub {
+  font-size: 16px;
+  color: var(--tinta2);
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+.middle .soon { margin-left: 0; }
+
+.middle-note {
+  font-size: 14px;
+  color: var(--tinta3);
+  line-height: 1.5;
+  max-width: 290px;
+  margin-top: 4px;
+}
+
+/* ── la barra de abajo ────────────────────────────────────────────────── */
+
+.tabs {
+  flex: none;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 10px 8px calc(14px + max(env(safe-area-inset-bottom), 6px));
+  background: var(--papel);
+  border-top: 1px solid var(--borde);
+}
+
+/* La marquita corre a la pestaña elegida. Va en una casilla del ancho de una
+   pestaña (25%) y centrada adentro, asi que basta con mover la casilla. */
+.tab-slot {
+  position: absolute;
+  top: 6px;
+  width: 25%;
+  display: flex;
+  justify-content: center;
+  transition: left 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.tab-mark {
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--morado);
+}
+
+.tab {
+  border: none;
+  background: none;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-height: 48px;
+  justify-content: center;
+  padding: 6px 4px;
+  cursor: pointer;
+}
+
+.tab-ico {
+  width: 24px;
+  height: 24px;
+  color: var(--tinta3);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.tab-say {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tinta3);
+  transition: color 0.25s ease;
+}
+
+.tab.on .tab-ico {
+  color: var(--morado);
+  transform: translateY(-2px) scale(1.08);
+}
+
+.tab.on .tab-say { color: var(--morado); }
+
+
+/* ── la pestana Mas ─────────────────────────────────────────────────────
+     Un menu de renglones, el mismo patron que "Mis cartones" del colaborador:
+     UN recuadro con filas adentro y raya en medio, no una pila de tarjetas.
+     El ambar es exclusivo del ensayo, aca y en todas las pantallas. */
+
+#mas { padding-top: 14px; }
+
+#mas .lista {
+  background: var(--papel);
+  border: 1.5px solid var(--linea);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+#mas .raya { height: 1px; background: var(--linea); margin: 0 16px; }
+
+#mas .opcion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#mas .opcion:active { background: var(--hueco); }
+
+#mas .opcion-icono {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--morado-suave);
+  color: var(--morado);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#mas .opcion-icono.ambar { background: #FEF3C7; color: #8A4A06; font-size: 16px; }
+
+#mas .opcion-que { flex: 1; min-width: 0; }
+
+#mas .opcion-que b {
+  display: block;
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--tinta);
+}
+
+#mas .opcion-que i {
+  display: block;
+  font-style: normal;
+  font-size: 12.5px;
+  color: var(--tinta3);
+  margin-top: 1px;
+}
+
+#mas .opcion-ir { flex: none; color: #C7C9D4; font-size: 15px; }
+
+/* La pastilla del bingo de ensayo en la lista. */
+.chip-practice { background: #FEF3C7; color: #8A4A06; }

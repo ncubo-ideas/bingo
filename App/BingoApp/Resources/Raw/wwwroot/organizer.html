@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- interactive-widget: que el teclado ACHIQUE el area de la pagina en vez de taparla.
+     Sin esto el campo que se esta llenando queda debajo del teclado y se escribe a ciegas. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Crear bingo</title>
+<script src="_framework/hybridwebview.js"></script>
+<script src="language.js"></script>
+<link rel="stylesheet" href="organizer.css">
+</head>
+<body>
+
+<!-- Cinco pasos, y el de los premios PREGUNTA en vez de pedir un formulario: una cosa a
+     la vez. Lo que ensena el modelo no es un texto explicativo sino la pregunta que
+     aparece justo despues de guardar un juego -- "habra otro premio en esta misma
+     ronda?" --, que es donde la decision existe de verdad.
+
+     Cuantas rondas se pregunta ANTES de configurarlas, aunque sea un paso mas: sin eso,
+     el ciclo de preguntas no tiene fondo a la vista y no se sabe cuanto falta. -->
+<div class="wiz">
+
+  <header class="head">
+    <div class="head-top">
+      <button id="back" class="back" aria-label="atras" data-texto-aria="general.atras">
+        <svg viewBox="0 0 24 24" width="19" height="19"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="head-title" data-texto="crear.titulo">Crear bingo</div>
+    </div>
+
+    <div id="steps" class="steps"></div>
+    <div id="stepName" class="step-name"></div>
+  </header>
+
+  <main id="body" class="body">
+
+    <!-- ══ 1 · EL BINGO ══════════════════════════════════════════════ -->
+    <section id="s1" class="step">
+      <h1 class="big" data-texto="crear.bingo.titulo">Creemos tu bingo</h1>
+      <p class="lead" data-texto="crear.bingo.lead">Como se va a llamar y cuando se juega.</p>
+
+      <label class="field-wrap">
+        <span class="label" data-texto="crear.bingo.nombre">Nombre del bingo</span>
+        <input id="name" class="field" type="text"
+               placeholder="Ej. Bingo Dia de la Madre" data-texto-ph="crear.bingo.nombre-ejemplo" autocomplete="off">
+      </label>
+
+      <!-- Fecha y hora como filas y no como campos: una fecha tecleada a mano sale mal
+           la mitad de las veces, y el dia de la semana -- que es como uno piensa un
+           bingo -- no se ve hasta que es tarde. Cada una ocupa el ancho entero: la
+           fecha se lee larga ("sabado 22 de agosto") y en media pantalla se partia en
+           dos lineas. -->
+      <div class="when">
+        <button id="dateCard" class="when-one">
+          <svg class="when-ico" viewBox="0 0 24 24" width="22" height="22"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 3.5v4M17 3.5v4M3.5 9h17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span class="when-what">
+            <span class="when-tag" data-texto="crear.fecha">Fecha</span>
+            <span id="dateSaid" class="when-said" data-texto="general.hoy">Hoy</span>
+          </span>
+          <svg class="when-go" viewBox="0 0 24 24" width="18" height="18"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="timeCard" class="when-one">
+          <svg class="when-ico" viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span class="when-what">
+            <span class="when-tag" data-texto="crear.hora">Hora</span>
+            <span id="timeSaid" class="when-said" data-texto="crear.elegir-hora">Elegir hora</span>
+          </span>
+          <svg class="when-go" viewBox="0 0 24 24" width="18" height="18"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ══ 2 · CARTONES ═══════════════════════════════════════════════ -->
+    <section id="s2" class="step hidden">
+      <h1 class="big" data-texto="crear.cartones.titulo">Cuantos cartones necesitas</h1>
+      <p class="lead" data-texto="crear.cartones.lead">Elegi una cantidad. Podes cambiarla despues.</p>
+
+      <!-- Una rueda y no pastillas: los saltos de cien van de 100 a 1000, y con botones
+           serian diez. La rueda dice ademas en que parte del rango uno esta parado, que
+           una pastilla marcada no dice. -->
+      <div class="wheel-wrap">
+        <div id="wheel" class="wheel">
+          <div class="wheel-veil wheel-top"></div>
+          <div class="wheel-veil wheel-bottom"></div>
+        </div>
+        <div class="wheel-unit" data-texto="crear.cartones.unidad">cartones</div>
+      </div>
+
+      <div class="wheel-own">
+        <div class="wheel-own-tag" data-texto="crear.cartones.otra-cantidad">O escribi otra cantidad</div>
+        <input id="cards" class="field mid-field" type="text" inputmode="numeric"
+               placeholder="Ej. 750" data-texto-ph="crear.cartones.ejemplo">
+      </div>
+
+      <!-- UN precio para todo el bingo, y opcional: un bingo puede nacer sin el y
+           ponerselo despues desde su configuracion. Con precio, Ventas suma la plata.
+           No esta en la maqueta -- lo pidieron despues --, asi que va con la misma forma
+           que el campo de al lado para que no se lea como pegado. -->
+      <div class="wheel-own no-top">
+        <div class="wheel-own-tag"><span data-texto="crear.precio">Precio por carton</span> <span class="soft-note" data-texto="general.opcional">opcional</span></div>
+        <input id="price" class="field mid-field" type="text" inputmode="numeric"
+               placeholder="Ej. 2000" data-texto-ph="crear.precio.ejemplo">
+      </div>
+    </section>
+
+    <!-- ══ 3 · CUANTAS RONDAS ═════════════════════════════════════════ -->
+    <section id="s3" class="step hidden">
+      <h1 class="big" data-texto="crear.rondas.titulo">Cuantas rondas van a jugar</h1>
+      <p class="lead" data-texto="crear.rondas.lead">Despues configuramos cada una, paso a paso.</p>
+
+      <div class="counter-wrap">
+        <div class="counter">
+          <button id="lessRounds" class="counter-side" aria-label="una menos" data-texto-aria="crear.rondas.una-menos">−</button>
+          <div id="roundCount" class="counter-num">1</div>
+          <button id="moreRounds" class="counter-side" aria-label="una mas" data-texto-aria="crear.rondas.una-mas">+</button>
+        </div>
+        <div id="roundUnit" class="counter-unit" data-texto="crear.rondas.varias">rondas</div>
+
+        <div class="quick-rounds">
+          <button class="quick-round" data-rounds="1">1</button>
+          <button class="quick-round" data-rounds="2">2</button>
+          <button class="quick-round" data-rounds="3">3</button>
+          <button class="quick-round" data-rounds="4">4</button>
+          <button class="quick-round" data-rounds="5">5</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4 · LOS PREMIOS, UNA PREGUNTA A LA VEZ ═════════════════════ -->
+    <section id="s4" class="step hidden">
+
+      <!-- El progreso de las rondas son puntitos y no pastillas: con cuatro rondas las
+           pastillas no caben en el ancho, y la fila que se deslizaba terminaba debajo de
+           "Cambiar cantidad". Los puntos no crecen con el numero de rondas.
+           Las que ya quedaron listas bajan a filas de ancho completo, cada una con su
+           Editar -- que es donde de verdad se necesita volver. -->
+      <div class="rounds-bar">
+        <div class="rounds-bar-what">
+          <div id="roundWhere" class="round-where"></div>
+          <div id="roundDots" class="round-dots"></div>
+        </div>
+        <button id="changeCount" class="link" data-texto="crear.cambiar-cantidad">Cambiar cantidad</button>
+      </div>
+
+      <div id="roundsDone" class="rounds-done"></div>
+
+      <!-- que figura -->
+      <div id="stagePattern" class="stage">
+        <h1 class="big" data-texto="crear.figura.titulo">Como se gana?</h1>
+        <p id="patternWho" class="lead"></p>
+        <div id="figures" class="picks"></div>
+      </div>
+
+      <!-- que premio -->
+      <div id="stagePrize" class="stage hidden">
+        <h1 class="big" data-texto="crear.premio.titulo">Que premio es?</h1>
+        <p id="prizeWho" class="lead"></p>
+
+        <div class="two big-two">
+          <button id="cash" class="prize on">
+            <img src="assets/prize-cash.png" alt="">
+            <span data-texto="crear.premio.efectivo">Efectivo</span>
+          </button>
+          <button id="goods" class="prize">
+            <img src="assets/prize-gift.png" alt="">
+            <span data-texto="crear.premio.fisico">Premio fisico</span>
+          </button>
+        </div>
+
+        <label class="field-wrap">
+          <span id="prizeLabel" class="label" data-texto="crear.premio.cuanto">Cuanto?</span>
+          <input id="prize" class="field" type="number" inputmode="numeric" placeholder="0">
+        </label>
+
+        <button id="saveGame" class="go wide" data-texto="crear.guardar-juego">Guardar juego</button>
+      </div>
+
+      <!-- La ronda y lo que lleva. El ✓ grande NO va aca: ese es el momento de cerrar
+           la ronda, otra cosa. Y la pregunta va en 17 y no en 24 porque a esta altura es
+           un seguimiento, no el titulo de la pantalla. -->
+      <div id="stageMore" class="stage hidden">
+        <div id="moreList" class="round-games no-top"></div>
+
+        <div class="mt-mid">
+          <div class="ask" data-texto="crear.otro-premio.pregunta">Habra otro premio en esta misma ronda?</div>
+          <p class="ask-says" data-texto="crear.otro-premio.explicacion">Podes seguir jugando con los mismos numeros hasta completar
+            otra figura.</p>
+        </div>
+
+        <div class="two-down">
+          <button id="another" class="ghost-add">+ <span data-texto="crear.agregar-otro-juego">Agregar otro juego</span></button>
+          <button id="roundDone" class="plain-box" data-texto="crear.ronda-lista">No, esta ronda esta lista</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 5 · LISTO ══════════════════════════════════════════════════ -->
+    <section id="s5" class="step hidden">
+      <h1 class="big" data-texto="crear.listo.titulo">Todo listo</h1>
+      <p class="lead" data-texto="crear.listo.lead">Revisa tu bingo antes de crearlo.</p>
+
+      <div class="sum">
+        <div id="revName" class="sum-name"></div>
+        <div id="revWhen" class="sum-when"></div>
+        <div id="revStats" class="sum-stats"></div>
+      </div>
+
+      <div id="revList"></div>
+
+      <p class="foot-note" data-texto="crear.listo.nota">Al crearlo te va a dar el codigo para tus colaboradores.</p>
+    </section>
+
+    <div class="fold">
+      <button id="logFold" class="fold-head">
+        <span data-texto="general.lo-que-va-pasando">lo que va pasando</span>
+        <span id="logChevron" class="chev">›</span>
+      </button>
+      <pre id="logBox" class="log hidden"></pre>
+    </div>
+
+  </main>
+
+  <footer id="foot" class="foot">
+    <button id="next" class="go wide" data-texto="crear.continuar">Continuar</button>
+  </footer>
+
+</div>
+
+<!-- ══ EL CALENDARIO ════════════════════════════════════════════════ -->
+<div id="dateSheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div class="sheet-title" data-texto="crear.calendario.titulo">Elegi la fecha</div>
+
+    <div class="cal-head">
+      <button id="calBack" class="cal-arrow" aria-label="mes anterior" data-texto-aria="crear.calendario.mes-anterior">‹</button>
+      <div id="calMonth" class="cal-month"></div>
+      <button id="calNext" class="cal-arrow" aria-label="mes siguiente" data-texto-aria="crear.calendario.mes-siguiente">›</button>
+    </div>
+
+    <div id="calDays" class="cal-week"></div>
+    <div id="calGrid" class="cal-grid"></div>
+
+    <button id="dateGo" class="go sheet-go" data-texto="general.listo">Listo</button>
+  </div>
+</div>
+
+<!-- ══ LA HORA ══════════════════════════════════════════════════════ -->
+<div id="timeSheet" class="sheet hidden">
+  <div class="sheet-card">
+    <div class="sheet-title" data-texto="crear.hora.titulo">A que hora</div>
+
+    <div class="clock">
+      <div class="clock-part">
+        <button class="clock-up" data-bump="hour" data-by="1">▲</button>
+        <div id="clockHour" class="clock-num">7</div>
+        <button class="clock-down" data-bump="hour" data-by="-1">▼</button>
+      </div>
+      <div class="clock-dots">:</div>
+      <div class="clock-part">
+        <button class="clock-up" data-bump="minute" data-by="5">▲</button>
+        <div id="clockMinute" class="clock-num">00</div>
+        <button class="clock-down" data-bump="minute" data-by="-5">▼</button>
+      </div>
+      <div class="clock-half">
+        <button id="isAm" class="half-one" data-texto="general.am">a.m.</button>
+        <button id="isPm" class="half-one on" data-texto="general.pm">p.m.</button>
+      </div>
+    </div>
+
+    <button id="timeGo" class="go sheet-go" data-texto="general.listo">Listo</button>
+    <button id="timeNone" class="plain" data-texto="crear.sin-hora">Sin hora</button>
+  </div>
+</div>
+
+<!-- ══ CREADO ═══════════════════════════════════════════════════════
+     Pantalla entera y no un aviso que se va solo: lo que sigue son dos caminos
+     distintos -- entrar a repartir cartones, o dejarlo listo para despues -- y
+     elegirlo es del organizador. -->
+<div id="done" class="done-screen hidden">
+  <div class="done-big">✓</div>
+  <div class="done-title" data-texto="crear.creado.titulo">Bingo creado</div>
+  <div id="doneName" class="done-name"></div>
+  <div class="done-says" data-texto="crear.creado.explicacion">Ya podes anotar colaboradores y repartir cartones.</div>
+
+  <button id="doneGo" class="go wide" data-texto="crear.ver-mi-bingo">Ver mi bingo</button>
+  <button id="doneHome" class="plain" data-texto="crear.volver-al-inicio">Volver al inicio</button>
+</div>
+
+<div id="busy" class="busy hidden">
+  <div class="busy-card">
+    <div class="spinner"></div>
+    <div class="busy-text" data-texto="crear.creando">Creando tu bingo...</div>
+  </div>
+</div>
+
+<script src="patterns.js"></script>
+<script src="organizer.js"></script>
+</body>
+</html>

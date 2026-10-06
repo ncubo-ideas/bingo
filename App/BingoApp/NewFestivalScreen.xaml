@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BingoApp"
+             x:Class="BingoApp.NewFestivalScreen"
+             Title="{local:Text crear.titulo}"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Ground}">
+
+    <!-- Armar un bingo es lo mas largo que hace el organizador, y en XAML era una
+         sola tirada donde CREAR EL BINGO convivia con AGREGAR ESTA FIGURA. Ahora es
+         una pagina servida desde adentro del apk, igual que la del jugador: un paso a
+         la vez, con el stepper arriba y CONTINUAR siempre en el mismo lugar.
+
+         El dominio no se entera. La pagina arma el plan y lo manda entero al final;
+         este code-behind solo lo traduce a RoundPlan y llama al mismo CreateFestival de
+         siempre. -->
+    <HybridWebView x:Name="Web" DefaultFile="organizer.html"
+                   RawMessageReceived="OnWebMessage" />
+
+</ContentPage>

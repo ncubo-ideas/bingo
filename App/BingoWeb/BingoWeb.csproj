@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WasmMainJSPath>wwwroot/main.js</WasmMainJSPath>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Engine\BingoEngine\BingoEngine.csproj" />
+    <PackageReference Include="Ncubo.Puppeteer" Version="3.0.0-beta.10049-portable.3" />
+  </ItemGroup>
+
+  <!-- The browser iroh bus, while it only lives in a local Puppeteer checkout
+       (Ncubo.Puppeteer.Adapters.Iroh.Browser): point the BINGO_IROH_BROWSER environment
+       variable, or -p:IrohBrowser=<folder>, at it. Without it the web player still
+       builds, HTTP only. -->
+  <PropertyGroup>
+    <IrohBrowser Condition="'$(IrohBrowser)' == ''">$(BINGO_IROH_BROWSER)</IrohBrowser>
+    <DefineConstants Condition="Exists('$(IrohBrowser)')">$(DefineConstants);IROH_BROWSER</DefineConstants>
+    <!-- Those sources live outside the repo: map their folder too, so no local path ships. -->
+    <PathMap Condition="'$(Configuration)' == 'Release' And Exists('$(IrohBrowser)')">$(PathMap),$([MSBuild]::EnsureTrailingSlash('$(IrohBrowser)'))=/iroh-browser/</PathMap>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('$(IrohBrowser)')">
+    <Compile Include="$(IrohBrowser)\Transport\Iroh\Browser\*.cs" />
+  </ItemGroup>
+</Project>

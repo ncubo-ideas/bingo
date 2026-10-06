@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BingoApp"
+             x:Class="BingoApp.FestivalsScreen"
+             Title="{local:Text inicio.pestana.inicio}"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Paper}">
+
+    <!-- El inicio del organizador: el bingo que tiene entre manos, con sus numeros, y
+         las que ya jugo. Es una pagina servida desde adentro del apk, como la del
+         jugador y la de crear bingo.
+
+         El diario no se entera: este code-behind le manda un retrato de la cartelera y
+         recibe gestos. Todo sale de Listing(), que ya leia cada bingo de SU diario. -->
+    <HybridWebView x:Name="Web" DefaultFile="home.html"
+                   RawMessageReceived="OnWebMessage" />
+
+</ContentPage>

@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Cantar</title>
+<script src="_framework/hybridwebview.js"></script>
+<script src="language.js"></script>
+<link rel="stylesheet" href="organizer.css">
+<link rel="stylesheet" href="caller.css">
+</head>
+<body>
+
+<!-- La noche en marcha. Se teclea el numero y se manda; el cuadro de las 75 esta en la
+     otra seccion, para mirar. Los colores de banda son los que grita la gente ("I 27", no
+     "27") y son los MISMOS del telefono del jugador: la bolita que aca se ingresa y la que
+     al jugador se le enciende son del mismo color. -->
+<div class="wiz">
+
+  <!-- Morada y con las pestañas adentro, como la maqueta: mientras se canta, la
+       cabecera ES la pantalla -- dice donde va uno y como cambiar de vista. Dejarla
+       blanca la hacia parecer una pantalla de formulario. -->
+  <header class="crown-call">
+    <div class="crown-call-top">
+      <button id="back" class="crown-round" aria-label="atras" data-texto-aria="general.atras">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="crown-call-mid">
+        <div id="title" class="crown-call-name"></div>
+        <div id="roundLine" class="crown-call-round"></div>
+      </div>
+      <div class="crown-round crown-hole"></div>
+    </div>
+
+    <div class="call-tabs">
+      <button id="tabEnter" class="call-tab on" data-texto="cantar.pestana.ingresar">Ingresar</button>
+      <button id="tabCheck" class="call-tab" data-texto="cantar.pestana.revisar">Revisar</button>
+    </div>
+  </header>
+
+  <main id="body" class="body cantar-body">
+
+    <!-- lo que alguien pide anular -->
+    <!-- Cantos que la mesa NO da por completos. Sin esto quedaban invisibles: la
+         persona canta, el letrero no se prende porque su carton no completo, y del
+         otro lado nadie se entera de que hay alguien parado esperando. -->
+    <div id="shouts" class="pleas hidden">
+      <div class="pleas-title" data-texto="cantar.cantaron.titulo">CANTARON, PERO LA MESA DICE QUE NO</div>
+      <div class="pleas-sub" data-texto="cantar.cantaron.sub">Revisa su carton igual: puede faltarle una bolita que
+        todavia no cantaste, o haberse confundido de figura.</div>
+      <div id="shoutList"></div>
+    </div>
+
+    <div id="pleas" class="pleas hidden">
+      <div class="pleas-title" data-texto="cantar.anular.titulo">TE ESTAN PIDIENDO ANULAR</div>
+      <div class="pleas-sub" data-texto="cantar.anular.sub">Anular saca el carton de la mesa y lo devuelve al libro.
+        Solo se puede antes de cantar la primera bolita de la ronda.</div>
+      <div id="pleaList"></div>
+    </div>
+
+    <!-- ══ CANTAR ══════════════════════════════════════════════════════
+         La misma superficie en las DOS pantallas que cantan, y los dos pueden cantar
+         SIEMPRE: no hay turno ni permiso que pedir. La bolita se teclea y se manda con un
+         boton; el cuadro de las 75 se mira y no se toca. -->
+
+    <!-- ══ LAS DOS SECCIONES ═══════════════════════════════════════════
+         INGRESAR es para meter la bolita: el juego, la ultima y el teclado, y nada mas.
+         REVISAR es el cuadro de las 75 con las cuentas, para cuando alguien pregunta
+         "salio el 40?". Son dos momentos distintos y por eso no comparten pantalla:
+         entre bolita y bolita el ojo no tiene que buscar el teclado entre setenta y
+         cinco casillas. -->
+    <div id="paneEnter">
+
+      <!-- Lo que se juega, DIBUJADO. Antes solo estaba como texto en la cabecera, y era
+           lo que mas le preguntan al que canta: un renglon gris de 13px no se mira de
+           reojo, un dibujo si. Va compacto y solo con lo que sigue abierto, porque el
+           boton de ingresar NO puede caer debajo del pliegue -- si cae, hay que
+           scrollear para CADA bolita, y eso ya nos habia pasado.
+           La ficha completa, con el carton y quien gano, sigue en Revisar. -->
+      <div id="nowPlaying" class="playing hidden">
+        <div class="playing-tag" data-texto="cantar.juego-actual">JUEGO ACTUAL</div>
+        <div id="playingList" class="playing-list"></div>
+      </div>
+
+
+      <!-- "ULTIMA BOLITA" y no "la que cantaste": la puede haber cantado el otro. -->
+      <div class="last-row">
+        <div id="lastBall" class="ball-big">—</div>
+        <div class="last-what">
+          <div class="last-tag" data-texto="cantar.ultima-bolita">ULTIMA BOLITA</div>
+          <div id="howMany" class="last-count" data-texto="cantando.ninguna-todavia">ninguna bolita todavia</div>
+          <div id="howLeft" class="last-left"></div>
+          <button id="oops" class="link-fix hidden"></button>
+        </div>
+      </div>
+
+      <!-- Corregir usa EL MISMO teclado: se toca "me equivoque", este cartel dice cual
+           era y el boton que manda pasa a decir CORREGIR. Va ARRIBA del teclado porque
+           primero se lee y despues se marca. -->
+      <div id="fixing" class="fixing hidden">
+        <div id="fixingSays" class="fixing-says"></div>
+        <button id="fixCancel" class="plain" data-texto="cantar.dejalo-como-esta">dejalo como esta</button>
+      </div>
+
+      <!-- El teclado. La bolita se marca y despues se manda: ese paso de mas es todo lo
+           que hace falta para que un dedo torcido se borre sin que nadie se entere. -->
+      <div id="pad" class="pad hidden">
+        <div id="padSays" class="pad-says"></div>
+        <div class="pad-show">
+          <div id="padLetter" class="pad-letter hidden"></div>
+          <div id="padShow" class="pad-num empty">—</div>
+        </div>
+        <div id="padBad" class="pad-bad hidden"></div>
+        <div id="padKeys" class="pad-keys"></div>
+      </div>
+
+      <!-- Sin ronda sonando no hay nada que ingresar, y va aca y no afuera: revisar lo
+           que salio en la ronda anterior sigue valiendo. -->
+      <div id="asleep" class="asleep hidden">
+        <div id="asleepTitle" class="asleep-title"></div>
+        <div id="asleepSub" class="asleep-sub"></div>
+      </div>
+
+    </div>
+
+    <div id="paneCheck" class="hidden">
+
+      <div class="check-head">
+        <div id="checkCount" class="check-count"></div>
+        <div id="checkLeft" class="check-left"></div>
+        <div id="checkLast" class="check-last hidden"></div>
+      </div>
+
+      <div class="now-card">
+        <div class="tag-line" data-texto="cantar.lo-que-se-juega">LO QUE SE ESTA JUGANDO</div>
+        <div id="checkGames"></div>
+      </div>
+
+      <!-- El cuadro dice CUALES salieron; esta fila, en que orden. -->
+      <div id="recent" class="recent hidden"></div>
+
+      <!-- Las 75. De aca no sale una bolita nueva -- eso se teclea --, pero se toca una
+           que ya salio para corregirla: se puede corregir CUALQUIERA de la ronda, no
+           solo la ultima, y este es el lugar donde se ven todas. -->
+      <p class="hint no-top" data-texto="cantar.corregir-cualquiera">Si una esta mal, tocala: se puede corregir cualquiera, no
+        solo la ultima.</p>
+
+      <div id="tombola" class="tombola">
+        <div class="tombola-head">
+          <div class="letter" data-band="0">B</div>
+          <div class="letter" data-band="1">I</div>
+          <div class="letter" data-band="2">N</div>
+          <div class="letter" data-band="3">G</div>
+          <div class="letter" data-band="4">O</div>
+        </div>
+        <div id="keys" class="keys"></div>
+      </div>
+
+      <div class="card-plain">
+        <div class="tag-line" data-texto="cantar.como-van">COMO VAN</div>
+        <div id="board"></div>
+        <div id="boardNone" class="none" data-texto="cantar.tablero-vacio">Cuando alguien compre un carton va a aparecer aca.</div>
+      </div>
+
+    </div>
+
+    <!-- la ronda: no es de ingresar ni de revisar, asi que vive afuera de las dos -->
+    <div class="card-plain">
+      <div class="tag-line" data-texto="cantar.la-ronda">LA RONDA</div>
+      <div id="roundNow" class="round-now"></div>
+
+      <button id="settle" class="soft wide-soft danger-soft" data-texto="cantar.cerrar-la-ronda">Cerrar la ronda</button>
+      <button id="next" class="go wide hidden" data-texto="cantar.arrancar-la-que-sigue">Arrancar la ronda que sigue</button>
+      <button id="close" class="soft wide-soft danger-soft hidden" data-texto="cantar.terminar-el-bingo">Terminar el bingo</button>
+
+      <div id="history" class="history"></div>
+    </div>
+
+    <div class="fold">
+      <button id="logFold" class="fold-head">
+        <span data-texto="general.lo-que-va-pasando">lo que va pasando</span>
+        <span id="logChevron" class="chev">›</span>
+      </button>
+      <pre id="logBox" class="log hidden"></pre>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- el bingo, encima de todo -->
+<div id="bingo" class="bingo hidden">
+  <div class="bingo-card">
+    <div id="bingoTag" class="bingo-tag" data-texto="jugador.bingo">¡BINGO!</div>
+    <div id="bingoWho" class="bingo-who"></div>
+    <div id="bingoWhat" class="bingo-what"></div>
+    <button id="give" class="go wide" data-texto="cantar.bingo.entregar">Entregar el premio</button>
+    <button id="wrong" class="plain" data-texto="cantar.bingo.estaba-mal">el carton estaba mal</button>
+  </div>
+</div>
+
+<div id="ask" class="sheet hidden">
+  <div class="sheet-card">
+    <div id="askTitle" class="sheet-title"></div>
+    <p id="askSub" class="hint"></p>
+    <button id="askYes" class="go sheet-go"></button>
+    <button id="askNo" class="plain" data-texto="cantar.pregunta.todavia-no">Todavia no</button>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="patterns.js"></script>
+<script src="drum.js"></script>
+<script src="calling.js"></script>
+<script src="caller.js"></script>
+</body>
+</html>
+

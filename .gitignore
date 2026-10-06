@@ -1,0 +1,24 @@
+# Build output
+bin/
+obj/
+*.apk
+*.aab
+
+# IDE and local tool settings
+.vs/
+.claude/
+*.user
+*.suo
+
+# Docker build output
+Docker/out/
+
+# Signing keys never go in the repo (Docker/debug.keystore stays on the machine that signs)
+*.keystore
+*.jks
+
+# Local settings (machine paths, emulator serials)
+appsettings.local.json
+
+# Notes and docs stay local
+*.md

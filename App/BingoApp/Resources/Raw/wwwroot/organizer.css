@@ -1,0 +1,2566 @@
+/* Los tokens salen de la maqueta de Fernanda, medidos del HTML que paso: cabecera
+   morada con 26px de radio abajo, campos de 58px con 16px de radio y borde de 1.5,
+   boton de 62px con 20px de radio y sombra morada, y el cuerpo BLANCO -- sin tarjetas
+   grises, que era lo que hacia que todo se viera igual que antes. */
+
+@font-face {
+  font-family: 'Fredoka';
+  src: url('fonts/Fredoka.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/Inter.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root {
+  --tinta: #171827;
+  --tinta2: #626577;
+  --tinta3: #9A9DAE;
+  --borde: #E6E7EF;
+  --linea: #F0F0F5;
+  --hueco: #F7F7FC;
+  --papel: #FFFFFF;
+  --morado: #4F46E5;
+  --morado-hondo: #4C1DCE;
+  --morado-suave: #EEF0FE;
+  --alerta: #B42318;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.hidden { display: none !important; }
+
+.wiz {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── la cabecera ──────────────────────────────────────────────────────── */
+
+/* El padding de arriba lleva un piso: la app dibuja de borde a borde y adentro de un
+   WebView de Android env(safe-area-inset-top) contesta 0, asi que sin el minimo la
+   hora del sistema queda encima del titulo. */
+.head {
+  flex: none;
+  background: var(--morado);
+  border-radius: 0 0 26px 26px;
+  padding: calc(20px + max(env(safe-area-inset-top), var(--arriba, 30px))) 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: #fff;
+}
+
+.head-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.back:active { transform: scale(0.94); background: rgba(255, 255, 255, 0.3); }
+
+.head-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+}
+
+/* ── la cabecera clara: la usan las pantallas que no son wizard ────────
+     Vive ACA y no en la pagina que la estreno, porque este archivo es el unico
+     que cargan todas: dejarla en una hoja suelta deja a las demas con el boton
+     de volver sin tamaño y metido debajo de la hora del sistema. */
+
+.head-plain {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: calc(12px + max(env(safe-area-inset-top), var(--arriba, 30px))) 20px 14px;
+  border-bottom: 1px solid var(--linea);
+}
+
+.back-plain {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: none;
+  border-radius: 12px;
+  background: var(--hueco);
+  color: var(--tinta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.back-plain:active { transform: scale(0.94); background: var(--borde); }
+
+.head-mid { flex: 1; min-width: 0; }
+
+.head-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.head-where {
+  font-size: 13px;
+  color: var(--tinta2);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── piezas que comparten todas las pantallas ──────────────────────────── */
+
+.none {
+  font-size: 15px;
+  color: var(--tinta2);
+  padding: 10px 0;
+}
+
+/* El rotulito en mayusculas que nombra una seccion. UN solo nombre para todas
+   las pantallas: antes convivian .tag y .tag-line, y la mitad de los rotulos de
+   cantar salian sin estilo porque su hoja no conocia el otro. */
+.tag-line {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--tinta2);
+  margin-bottom: 12px;
+}
+
+/* Los tres numeros de la noche. Los muestran el inicio y el detalle, asi que
+   viven aca: dejarlos en la hoja de una de las dos deja a la otra con las
+   cajitas sin color ni forma.
+
+   El color esta en el tinte de la cajita y NO en el numero: tres numeros de tres
+   colores compiten entre si y ninguno se lee primero. */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.stat {
+  border-radius: 14px;
+  padding: 12px 6px;
+  text-align: center;
+}
+
+.stat-sold { background: #E4EEFB; }
+.stat-in { background: #FBE7E4; }
+.stat-prize { background: #E1F3E9; }
+
+.stat-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.1;
+  color: var(--tinta);
+}
+
+.stat-what {
+  font-size: 11.5px;
+  line-height: 1.25;
+  margin-top: 2px;
+  color: var(--tinta2);
+}
+
+/* La pastilla que dice en que anda un bingo. Vive aca porque la ensenan el inicio
+   (en cada tarjeta de la lista) y el detalle (arriba, para el bingo abierto): antes
+   habia una `.chip` en cada hoja, con dos formas distintas para lo mismo. */
+.chip {
+  display: inline-block;
+  flex: none;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.chip-live { background: var(--morado-suave); color: var(--morado); }
+.chip-ready { background: #E1F3E9; color: #1F7A47; }
+.chip-over { background: var(--linea); color: #7A7F8C; }
+
+/* Arriba del detalle la misma pastilla habla mas fuerte: ahi es el estado de LA
+   bingo abierto, no una etiqueta en una lista de varias. */
+.chip-big {
+  font-size: 13px;
+  letter-spacing: 0;
+  padding: 7px 15px;
+}
+
+/* Tres retoques que usan todas las pantallas: separar un bloque del de arriba, pegar
+   una aclaracion a lo que aclara, y bajarle la voz a un "opcional". */
+
+.mt-big { margin-top: 26px; }
+
+.no-top { margin-top: 4px; }
+
+.soft-note {
+  font-weight: 400;
+  color: var(--tinta3);
+}
+
+.wide { width: 100%; margin-top: 16px; }
+
+/* Lleva `.soft` en el selector a proposito: `.soft` fija 108px de ancho y esta
+   escrita mas abajo, asi que con `.wide-soft` a secas ganaba ella y el boton salia
+   angosto con el texto partido en tres lineas. */
+.soft.wide-soft { width: 100%; margin-top: 14px; height: 50px; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%);
+  background: rgba(23, 24, 39, 0.92);
+  color: #fff;
+  font-size: 14px;
+  padding: 12px 20px;
+  border-radius: 14px;
+  animation: toastIn 0.2s ease both;
+  pointer-events: none;
+  max-width: 84%;
+  text-align: center;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translateX(-50%); }
+}
+
+/* ── los pasos, con icono en vez de numero ────────────────────────────── */
+
+.steps {
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease,
+              transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.dot.done { background: #fff; color: var(--morado); }
+
+.dot.on {
+  background: #fff;
+  color: var(--morado);
+  transform: scale(1.14);
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+.bar {
+  flex: 1;
+  height: 2.5px;
+  background: rgba(255, 255, 255, 0.28);
+  transition: background 0.3s ease;
+}
+
+.bar.done { background: #fff; }
+
+.step-name {
+  text-align: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+}
+
+/* ── el cuerpo ────────────────────────────────────────────────────────── */
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 18px 24px 24px;
+}
+
+.step { animation: enter 0.3s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+@keyframes enter {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+.big {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.lead {
+  font-size: 16px;
+  color: var(--tinta2);
+  line-height: 1.4;
+  margin: 6px 0 0;
+}
+
+/* ── los campos: etiqueta arriba, sin tarjeta alrededor ───────────────── */
+
+.field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta2);
+}
+
+.mt { margin-top: 18px; display: block; }
+
+.field {
+  height: 58px;
+  width: 100%;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  padding: 0 18px;
+  background: var(--papel);
+  font-family: inherit;
+  font-size: 17px;
+  color: var(--tinta);
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+  transition: border-color 0.18s ease;
+}
+
+.field:focus { border-color: var(--morado); }
+
+.field::placeholder { color: var(--tinta3); }
+
+.select { position: relative; }
+
+.select::after {
+  content: '';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--tinta3);
+  border-bottom: 2px solid var(--tinta3);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+select.field { appearance: none; }
+
+.hint {
+  font-size: 14px;
+  color: var(--tinta2);
+  line-height: 1.4;
+  margin: 8px 0 0;
+}
+
+.quick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.quick-one.on {
+  border-color: var(--morado);
+  color: var(--morado);
+  background: var(--morado-suave);
+}
+
+/* ── lo que se ve pero todavia no anda ────────────────────────────────── */
+
+.soon {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: var(--morado-suave);
+  color: var(--morado);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.field.muted {
+  display: flex;
+  align-items: center;
+  color: var(--tinta3);
+  background: var(--hueco);
+  border-style: dashed;
+}
+
+/* ── el paso que pregunta ─────────────────────────────────────────────── */
+
+.stage { animation: enter 0.3s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+/* las figuras, en botones grandes: se elige con el pulgar, no de una lista */
+.picks { margin-top: 18px; }
+
+.pick-one {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  background: var(--papel);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.pick-one:active { transform: scale(0.99); }
+.pick-one.on { border-color: var(--morado); background: var(--morado-suave); }
+
+.pick-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+
+.pick-says {
+  display: block;
+  font-size: 13.5px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+/* el dibujito de la figura: 25 casillas con las que hay que tapar encendidas */
+.pick-grid {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+}
+
+.pick-grid i {
+  border-radius: 2px;
+  background: var(--borde);
+}
+
+.pick-grid i.lit { background: var(--morado); }
+
+.big-two { margin-top: 18px; }
+
+.prize {
+  height: 118px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  background: var(--papel);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta2);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+
+.prize img { width: 52px; height: 52px; object-fit: contain; }
+
+.prize.on {
+  border-color: var(--morado);
+  color: var(--morado);
+  background: var(--morado-suave);
+}
+
+.done-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background: #E6F7EE;
+  color: #12805A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  animation: popMark 0.4s cubic-bezier(0.34, 1.5, 0.64, 1) both;
+}
+
+/* Nombre propio y no `pop` a secas: esta hoja la cargan todas las pantallas y
+   caller.css ya tiene su propio `pop` para la bolita. */
+@keyframes popMark {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+.quick-one {
+  height: 50px;
+  border: 1.5px solid var(--borde);
+  border-radius: 14px;
+  background: var(--papel);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tinta2);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.quick-one:active { transform: scale(0.97); border-color: var(--morado); color: var(--morado); }
+
+/* ── las rondas, como acordeon ────────────────────────────────────────── */
+
+.round {
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  margin-top: 14px;
+  overflow: hidden;
+  animation: enter 0.22s ease both;
+}
+
+.round-head {
+  width: 100%;
+  background: var(--hueco);
+  border: none;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.round-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--tinta);
+}
+
+.round-sub {
+  font-size: 14px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+.chev {
+  font-size: 18px;
+  color: var(--tinta3);
+  transition: transform 0.2s ease;
+}
+
+.chev.open { transform: rotate(90deg); }
+
+.round-body { padding: 18px; }
+
+/* el conector: es lo que explica que la ronda comparte tombola */
+.linkline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 0;
+  color: var(--tinta3);
+  font-size: 13px;
+  text-align: center;
+}
+
+.game {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--linea);
+}
+
+.game-no {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--morado-suave);
+  color: var(--morado);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.game-what { flex: 1; }
+
+.game-figure {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.game-prize {
+  font-size: 15px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+.game-drop {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--alerta);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.empty {
+  font-size: 15px;
+  color: var(--tinta2);
+  padding: 4px 0 12px;
+}
+
+.ghost {
+  width: 100%;
+  margin-top: 14px;
+  border: 1.5px dashed var(--borde);
+  border-radius: 16px;
+  background: var(--papel);
+  color: var(--morado);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.ghost:active { transform: scale(0.99); background: var(--morado-suave); }
+
+.ghost-plus { font-size: 18px; }
+
+/* ── el resumen ───────────────────────────────────────────────────────── */
+
+.sum {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--hueco);
+}
+
+.sum-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 21px;
+}
+
+.sum-stats {
+  font-size: 15px;
+  color: var(--tinta2);
+  margin-top: 4px;
+}
+
+.foot-note {
+  font-size: 14px;
+  color: var(--tinta2);
+  line-height: 1.45;
+  margin: 18px 0 0;
+}
+
+/* ── el registro ──────────────────────────────────────────────────────── */
+
+.fold {
+  margin-top: 22px;
+  border-top: 1px solid var(--linea);
+}
+
+.fold-head {
+  width: 100%;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--tinta2);
+  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.log {
+  margin: 0 0 12px;
+  max-height: 170px;
+  overflow-y: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--tinta2);
+  white-space: pre-wrap;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ── el rotulo de una seccion ────────────────────────────────────────── */
+
+.head-small {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--tinta);
+}
+
+/* ── un rotulo con su boton al otro lado ─────────────────────
+     Lo usan el inicio ("Mis bingos / ver todas") y el detalle ("Quienes venden /
+     anotar"): el rotulo dice de que es la lista y el boton la alimenta. */
+
+.row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* ── la cuenta de arriba, con su barra ───────────────────────
+     La usan la lista de colaboradores (como estan repartidos los cartones de la
+     bingo) y la pantalla de una persona (como estan los suyos). Es la misma pregunta
+     a dos escalas, asi que es la misma pieza. */
+
+.spread {
+  border-radius: 20px;
+  background: var(--hueco);
+  padding: 18px 16px 16px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.spread .tag-line { margin-bottom: 8px; }
+
+.spread-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.05;
+}
+
+.spread-what {
+  font-size: 14px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+.spread-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.spread-box {
+  border-radius: 14px;
+  background: var(--papel);
+  padding: 12px 6px;
+}
+
+.spread-box-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--morado);
+}
+
+.spread-box-what {
+  font-size: 12.5px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+.spread .bar-wrap { margin-top: 14px; }
+
+.spread-range {
+  font-size: 12.5px;
+  color: var(--tinta3);
+  margin-top: 8px;
+}
+
+/* La carita en grande, arriba de lo de una persona. */
+.big-face {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 10px;
+  font-size: 22px;
+}
+
+/* ── las tres cajitas de ventas ─────────────────────────────────────────
+     Vendido, plata y lo que queda, cada una en su tinte. El tinte es de la CAJA y no
+     del numero, igual que en los tres numeros de la noche: tres numeros de tres
+     colores compiten entre si y ninguno se lee primero.
+
+     La del medio es la plata, y por ahora esta vacia a proposito: al carton le falta
+     precio. Se queda en su lugar en vez de desaparecer, porque sacarla cambiaria la
+     forma de la pantalla el dia que el precio exista. */
+
+.boxes-three {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.tri {
+  border-radius: 16px;
+  padding: 14px 8px;
+  text-align: center;
+}
+
+.tri-sold { background: #E4EEFB; }
+.tri-money { background: var(--hueco); }
+.tri-left { background: #FBE7E4; }
+
+.tri-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Apagados solo MIENTRAS no hay precio: el gris y el rojo son del hueco, no de la
+   caja. Con precio puesto, la plata habla con la voz de las otras dos. */
+.tri-num.tri-off { color: var(--tinta3); }
+
+.tri-what {
+  font-size: 11.5px;
+  line-height: 1.25;
+  margin-top: 3px;
+  color: var(--tinta2);
+}
+
+.tri-note {
+  font-size: 10.5px;
+  line-height: 1.25;
+  margin-top: 5px;
+  color: var(--tinta3);
+}
+
+.tri-note.tri-bad { color: var(--alerta); }
+
+/* ── la barra de cuanto va ──────────────────────────────────────────────
+     La misma en el detalle (cartones repartidos), en la lista de colaboradores (lo
+     que vendio cada una) y en ventas (bingo por bingo). */
+
+.bar-wrap {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--linea);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--morado);
+  transition: width 0.3s ease;
+}
+
+/* ── el renglon de una persona ──────────────────────────────────────────
+     Lo comparten la lista de colaboradores y las ventas del inicio: en las dos, una
+     carita, un nombre y una linea que dice como va. El color de la carita es el del
+     papel que cumple esa persona en la noche. */
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--linea);
+}
+
+.who-face {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.who-sell { background: #FEF3E2; color: #B45309; }
+.who-call { background: var(--morado-suave); color: var(--morado); }
+.who-play { background: #E6F7EE; color: #12805A; }
+.who-gone { background: var(--hueco); color: var(--tinta3); }
+
+.who-what { flex: 1; min-width: 0; }
+
+.who-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.who-name.gone { color: var(--tinta3); text-decoration: line-through; }
+
+.who-sub {
+  font-size: 13px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+/* El numero grande a la derecha del renglon: cuantos vendio ese bingo. */
+.sales-num {
+  flex: none;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--morado);
+  font-variant-numeric: tabular-nums;
+}
+
+/* El nombre con la pastilla de su oficio al lado. En UNA sola lista el oficio es lo
+   unico que distingue a una persona de la otra, asi que va pegado al nombre y no en
+   la linea de abajo -- si no, hay que bajar la vista en cada renglon. */
+.who-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* La de quien vende habla en su ambar, igual que su pantalla. La de quien canta usa
+   .chip-live, que ya es morada. */
+.chip-sell { background: #FDF3E7; color: #B45309; }
+
+/* ── una persona, en la lista ─────────────────────────────
+     Una tarjeta que se toca entera y lleva a lo suyo. Las acciones NO viven aca: no
+     caben, y apretadas en el renglon la mas peligrosa -- sacarla -- queda pegada a la
+     mas comun. */
+
+.person {
+  width: 100%;
+  display: block;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  background: var(--papel);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.person:active { transform: scale(0.99); border-color: var(--morado); }
+
+.person-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.person-go {
+  flex: none;
+  font-size: 22px;
+  color: var(--tinta3);
+  line-height: 1;
+}
+
+.person .bar-wrap { margin-top: 12px; }
+
+.person-feet {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--tinta2);
+  margin-top: 6px;
+}
+
+/* ── un renglon que lleva a algo ──────────────────────────
+     Icono, que es, y una flecha. Apagado se queda EN SU LUGAR y no desaparece: verlo
+     apagado dice que la gestion existe, y la nota de abajo dice por que hoy no. */
+
+.row-door {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  margin-bottom: 8px;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  background: var(--papel);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.row-door:active { transform: scale(0.99); border-color: var(--morado); }
+
+.row-door.off {
+  opacity: 0.45;
+  cursor: default;
+  border-style: dashed;
+}
+
+.row-door-ico {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--morado-suave);
+  color: var(--morado);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+
+.row-door-what { flex: 1; min-width: 0; }
+
+.row-door-name {
+  font-size: 15.5px;
+  font-weight: 600;
+}
+
+.row-door-sub {
+  font-size: 13px;
+  color: var(--tinta2);
+  margin-top: 1px;
+}
+
+.row-door-go {
+  flex: none;
+  font-size: 20px;
+  color: var(--tinta3);
+  line-height: 1;
+}
+
+/* ── el boton de agregar, con borde cortado ──────────────────
+     El borde punteado dice que ahi todavia no hay nada y que eso lo pone uno. */
+
+.dashed {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 4px;
+  border: 1.5px dashed var(--morado);
+  border-radius: 16px;
+  background: var(--morado-suave);
+  color: var(--morado);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.dashed:active { transform: scale(0.99); }
+
+/* La salida de una pantalla, en rojo y sin marco: es la ultima cosa de la pagina y no
+   tiene que competir con lo que se hace todos los dias. */
+.plain.danger-plain { color: var(--alerta); margin-top: 22px; }
+
+/* ── un puesto que todavia no tiene a nadie ────────────────────
+     Quien canta el bingo es UNO, asi que su lugar existe antes de que haya alguien:
+     ensenarlo vacio es lo que le recuerda al organizador que le falta. */
+
+.slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.slot-none {
+  font-size: 15.5px;
+  color: var(--tinta3);
+}
+
+/* Ya elegido, el renglon habla con la voz normal: el gris era del "sin configurar". */
+.slot-none.slot-set { color: var(--tinta); font-weight: 600; }
+
+.slot-what { flex: 1; min-width: 0; }
+
+/* El corte entre dos decisiones de la misma tarjeta. */
+.slot-cut {
+  height: 1px;
+  background: var(--linea);
+  margin: 14px 0;
+}
+
+/* ── el marco liso ────────────────────────────────────────────────────── */
+
+.card-plain {
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+/* ── un codigo para ensenar ────────────────────────────────────────────
+     Lo ensena el organizador (los papelitos de sus colaboradores) y tambien la
+     colaboradora (su propio numero, y el codigo del comprador). */
+
+.qr-card {
+  margin-top: 16px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+}
+
+.qr {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  image-rendering: pixelated;
+  background: #fff;
+}
+
+.qr-who {
+  font-size: 13.5px;
+  color: var(--tinta2);
+  margin-top: 6px;
+}
+
+/* Chico y en monoespaciado: es para copiar o dictar, no para leer de corrido. */
+.qr-link {
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--tinta3);
+  margin-top: 8px;
+  word-break: break-all;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ── una capa encima de todo ────────────────────────────────────────────
+     Para lo que hay que ENSENARLE a otra persona en la pantalla: el codigo del
+     comprador, y el QR de cada colaborador. No es una banda mas de la pagina porque
+     se abre desde lugares distintos y tiene que salir igual desde todos. */
+
+.layer {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 24, 39, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  overflow-y: auto;
+  animation: fade 0.2s ease both;
+}
+
+.layer-card {
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  /* El marco va en el color de QUIEN mira la pantalla, asi que aca queda el del
+     organizador y la hoja de quien ayuda lo pinta de su ambar. Con var(--ayuda) a secas
+     -- que solo existe en esa hoja -- el detalle se quedaba con un borde invalido. */
+  border: 2px solid var(--morado);
+  border-radius: 22px;
+  background: var(--papel);
+  padding: 20px;
+  text-align: center;
+  animation: rise 0.26s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+.layer-card .qr { margin-top: 12px; }
+
+.code-text {
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--tinta3);
+  margin-top: 10px;
+  max-height: 62px;
+  overflow-y: auto;
+  word-break: break-all;
+  text-align: left;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ── el boton que da miedo ────────────────────────────────────────────── */
+
+.danger-soft { border-color: var(--alerta); color: var(--alerta); }
+
+/* ── lo que se esta jugando ahora ───────────────────────────────────────
+     Lo ven las dos pantallas que cantan. Nuestra ronda juega varias figuras a la
+     vez, asi que no hay "el juego actual" sino los que van: cada uno con su
+     dibujito, su premio y si ya tiene ganador. */
+
+.now-card {
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-top: 16px;
+}
+
+.now-game {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--linea);
+}
+
+.now-game:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* El cartoncito de la figura. Lo dibujan el detalle (en fila, para ver de que es la
+   noche) y las dos pantallas que cantan (al lado de cada juego), asi que vive aca. */
+.mini-grid {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5px;
+}
+
+.mini-grid i {
+  border-radius: 1.5px;
+  background: var(--linea);
+}
+
+.mini-grid i.lit { background: var(--morado); }
+
+.now-what { flex: 1; min-width: 0; }
+
+.now-figure {
+  font-weight: 600;
+  font-size: 15.5px;
+}
+
+.now-who {
+  font-size: 13px;
+  color: var(--tinta3);
+  margin-top: 2px;
+}
+
+.now-who.won { color: #1F7A47; font-weight: 600; }
+
+.now-prize {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.now-icon { width: 26px; height: 26px; object-fit: contain; }
+
+.now-what-prize {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--tinta);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── las ultimas que salieron ───────────────────────────────────────────
+     Para el que llego tarde a mirar, y para cantar en voz alta "y antes habia
+     salido...". La primera va mas fuerte porque es la que se acaba de gritar. */
+
+.recent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.recent-one {
+  padding: 5px 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 100px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tinta2);
+}
+
+.recent-one.first {
+  color: var(--tinta);
+  font-weight: 700;
+  border-width: 2px;
+}
+
+/* ── me equivoque ───────────────────────────────────────────────────────
+     Debajo de la bolita, chiquito: es una salida que casi nunca se usa y no tiene
+     que competir con la tombola por el pulgar. */
+
+.link-fix {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--alerta);
+  padding: 6px 0 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.fixing {
+  margin-top: 14px;
+  border: 2px solid var(--alerta);
+  border-radius: 18px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.fixing-says {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--alerta);
+  line-height: 1.4;
+}
+
+/* ── las dos secciones de cantar ────────────────────────────────────────
+     Ingresar y Revisar. Van pegadas arriba del cuerpo y no abajo con las otras
+     pestanias: estas dos parten UNA pantalla en dos, no llevan a otro lugar. En el
+     telefono de quien ayuda conviven con la barra de abajo, y por eso se ven distintas
+     -- pastillas adentro de un riel, no rotulos con marquita. */
+
+.call-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--hueco);
+  margin-bottom: 4px;
+}
+
+.call-tab {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta2);
+  padding: 10px 0;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.call-tab.on {
+  background: var(--papel);
+  color: var(--morado);
+  box-shadow: 0 1px 3px rgba(23, 24, 39, 0.1);
+}
+
+/* ── revisar: las cuentas arriba del cuadro ─────────────────────────────── */
+
+.check-head {
+  text-align: center;
+  padding: 18px 0 4px;
+}
+
+.check-count {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.check-left {
+  font-size: 14px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+.check-last {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+/* ── el teclado ─────────────────────────────────────────────────────────
+     La bolita se marca aca y se manda con CANTAR. Doce teclas en vez de setenta y
+     cinco, y ninguna manda nada por si sola: el numero se ve, se comprueba con su
+     letra, y hasta que no se toca CANTAR no salio de este telefono.
+
+     Es de las DOS pantallas que cantan, igual que el cuadro de las 75. */
+
+.pad {
+  margin-top: 12px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  padding: 10px 14px 12px;
+}
+
+/* Corrigiendo se ve distinto: si se viera igual, lo que se marque parece una bolita
+   nueva en vez del reemplazo de la mala. */
+.pad.fixing-now { border-color: var(--alerta); border-width: 2px; }
+
+.pad-says {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  color: var(--tinta3);
+  text-align: center;
+}
+
+.pad.fixing-now .pad-says { color: var(--alerta); }
+
+/* La letra va A LA IZQUIERDA del numero, como se lee y como se grita: "I 27". */
+.pad-show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  margin-top: 4px;
+}
+
+.pad-letter {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 23px;
+}
+
+.pad-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--tinta);
+}
+
+.pad-num.empty { color: var(--linea); }
+
+.pad-bad {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--alerta);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.pad-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.pad-key {
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: var(--hueco);
+  color: var(--tinta);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+
+.pad-key:active { transform: scale(0.94); }
+
+.pad-back {
+  font-family: inherit;
+  font-size: 20px;
+  color: var(--tinta2);
+}
+
+.pad-go {
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: var(--morado);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: transform 0.08s ease, opacity 0.2s ease;
+}
+
+.pad-go:active { transform: scale(0.94); }
+
+/* Apagado no es "no anda": es "todavia no hay nada que mandar". Se queda ahi, en su
+   lugar, para que el pulgar sepa desde el principio donde va a caer. */
+.pad-go:disabled { opacity: 0.35; cursor: default; }
+
+.pad.fixing-now .pad-go { background: var(--alerta); }
+
+/* ── la tombola y lo que la acompana ────────────────────────────────────
+     Vive aca y no en la hoja de cantar porque la usan DOS pantallas: el
+     organizador y la colaboradora a la que le toco cantar. Los colores de banda
+     son LOS MISMOS que se le encienden al jugador en su carton -- el "I 27" que
+     uno grita tiene que coincidir con lo que el otro ve. */
+
+:root {
+  --b: #FF6B6B;
+  --i: #F5A623;
+  --n: #50C878;
+  --g: #4DA3FF;
+  --o: #9B7BFF;
+}
+
+/* la ultima que salio, con el color de su banda */
+
+.last-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ball-big {
+  width: 84px;
+  height: 84px;
+  flex: none;
+  border-radius: 42px;
+  background: var(--tinta3);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  box-shadow: inset -6px -8px 14px rgba(0, 0, 0, 0.18),
+              inset 5px 6px 12px rgba(255, 255, 255, 0.45);
+  transition: background 0.25s ease;
+}
+
+.ball-big.pop { animation: pop 0.4s cubic-bezier(0.34, 1.5, 0.64, 1); }
+
+@keyframes pop {
+  0% { transform: scale(0.7); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.last-what { flex: 1; min-width: 0; }
+
+.last-tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--tinta2);
+}
+
+.last-count {
+  font-size: 16px;
+  color: var(--tinta);
+  margin-top: 4px;
+}
+
+/* cuando no hay ronda sonando */
+
+.asleep {
+  margin-top: 16px;
+  border-radius: 18px;
+  background: var(--hueco);
+  padding: 22px 18px;
+  text-align: center;
+}
+
+.asleep-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.asleep-sub {
+  font-size: 14.5px;
+  color: var(--tinta2);
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+/* el cuadro de las 75, que se mira y no se toca */
+
+.tombola {
+  margin-top: 18px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.tombola-head,
+.keys {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+.tombola-head { margin-bottom: 8px; }
+
+.letter {
+  text-align: center;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.letter[data-band="0"] { color: var(--b); }
+.letter[data-band="1"] { color: var(--i); }
+.letter[data-band="2"] { color: var(--n); }
+.letter[data-band="3"] { color: var(--g); }
+.letter[data-band="4"] { color: var(--o); }
+
+/* Es un boton, pero solo las que ya salieron estan habilitadas, y tocarlas no canta:
+   abre la correccion de esa bolita. De aca no sale nunca una bolita nueva. */
+.key {
+  height: 44px;
+  border: none;
+  border-radius: 11px;
+  background: var(--hueco);
+  color: var(--tinta);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease, background 0.2s ease, transform 0.08s ease;
+}
+
+/* Apagada no se ve distinta: una que no salio ya se ve que no salio, y ponerla mas
+   palida solo la haria dificil de leer. */
+.key:disabled { cursor: default; }
+
+.key.out { color: #fff; opacity: 0.5; }
+
+.key.out:not(:disabled):active { transform: scale(0.9); opacity: 0.75; }
+
+.key.last {
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 0 5px currentColor;
+}
+
+/* Sin ronda sonando el cuadro se apaga: sigue diciendo como quedo la ronda anterior,
+   pero apagado no se confunde con una que esta andando. */
+.tombola.off { opacity: 0.4; }
+
+/* ── lo que hace avanzar ──────────────────────────────────────────────── */
+
+.foot {
+  flex: none;
+  display: flex;
+  gap: 10px;
+  padding: 14px 24px calc(20px + max(env(safe-area-inset-bottom), 6px));
+  background: var(--papel);
+}
+
+/* Sin flex: el pie se lo da abajo. Con `flex: 1` puesto aca, el mismo boton dentro
+   de una columna (el de "crear mi primer bingo") se estira hasta comerse media
+   pantalla. */
+.go {
+  flex: none;
+  height: 62px;
+  border: none;
+  border-radius: 20px;
+  background: var(--morado);
+  color: #fff;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 14px 26px -8px rgba(79, 70, 229, 0.5);
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.go:active { transform: scale(0.98); background: var(--morado-hondo); }
+.go:disabled { opacity: 0.55; box-shadow: none; }
+
+/* En el pie SI se estira: ahi conviven con el boton de atras y tienen que
+   repartirse el ancho. */
+.foot .go { flex: 1; }
+
+.soft {
+  width: 108px;
+  flex: none;
+  height: 62px;
+  border: 1.5px solid var(--borde);
+  border-radius: 20px;
+  background: var(--papel);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tinta2);
+  cursor: pointer;
+}
+
+.soft:active { transform: scale(0.98); }
+
+/* El mismo boton morado, mas bajo y sin sombra: sirve cuando NO es lo unico que
+   se puede hacer en la pantalla y no tiene que gritar tanto. */
+.go.mid {
+  height: 52px;
+  border-radius: 16px;
+  font-size: 16px;
+  box-shadow: none;
+}
+
+/* Delineado en morado. Es el segundo camino de una pantalla: se ve que se puede
+   apretar, pero no compite con el boton lleno de al lado. */
+.line {
+  width: 100%;
+  height: 54px;
+  border: 1.5px solid var(--morado);
+  border-radius: 18px;
+  background: var(--papel);
+  color: var(--morado);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.1s ease;
+}
+
+.line:active { transform: scale(0.99); background: var(--morado-suave); }
+
+/* La pastilla que vive en la cabecera de una lista: chica, llena, al lado del
+   titulo. No es el boton principal de la pantalla, es el atajo de la seccion. */
+.pill {
+  flex: none;
+  border: none;
+  border-radius: 100px;
+  background: var(--morado);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 14px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.pill:active { transform: scale(0.96); background: var(--morado-hondo); }
+
+.plain {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--tinta2);
+  padding: 14px;
+  cursor: pointer;
+}
+
+/* ── la hoja del juego ────────────────────────────────────────────────── */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 24, 39, 0.45);
+  display: flex;
+  align-items: flex-end;
+  animation: fade 0.2s ease both;
+}
+
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+.sheet-card {
+  width: 100%;
+  max-height: 92%;
+  overflow-y: auto;
+  background: var(--papel);
+  border-radius: 26px 26px 0 0;
+  padding: 22px 24px calc(24px + max(env(safe-area-inset-bottom), 6px));
+  animation: rise 0.26s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes rise { from { transform: translateY(100%); } to { transform: none; } }
+
+.sheet-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 21px;
+}
+
+.sheet-go { width: 100%; margin-top: 22px; }
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.pick {
+  height: 58px;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  background: var(--papel);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tinta2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: all 0.18s ease;
+}
+
+.pick.on {
+  border-color: var(--morado);
+  color: var(--morado);
+  background: var(--morado-suave);
+}
+
+.pick-ico { font-size: 17px; }
+
+/* ── mientras nace el bingo ──────────────────────────────────────────── */
+
+.busy {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 24, 39, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade 0.2s ease both;
+}
+
+.busy-card {
+  background: var(--papel);
+  border-radius: 22px;
+  padding: 30px 36px;
+  text-align: center;
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 14px;
+  border: 3px solid var(--morado-suave);
+  border-top-color: var(--morado);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.busy-text {
+  font-size: 16px;
+  color: var(--tinta2);
+}
+
+
+/* ── el wizard: cuando se juega ────────────────────────────────────────
+     Medido del archivo de Fernanda, no estimado de una captura: fila de ancho completo
+     sobre el hueco gris, radio 18, icono de 22 a la izquierda y chevron de 18 a la
+     derecha. La version anterior eran dos cajitas blancas lado a lado con el rotulo en
+     mayusculas -- se veia bien, pero no era esto. */
+
+.when {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.when-one {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 16px;
+  border: 1.5px solid var(--borde);
+  border-radius: 18px;
+  background: var(--hueco);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.when-one:active { transform: scale(0.99); border-color: var(--morado); }
+
+.when-ico {
+  flex: none;
+  color: #7A7F8C;
+}
+
+.when-go {
+  flex: none;
+  color: var(--tinta3);
+}
+
+.when-what {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.when-tag {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tinta2);
+}
+
+.when-said {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--tinta);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sin hora dicha, el valor habla mas bajo: es una invitacion, no un dato. */
+.when-empty .when-said { color: var(--tinta2); font-weight: 600; }
+
+/* ── el calendario ──────────────────────────────────────────────────── */
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 6px 0 14px;
+}
+
+.cal-arrow {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: none;
+  border-radius: 12px;
+  background: var(--hueco);
+  color: var(--tinta);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cal-arrow:disabled { color: var(--tinta3); opacity: 0.45; }
+
+.cal-month {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  text-transform: capitalize;
+}
+
+.cal-week, .cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-day-name {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--tinta3);
+  padding-bottom: 6px;
+}
+
+.cal-hole { height: 42px; }
+
+.cal-cell {
+  height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--tinta);
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.cal-cell.cal-gone { color: var(--tinta3); opacity: 0.35; }
+
+/* Hoy va marcado aunque no sea el elegido: es de donde uno cuenta los dias. */
+.cal-cell.cal-today { font-weight: 700; color: var(--morado); }
+
+.cal-cell.on {
+  background: var(--morado);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── el reloj ───────────────────────────────────────────────────────── */
+
+.clock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+
+.clock-part {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.clock-up, .clock-down {
+  width: 54px;
+  height: 32px;
+  border: none;
+  border-radius: 10px;
+  background: var(--hueco);
+  color: var(--tinta2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.clock-up:active, .clock-down:active { background: var(--borde); }
+
+.clock-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.35;
+  min-width: 54px;
+  text-align: center;
+}
+
+.clock-dots {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--tinta3);
+  padding-bottom: 4px;
+}
+
+.clock-half {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 10px;
+}
+
+.half-one {
+  padding: 9px 14px;
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  background: var(--papel);
+  color: var(--tinta2);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.half-one.on {
+  border-color: var(--morado);
+  background: var(--morado-suave);
+  color: var(--morado);
+}
+
+/* ── la rueda de cantidades ─────────────────────────────────────────────
+     Medida de su archivo: 220px de alto, cinco renglones, y el del medio en 40px con
+     los vecinos apagandose hacia afuera. Los dos velos son degradados del papel: son
+     los que hacen que la rueda se vea como una rueda y no como una lista. */
+
+.wheel-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.wheel {
+  position: relative;
+  height: 220px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.wheel-row {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 6px 0;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.wheel-veil {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60px;
+  pointer-events: none;
+}
+
+.wheel-top { top: 0; background: linear-gradient(var(--papel), rgba(255, 255, 255, 0)); }
+
+.wheel-bottom { bottom: 0; background: linear-gradient(rgba(255, 255, 255, 0), var(--papel)); }
+
+.wheel-unit {
+  font-size: 15px;
+  color: var(--tinta2);
+}
+
+.wheel-own {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 8px;
+}
+
+.wheel-own-tag {
+  font-size: 14px;
+  color: var(--tinta2);
+}
+
+/* El campo de la rueda es mas bajo que el de un formulario y va centrado: es un numero
+   suelto, no un renglon que se lee de izquierda a derecha. */
+.mid-field {
+  height: 52px;
+  border-radius: 14px;
+  padding: 0 16px;
+  text-align: center;
+}
+
+/* ── cuantas rondas ─────────────────────────────────────────────────────
+     Redondos, no cuadrados: es lo que la separa del paso de los cartones, que tiene la
+     misma forma de "un numero grande en el medio". */
+
+.counter-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 10px 0;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.counter-side {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--borde);
+  border-radius: 50%;
+  background: var(--papel);
+  color: var(--morado);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.counter-side:active { transform: scale(0.94); background: var(--hueco); }
+
+.counter-side:disabled { color: var(--tinta3); opacity: 0.4; }
+
+.counter-num {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--tinta);
+  min-width: 70px;
+  text-align: center;
+}
+
+.counter-unit {
+  font-size: 15px;
+  color: var(--tinta2);
+}
+
+.quick-rounds {
+  display: flex;
+  gap: 10px;
+}
+
+.quick-round {
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid var(--borde);
+  border-radius: 50%;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.quick-round.on {
+  border: none;
+  background: var(--morado);
+  color: #fff;
+}
+
+/* ── la cabecera de las rondas ──────────────────────────────────────────
+     Medida de su archivo. Lo que reemplaza: una fila de pastillas que se deslizaba y
+     quedaba pisada por "Cambiar cantidad" apenas habia tres rondas. */
+
+.rounds-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rounds-bar-what { min-width: 0; }
+
+.round-where {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--tinta);
+}
+
+/* El punto de la ronda en curso se ALARGA en vez de crecer: asi la fila no cambia de
+   alto al pasar de una ronda a otra, y con diez rondas sigue cabiendo. */
+.round-dots {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.round-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--borde);
+  transition: all 0.25s ease;
+}
+
+.round-dot.done { background: #A9A3F0; }
+
+.round-dot.now { width: 20px; background: var(--morado); }
+
+/* Las rondas ya listas, una por renglon y de ancho completo. Solo las ANTERIORES a la
+   que se esta armando: la de ahora ya se ve entera abajo. */
+.rounds-done {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.round-done {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--hueco);
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+.round-done-tick {
+  color: #1F7A47;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.round-done-what {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tinta);
+}
+
+.link {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--morado);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Quitar un juego vive EN su renglon: mandarlo a un menu haria que corregir un premio
+   cueste mas que haberlo escrito. */
+.game-out {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 6px 2px 6px 10px;
+  color: var(--alerta);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sum-when {
+  font-size: 14px;
+  color: var(--tinta2);
+  margin-top: 2px;
+}
+
+/* ── creado ─────────────────────────────────────────────────────────── */
+
+.done-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--papel);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 30px 24px calc(30px + env(safe-area-inset-bottom));
+  text-align: center;
+  animation: enter 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.done-big {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: #E1F3E9;
+  color: #1F7A47;
+  font-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.done-title {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 27px;
+}
+
+.done-name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--morado);
+}
+
+.done-says {
+  font-size: 15px;
+  color: var(--tinta2);
+  max-width: 300px;
+  margin-bottom: 24px;
+}
+
+
+/* Las dos pantallas de "un numero grande en el medio" ocupan el alto entero, que es lo
+   que le da a su contenido contra que centrarse. */
+#s2.step, #s3.step {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+#s2.step.hidden, #s3.step.hidden { display: none; }
+
+
+/* ── la ronda que se esta armando ───────────────────────────────────────
+     Medido de su archivo. Lo que reemplaza: un ✓ gigante que no era de esta etapa, la
+     pregunta en 24px como si fuera el titulo de la pantalla, y un boton morado solido
+     para "agregar otro" que se llevaba toda la atencion de la pantalla. */
+
+.round-games {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.round-games.no-top { margin-top: 16px; }
+
+.round-game {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--hueco);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.round-game-tick {
+  color: #1F7A47;
+  font-weight: 700;
+}
+
+.round-game-what { flex: 1; min-width: 0; }
+
+.round-game-figure {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--tinta);
+}
+
+.round-game-prize {
+  font-size: 14px;
+  color: var(--tinta2);
+}
+
+/* El premio se reconoce por su icono antes que por su texto: de un vistazo se ve cuales
+   son plata y cuales son cosa. */
+.round-game-ico {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--papel);
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.mt-mid { margin-top: 22px; }
+
+.ask {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--tinta);
+}
+
+.ask-says {
+  font-size: 14px;
+  color: var(--tinta2);
+  line-height: 1.4;
+  margin: 6px 0 0;
+}
+
+.two-down {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Punteado y no solido: agregar otro premio es una opcion, no lo que la pantalla espera
+   que uno haga. Un boton morado lleno ahi empuja a seguir agregando. */
+.ghost-add {
+  width: 100%;
+  height: 56px;
+  border: 1.5px dashed var(--morado);
+  border-radius: 16px;
+  background: #F7F7FF;
+  color: var(--morado);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.ghost-add:active { transform: scale(0.99); }
+
+.plain-box {
+  width: 100%;
+  height: 52px;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.plain-box:active { transform: scale(0.99); }

@@ -1,0 +1,158 @@
+/* La entrada al bingo del jugador web: la tombola mientras se conecta, el cartón repartido mientras se pone al
+   dia, y el aviso de "volviendo a la mesa" cuando la pestaña vuelve de estar congelada. */
+
+.ent {
+  position: fixed; inset: 0; z-index: 900; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: max(30px, env(safe-area-inset-top)) 22px max(24px, env(safe-area-inset-bottom));
+  background-color: #2a0f3d;
+  background-image: linear-gradient(to bottom, rgba(42,15,61,.5), rgba(42,15,61,.95) 64%), url('assets/player-bg.webp');
+  background-size: cover; background-position: center top;
+  font-family: 'Inter', system-ui, sans-serif; color: #fff2d6;
+  transition: opacity .55s ease, transform .55s ease;
+}
+.ent.ent-fuera { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.ent-logo { width: 150px; height: auto; display: block; }
+.ent-titulo {
+  font-family: 'Paytone One', sans-serif; font-size: 25px; letter-spacing: 1px; color: #ffd98a; text-align: center;
+  text-shadow: 0 3px 0 #7a0000, 0 6px 14px rgba(0,0,0,.45);
+}
+
+/* La tombola: una esfera de alambre que gira sobre su eje, con las bolitas revolviendose adentro. */
+.tmb { position: relative; width: 280px; height: 250px; flex: none; }
+.tmb-rayos {
+  position: absolute; left: 10px; top: -30px; width: 260px; height: 260px; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(255,217,138,.18) 0deg 8deg, rgba(255,217,138,0) 8deg 20deg);
+  -webkit-mask: radial-gradient(circle, #000 20%, transparent 68%); mask: radial-gradient(circle, #000 20%, transparent 68%);
+  animation: ent-gira-inv 30s linear infinite;
+}
+.tmb svg { position: absolute; left: 0; top: 0; overflow: visible; }
+.tmb-meridiano { transform-box: view-box; transform-origin: 140px 104px; animation: ent-meridiano 2.4s linear infinite; }
+.tmb-manivela { transform-box: view-box; transform-origin: 228px 104px; animation: ent-gira 2.4s linear infinite; }
+.tmb-dentro { position: absolute; left: 66px; top: 30px; width: 148px; height: 148px; border-radius: 50%; overflow: hidden; }
+.tmb-dentro .ent-bola { position: absolute; left: 0; top: 0; }
+.tmb-a { animation: ent-tA 2.3s ease-in-out infinite; }
+.tmb-b { animation: ent-tB 2.7s ease-in-out infinite; }
+.tmb-c { animation: ent-tC 2.1s ease-in-out infinite; }
+.tmb-d { animation: ent-tD 3.1s ease-in-out infinite; }
+.tmb-lejos { transform-origin: center; filter: brightness(.78); }
+.tmb-sale { position: absolute; left: 128px; top: 166px; animation: ent-sale 3.6s cubic-bezier(.45,.05,.4,1) infinite; }
+.tmb-destello {
+  position: absolute; left: 119px; top: 204px; width: 46px; height: 46px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,244,190,.95), rgba(255,200,90,0) 70%);
+  animation: ent-destello 3.6s ease-out infinite;
+}
+.tmb-chispa { position: absolute; width: 14px; height: 14px; animation: ent-chispa 2.2s ease-in-out infinite; }
+
+/* Una bolita como las del tubo de la app: aro del color de su letra y la cara blanca con letra y número. */
+.ent-bola {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  box-shadow: 0 3px 5px rgba(0,0,0,.45), inset 0 -3px 4px rgba(0,0,0,.25), inset 0 3px 4px rgba(255,255,255,.35);
+}
+.ent-bola > span {
+  width: 66%; height: 66%; border-radius: 50%; background: radial-gradient(circle at 40% 30%, #fff, #e7ebf1);
+  display: grid; place-items: center; font-family: 'Paytone One', sans-serif; font-size: 8px; line-height: 1; color: #2a0f3d;
+}
+
+/* Los pasos. */
+.ent-pasos {
+  width: 100%; max-width: 380px; box-sizing: border-box; padding: 14px 16px; border-radius: 22px;
+  background: rgba(255,255,255,.10); border: 2px solid rgba(255,255,255,.16);
+  box-shadow: inset 0 2px 6px rgba(255,255,255,.18), 0 10px 24px -10px rgba(0,0,0,.6);
+  display: flex; flex-direction: column; gap: 11px;
+}
+.ent-paso { display: flex; align-items: center; gap: 14px; transition: opacity .3s; }
+.ent-paso.falta { opacity: .55; }
+.ent-marca { width: 30px; height: 30px; flex: none; border-radius: 50%; box-sizing: border-box; display: grid; place-items: center; }
+.ent-paso.hecho .ent-marca { background: #f5a623; box-shadow: 0 2px 0 #3a1c00; animation: ent-pop .4s cubic-bezier(.22,1,.36,1); }
+.ent-paso.ahora .ent-marca { border: 3.5px solid rgba(255,217,138,.25); border-top-color: #ffd98a; animation: ent-gira .9s linear infinite; }
+.ent-paso.falta .ent-marca { border: 2.5px dashed rgba(255,242,214,.45); }
+.ent-marca svg { display: none; }
+.ent-paso.hecho .ent-marca svg { display: block; }
+.ent-paso-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ent-paso-t { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 17px; color: #fff2d6; }
+.ent-paso-s { font-size: 12.5px; color: #e9dcf5; }
+.ent-pie { margin-top: auto; font-size: 13px; color: #e9dcf5; text-align: center; animation: ent-late 1.4s ease-in-out infinite; }
+.ent-boton {
+  margin-top: 4px; padding: 12px 22px; border-radius: 16px; border: 2px solid #3a1c00;
+  background: linear-gradient(180deg, #ffe08a, #f5a623); color: #3a1c00; box-shadow: 0 4px 0 #3a1c00;
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer;
+}
+
+/* El reparto: el cartón entra a la mesa y se sellan las bolitas que ya salieron. */
+.ent-mesa {
+  position: relative; width: 100%; max-width: 380px; flex: 1; min-height: 0; max-height: 470px; border-radius: 30px;
+  display: grid; place-items: center; overflow: visible;
+}
+.ent-mesa .hanger { width: auto; }
+.ent-ficha-sale { animation: ent-ficha .5s cubic-bezier(.22,1,.36,1) both; }
+@keyframes ent-ficha { 0% { transform: scale(1.9); opacity: 0; } 55% { transform: scale(.88); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+.ent-carton {
+  width: min(300px, 86%); box-sizing: border-box; border-radius: 20px; padding: 10px;
+  background: #fff2d6; border: 3px solid #3a1c00; box-shadow: 0 6px 0 #3a1c00, 0 20px 34px -10px rgba(0,0,0,.7);
+  animation: ent-llega .95s cubic-bezier(.22,1,.36,1) both;
+}
+.ent-carton-cab { display: flex; justify-content: space-between; align-items: baseline; padding: 0 4px 8px; }
+.ent-carton-n { font-family: 'Paytone One', sans-serif; font-size: 15px; color: #7a0000; }
+.ent-carton-mas { font-size: 12px; font-weight: 600; color: #5e0606; }
+.ent-grilla { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.ent-letra {
+  height: 28px; border-radius: 8px; background: #7a0000; color: #ffd98a; display: grid; place-items: center;
+  font-family: 'Paytone One', sans-serif; font-size: 15px;
+}
+.ent-celda {
+  position: relative; aspect-ratio: 1 / .92; border-radius: 10px; background: #fff; border: 2px solid #e8d3a8;
+  display: grid; place-items: center; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 18px; color: #3a1c00;
+}
+.ent-sello {
+  position: absolute; inset: 4px; border-radius: 50%;
+  background: radial-gradient(circle at 45% 40%, rgba(232,40,40,.75), rgba(170,10,10,.6)); border: 2px solid rgba(122,0,0,.7);
+  animation: ent-sello .45s ease-out both;
+}
+.ent-cuenta {
+  position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; font-family: 'Fredoka', sans-serif;
+  font-weight: 600; font-size: 15px; color: #ffd98a; text-shadow: 0 2px 4px rgba(0,0,0,.6); animation: ent-sube .4s ease-out both;
+}
+
+/* El aviso de volver a la mesa, arriba, sin tapar el cartón. */
+.ent-aviso {
+  position: fixed; z-index: 890; left: 50%; top: max(118px, calc(env(safe-area-inset-top) + 100px));
+  width: min(360px, calc(100% - 28px)); box-sizing: border-box; padding: 12px 16px; border-radius: 18px;
+  display: flex; align-items: center; gap: 14px; transform: translateX(-50%);
+  background: rgba(42,15,61,.92); border: 2px solid rgba(255,217,138,.45); box-shadow: 0 10px 22px -8px rgba(0,0,0,.6);
+  font-family: 'Inter', system-ui, sans-serif; color: #fff2d6; animation: ent-aviso .45s cubic-bezier(.22,1,.36,1) both;
+  transition: opacity .4s ease;
+}
+.ent-aviso.listo { background: linear-gradient(180deg, #ffe08a, #f5a623); border-color: #3a1c00; color: #3a1c00; box-shadow: 0 4px 0 #3a1c00, 0 12px 22px -8px rgba(0,0,0,.6); }
+.ent-aviso.fuera { opacity: 0; }
+.ent-aviso-icono { width: 38px; height: 38px; flex: none; }
+.ent-aviso-icono.ruleta { background: url('assets/ic-wheel.webp') center / contain no-repeat; animation: ent-gira 2.4s linear infinite; }
+.ent-aviso-icono.ok { border-radius: 50%; background: #3a1c00; display: grid; place-items: center; }
+.ent-aviso-t { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 16px; color: #ffd98a; }
+.ent-aviso.listo .ent-aviso-t { color: #3a1c00; }
+.ent-aviso-s { font-size: 12.5px; color: #e9dcf5; }
+.ent-aviso.listo .ent-aviso-s { color: #3a1c00; font-weight: 600; }
+
+@keyframes ent-gira { to { transform: rotate(360deg); } }
+@keyframes ent-gira-inv { to { transform: rotate(-360deg); } }
+@keyframes ent-late { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes ent-pop { 0% { transform: scale(.4); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes ent-meridiano {
+  0% { transform: scaleX(1); } 12.5% { transform: scaleX(.71); } 25% { transform: scaleX(.02); } 37.5% { transform: scaleX(-.71); }
+  50% { transform: scaleX(-1); } 62.5% { transform: scaleX(-.71); } 75% { transform: scaleX(-.02); } 87.5% { transform: scaleX(.71); } 100% { transform: scaleX(1); }
+}
+@keyframes ent-tA { 0% { transform: translate(18px,98px) rotate(0); } 22% { transform: translate(72px,108px) rotate(160deg); } 44% { transform: translate(112px,54px) rotate(330deg); } 58% { transform: translate(84px,14px) rotate(420deg); } 74% { transform: translate(40px,30px) rotate(560deg); } 100% { transform: translate(18px,98px) rotate(720deg); } }
+@keyframes ent-tB { 0% { transform: translate(98px,102px) rotate(0); } 20% { transform: translate(118px,58px) rotate(-150deg); } 40% { transform: translate(70px,16px) rotate(-300deg); } 62% { transform: translate(22px,62px) rotate(-470deg); } 80% { transform: translate(56px,108px) rotate(-600deg); } 100% { transform: translate(98px,102px) rotate(-720deg); } }
+@keyframes ent-tC { 0% { transform: translate(60px,62px) rotate(0) scale(.82); } 25% { transform: translate(14px,40px) rotate(200deg) scale(.82); } 50% { transform: translate(50px,110px) rotate(380deg) scale(.82); } 75% { transform: translate(110px,88px) rotate(560deg) scale(.82); } 100% { transform: translate(60px,62px) rotate(720deg) scale(.82); } }
+@keyframes ent-tD { 0% { transform: translate(110px,22px) rotate(0) scale(.82); } 30% { transform: translate(60px,8px) rotate(-200deg) scale(.82); } 55% { transform: translate(20px,76px) rotate(-390deg) scale(.82); } 80% { transform: translate(88px,114px) rotate(-560deg) scale(.82); } 100% { transform: translate(110px,22px) rotate(-720deg) scale(.82); } }
+@keyframes ent-sale { 0% { transform: translate(0,0) scale(.6); opacity: 0; } 10% { opacity: 1; transform: translate(0,6px) scale(.8); } 34% { transform: translate(0,40px) scale(1); } 42% { transform: translate(0,30px) scale(1.06,.94); } 50% { transform: translate(0,40px); } 56% { transform: translate(0,36px); } 62% { transform: translate(0,40px); } 86% { transform: translate(0,40px); opacity: 1; } 100% { transform: translate(0,40px) scale(.6); opacity: 0; } }
+@keyframes ent-destello { 0%,30% { transform: scale(.2); opacity: 0; } 36% { transform: scale(1.25); opacity: .95; } 56% { transform: scale(1.7); opacity: 0; } 100% { opacity: 0; } }
+@keyframes ent-chispa { 0%,100% { transform: scale(0) rotate(0); opacity: 0; } 45% { transform: scale(1) rotate(45deg); opacity: 1; } 70% { transform: scale(.6) rotate(90deg); opacity: .6; } }
+@keyframes ent-llega { 0% { transform: translate(120px,380px) rotate(26deg) scale(.7); opacity: 0; } 40% { opacity: 1; } 78% { transform: translate(-5px,-8px) rotate(-3deg) scale(1.03); } 100% { transform: translate(0,0) rotate(0) scale(1); opacity: 1; } }
+@keyframes ent-sello { 0% { transform: scale(2.2) rotate(-25deg); opacity: 0; } 60% { transform: scale(.88) rotate(4deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes ent-sube { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ent-aviso { from { opacity: 0; transform: translate(-50%, -14px) scale(.92); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ent *, .ent-aviso, .ent-aviso * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
